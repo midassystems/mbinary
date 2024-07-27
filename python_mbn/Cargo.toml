@@ -1,0 +1,16 @@
+[package]
+name = "python_mbn"
+version = "0.1.0"
+edition = "2021"
+
+[lib]
+name = "python_mbn"
+# crate-type = ["cdylib"]
+
+[dependencies]
+mbn = {path = "../mbn" , features =["python"]}
+pyo3 = { workspace = true }
+
+
+[build-dependencies]
+pyo3-build-config = { workspace = true }

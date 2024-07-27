@@ -1,0 +1,26 @@
+[package]
+name = "mbn"
+version = "0.1.0"
+edition = "2021"
+
+[features]
+default = []
+python = ["dep:pyo3", "dep:strum"]
+
+[dependencies]
+serde = { version = "1.0", features = ["derive"] }
+serde_json = "1.0"
+thiserror = "1.0.61"
+num_enum = "0.7.2"
+strum = { version = "0.26", features = ["derive"], optional = true }
+sqlx = { version = "0.6", features = ["postgres","runtime-tokio-rustls", "runtime-actix-rustls", "macros", "bigdecimal", "json"] }
+pyo3 = { workspace = true, optional = true }
+bigdecimal = { version = "0.3", features = ["serde"] }
+polars = { version = "0.41.3", features = ["csv", "json", "parquet"] }
+dbn = "0.19.2"
+databento ={version="0.11.4"}
+
+
+
+[lib]
+crate-type = ["rlib"]
