@@ -1,0 +1,10 @@
+[workspace]
+members = [
+  "mbn",
+  "python_mbn"
+]
+resolver = "2"
+
+[workspace.dependencies]
+pyo3 = "0.22.2"
+pyo3-build-config = "0.22.2"
