@@ -3,13 +3,7 @@ use databento::dbn;
 use serde::{Deserialize, Serialize};
 use sqlx::FromRow;
 use std::convert::From;
-use std::fmt;
-// use std::ffi::c_char;
-// use std::mem;
-use std::{ffi::CStr, mem, os::raw::c_char, ptr::NonNull, slice};
-
-// use std::ptr::NonNull;
-// use std::slice;
+use std::{mem, os::raw::c_char, ptr::NonNull, slice};
 
 #[cfg(feature = "python")]
 use pyo3::pyclass;
@@ -61,25 +55,14 @@ impl RecordHeader {
     }
 }
 
-// impl<R: HasRType> From<dbn::RecordHeader> for RecordHeader {
-//     fn from(header: dbn::RecordHeader) -> Self {
-//         RecordHeader::new::<R>(header.instrument_id, header.ts_event)
-//     }
-// }
-
-// #[cfg_attr(test, derive(type_layout::TypeLayout))]
-// #[cfg_attr(feature = "trivial_copy", derive(Copy))]
-// #[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
 /// A level.
 #[repr(C)]
 #[cfg_attr(feature = "python", pyclass(get_all, set_all, dict, module = "mbn"))]
 #[derive(Clone, Serialize, Deserialize, Debug, PartialEq, Eq, Hash)]
 pub struct BidAskPair {
     /// The bid price.
-    // #[dbn(fixed_price)]
     pub bid_px: i64,
     /// The ask price.
-    // #[dbn(fixed_price)]
     pub ask_px: i64,
     /// The bid size.
     pub bid_sz: u32,
@@ -176,12 +159,6 @@ pub struct OhlcvMsg {
     pub volume: u64,
 }
 
-// impl OhlcvMsg {
-//     fn open(&self) -> &i64 {
-//         &self.open
-//     }
-// }
-
 impl Record for OhlcvMsg {
     fn header(&self) -> &RecordHeader {
         &self.hd
@@ -256,7 +233,8 @@ pub unsafe fn transmute_record<T: HasRType>(header: &RecordHeader) -> Option<&T>
     }
 }
 
-// Creates byte slic of a record
+// Creates byte slice of a record
+#[allow(dead_code)]
 pub(crate) unsafe fn as_u8_slice<T: Sized>(data: &T) -> &[u8] {
     slice::from_raw_parts((data as *const T).cast(), mem::size_of::<T>())
 }
@@ -320,7 +298,6 @@ mod tests {
         };
 
         let bytes = record.as_ref();
-        println!("{:?}", bytes);
 
         // Validate
         let decoded_header: &RecordHeader = unsafe { transmute_header_bytes(bytes).unwrap() };
@@ -380,11 +357,9 @@ mod tests {
         };
 
         let bytes = unsafe { as_u8_slice(&record) };
-        println!("{:?}", bytes);
 
         // Test
         let decoded_record: Mbp1Msg = unsafe { transmute_record_bytes(bytes).unwrap() };
-        println!("{:?}", decoded_record);
         assert_eq!(decoded_record, record);
     }
 }

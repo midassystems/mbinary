@@ -3,7 +3,6 @@ use crate::encode::MetadataEncoder;
 use crate::enums::Schema;
 use crate::metadata::Metadata;
 use crate::symbols::SymbolMap;
-use pyo3::prelude::pymethods;
 use pyo3::prelude::*;
 use pyo3::types::{PyBytes, PyType};
 

@@ -1,16 +1,8 @@
 use crate::decode::CombinedDecoder;
 use crate::metadata::Metadata;
-// use polars;
-use crate::record_enum::RecordEnum;
-// use polars::prelude::*;
 use pyo3::exceptions::PyIOError;
 use pyo3::prelude::*;
 use pyo3::types::PyBytes;
-// use pyo3_polars::PyDataFrame;
-use crate::error::Result;
-use crate::record_ref::RecordRef;
-use crate::records::OhlcvMsg;
-use std::collections::hash_map::HashMap;
 use std::io::Cursor;
 
 //TODO :

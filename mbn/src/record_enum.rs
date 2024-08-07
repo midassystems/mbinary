@@ -1,9 +1,7 @@
 use crate::enums::RType;
 use crate::record_ref::RecordRef;
 use crate::records::{Mbp1Msg, OhlcvMsg, Record, RecordHeader};
-// use polars::prelude::*;
 use serde::Serialize;
-use std::collections::hash_map::HashMap;
 
 #[cfg(feature = "python")]
 use pyo3::prelude::*;
@@ -46,30 +44,6 @@ impl RecordEnum {
             RecordEnum::Ohlcv(msg) => msg as &dyn Record,
         }
     }
-
-    // pub fn extract_fields(&self) -> HashMap<&'static str, Vec<AnyValue>> {
-    //     let mut fields = HashMap::new();
-    //     match self {
-    //         RecordEnum::Mbp1(msg) => {
-    //             fields.insert("price", vec![AnyValue::Int64(msg.price)]);
-    //             fields.insert("size", vec![AnyValue::UInt32(msg.size)]);
-    //             fields.insert("action", vec![AnyValue::UInt16(msg.action)]);
-    //             fields.insert("side", vec![AnyValue::UInt16(msg.side)]);
-    //             fields.insert("flags", vec![AnyValue::UInt8(msg.flags)]);
-    //             fields.insert("ts_recv", vec![AnyValue::UInt64(msg.ts_recv)]);
-    //             fields.insert("ts_in_delta", vec![AnyValue::Int32(msg.ts_in_delta)]);
-    //             fields.insert("sequence", vec![AnyValue::UInt32(msg.sequence)]);
-    //         }
-    //         RecordEnum::Ohlcv(msg) => {
-    //             fields.insert("open", vec![AnyValue::Int64(msg.open)]);
-    //             fields.insert("high", vec![AnyValue::Int64(msg.high)]);
-    //             fields.insert("low", vec![AnyValue::Int64(msg.low)]);
-    //             fields.insert("close", vec![AnyValue::Int64(msg.close)]);
-    //             fields.insert("volume", vec![AnyValue::UInt64(msg.volume)]);
-    //         }
-    //     }
-    //     fields
-    // }
 }
 
 impl Record for RecordEnum {
