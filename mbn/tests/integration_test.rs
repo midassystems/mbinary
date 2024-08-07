@@ -100,6 +100,7 @@ fn test_integration_test() {
         .expect("Error decoding metadata.");
 
     // Validate
+    println!("{:?}", decoded);
     assert_eq!(decoded.0.unwrap(), metadata);
     assert_eq!(
         decoded.1,

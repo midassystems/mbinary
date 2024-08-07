@@ -320,6 +320,7 @@ mod tests {
         };
 
         let bytes = record.as_ref();
+        println!("{:?}", bytes);
 
         // Validate
         let decoded_header: &RecordHeader = unsafe { transmute_header_bytes(bytes).unwrap() };
@@ -379,9 +380,11 @@ mod tests {
         };
 
         let bytes = unsafe { as_u8_slice(&record) };
+        println!("{:?}", bytes);
 
         // Test
         let decoded_record: Mbp1Msg = unsafe { transmute_record_bytes(bytes).unwrap() };
+        println!("{:?}", decoded_record);
         assert_eq!(decoded_record, record);
     }
 }

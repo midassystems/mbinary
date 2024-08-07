@@ -95,6 +95,17 @@ class RecordMsg(ABC):
 class RecordHeader:
     def __init__(self, instrument_id: int, ts_event: int) -> None: ...
 
+class BidAskPair:
+    def __init__(
+        self,
+        bid_px: int,
+        ask_px: int,
+        bid_sz: int,
+        ask_sz: int,
+        bid_ct: int,
+        ask_ct: int,
+    ) -> None: ...
+
 class OhlcvMsg(RecordMsg):
     def __init__(
         self,
@@ -114,8 +125,9 @@ class Mbp1Msg(RecordMsg):
         size: int,
         action: int,
         side: int,
-        flags: int,
+        depth: int,
         ts_recv: int,
         ts_in_delta: int,
         sequence: int,
+        levels: List[BidAskPair],
     ) -> None: ...

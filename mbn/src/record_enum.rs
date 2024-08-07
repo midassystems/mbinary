@@ -1,7 +1,7 @@
 use crate::enums::RType;
 use crate::record_ref::RecordRef;
 use crate::records::{Mbp1Msg, OhlcvMsg, Record, RecordHeader};
-use polars::prelude::*;
+// use polars::prelude::*;
 use serde::Serialize;
 use std::collections::hash_map::HashMap;
 
