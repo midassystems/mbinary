@@ -1,9 +1,6 @@
-use std::os::raw::c_char;
-
 use crate::records::{BidAskPair, Mbp1Msg, OhlcvMsg, RecordHeader};
 use pyo3::prelude::*;
-
-// TODO: Add BIDAsK PAIR
+use std::os::raw::c_char;
 
 #[pymethods]
 impl BidAskPair {

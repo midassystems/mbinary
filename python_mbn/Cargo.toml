@@ -5,7 +5,7 @@ edition = "2021"
 
 [lib]
 name = "python_mbn"
-# crate-type = ["cdylib"]
+crate-type = ["cdylib"]
 
 [dependencies]
 mbn = {path = "../mbn" , features =["python"]}

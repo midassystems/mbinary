@@ -1,5 +1,3 @@
-use serde::Serialize;
-
 use crate::records::{HasRType, Record, RecordHeader};
 use std::marker::PhantomData;
 use std::ptr::NonNull;

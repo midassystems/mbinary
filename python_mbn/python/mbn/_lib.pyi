@@ -1,10 +1,8 @@
 # lib.pyi
-from _typeshed import SupportsContainsAndGetItem
 from abc import ABC
-from typing import Dict, List, Iterable
+from typing import Dict, List
 from enum import Enum
 from typing import SupportsBytes
-from collections.abc import Sequence
 
 class Side(Enum):
     ASK: str
@@ -31,10 +29,10 @@ class Action(Enum):
 
 class Schema(Enum):
     MBP1: str
-    # TBBO: str
-    # TRADES: str
     OHLCV1_S: str
     OHLCV1_M: str
+    # TBBO: str
+    # TRADES: str
     # OHLCV_1H: str
     # OHLCV_1D: str
     # BBO_1S: str

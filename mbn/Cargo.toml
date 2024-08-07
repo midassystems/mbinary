@@ -13,7 +13,6 @@ strum = { version = "0.26", features = ["derive"], optional = true }
 sqlx = { version = "0.6", features = ["postgres","runtime-tokio-rustls", "runtime-actix-rustls", "macros", "bigdecimal", "json"] }
 pyo3 = { workspace = true, optional = true }
 bigdecimal = { version = "0.3", features = ["serde"] }
-# polars = { version = "0.41.3", features = ["csv", "json", "parquet"] }
 dbn = "0.19.2"
 databento ={version="0.11.4"}
 

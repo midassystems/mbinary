@@ -2,7 +2,6 @@ use crate::error::{Error, Result};
 use num_enum::{IntoPrimitive, TryFromPrimitive};
 use std::fmt;
 use std::str::FromStr;
-use std::{ffi::CStr, mem, os::raw::c_char, ptr::NonNull, slice};
 
 #[cfg(feature = "python")]
 use pyo3::pyclass;
@@ -132,14 +131,6 @@ impl Schema {
             Schema::Ohlcv1D => "ohlcv-1d",
         }
     }
-
-    // pub fn base_name(&self) -> &'static str {
-    //     match self {
-    //         Schema::Mbp1 => "mbp",
-    //         Schema::Ohlcv1S => "ohlcv",
-    //         Schema::Ohlcv1M => "ohlcv",
-    //     }
-    // }
 }
 
 impl FromStr for Schema {

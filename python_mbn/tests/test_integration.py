@@ -1,10 +1,7 @@
 import unittest
 import pandas as pd
 from mbn import Side, Action, Schema, RType, SymbolMap, Metadata, BufferStore
-from mbn import OhlcvMsg
-from typing import List
-
-from python.mbn._lib import Mbp1Msg
+from mbn import OhlcvMsg, Mbp1Msg
 
 
 class IntegrationTests(unittest.TestCase):
