@@ -9,13 +9,16 @@ use pyo3::pyclass;
 pub struct Instrument {
     pub ticker: String,
     pub name: String,
+    pub instrument_id: Option<u32>,
+    // pub stype: SType
 }
 
 impl Instrument {
-    pub fn new(ticker: &str, name: &str) -> Self {
+    pub fn new(ticker: &str, name: &str, instrument_id: Option<u32>) -> Self {
         Self {
             ticker: ticker.to_string(),
             name: name.to_string(),
+            instrument_id,
         }
     }
 }
@@ -81,11 +84,12 @@ mod tests {
         // Test
         let ticker = "AAPL";
         let name = "Apple Inc.";
-        let instrument = Instrument::new(ticker, name);
+        let instrument = Instrument::new(ticker, name, None);
 
         // Validate
         assert_eq!(instrument.ticker, ticker);
         assert_eq!(instrument.name, name);
+        assert_eq!(instrument.instrument_id, None);
     }
 
     #[test]
