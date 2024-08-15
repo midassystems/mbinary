@@ -1,6 +1,5 @@
 use crate::symbols::SymbolMap;
 use pyo3::prelude::*;
-// use pyo3::prelude::{pymethods, PyResult};
 use std::collections::HashMap;
 
 #[pymethods]
@@ -30,8 +29,8 @@ impl SymbolMap {
         }
     }
 
-    fn get_ticker(&self, id: u8) -> PyResult<String> {
-        let id = SymbolMap::get_instrument_ticker(&self, id as u32).unwrap();
+    fn get_ticker(&self, id: u32) -> PyResult<String> {
+        let id = SymbolMap::get_instrument_ticker(&self, id).unwrap();
         Ok(id)
     }
 }

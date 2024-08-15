@@ -2,12 +2,9 @@ use crate::enums::Schema;
 use crate::symbols::SymbolMap;
 
 #[cfg(feature = "python")]
-use pyo3;
+use pyo3::pyclass;
 
-#[cfg_attr(
-    feature = "python",
-    pyo3::pyclass(get_all, set_all, dict, module = "mbn")
-)]
+#[cfg_attr(feature = "python", pyclass(get_all, set_all, dict, module = "mbn"))]
 #[derive(Debug, PartialEq, Eq, Clone)]
 pub struct Metadata {
     pub schema: Schema,

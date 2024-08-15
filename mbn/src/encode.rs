@@ -95,7 +95,6 @@ mod tests {
     use std::io::Cursor;
 
     #[test]
-    // #[ignore]
     fn test_encode_record() {
         let ohlcv_msg = OhlcvMsg {
             hd: RecordHeader::new::<OhlcvMsg>(1, 1622471124),
@@ -121,7 +120,6 @@ mod tests {
     }
 
     #[test]
-    // #[ignore]
     fn test_encode_decode_records() {
         let ohlcv_msg1 = OhlcvMsg {
             hd: RecordHeader::new::<OhlcvMsg>(1, 1622471124),
@@ -162,19 +160,12 @@ mod tests {
     }
 
     #[test]
-    // #[ignore]
     fn test_encode_metadata() {
         let mut symbol_map = SymbolMap::new();
         symbol_map.add_instrument("AAPL", 1);
         symbol_map.add_instrument("TSLA", 2);
 
-        let metadata = Metadata::new(
-            Schema::Ohlcv1S,
-            1234567898765,
-            123456765432,
-            // symbols,
-            symbol_map,
-        );
+        let metadata = Metadata::new(Schema::Ohlcv1S, 1234567898765, 123456765432, symbol_map);
 
         // Test
         let mut buffer = Vec::new();

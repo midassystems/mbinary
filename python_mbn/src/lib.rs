@@ -2,6 +2,7 @@ use mbn::{
     enums::{Action, RType, Schema, Side},
     metadata::Metadata,
     python::buffer::BufferStore,
+    python::records::RecordMsg,
     records::{Mbp1Msg, OhlcvMsg, RecordHeader},
     symbols::SymbolMap,
 };
@@ -26,6 +27,7 @@ fn python_mbn(_py: Python<'_>, m: &Bound<PyModule>) -> PyResult<()> {
     checked_add_class::<OhlcvMsg>(m)?;
     checked_add_class::<Mbp1Msg>(m)?;
     checked_add_class::<BufferStore>(m)?;
+    checked_add_class::<RecordMsg>(m)?;
 
     Ok(())
 }

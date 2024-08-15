@@ -44,6 +44,13 @@ impl RecordEnum {
             RecordEnum::Ohlcv(msg) => msg as &dyn Record,
         }
     }
+
+    pub fn price(&self) -> i64 {
+        match self {
+            RecordEnum::Ohlcv(msg) => msg.close,
+            RecordEnum::Mbp1(msg) => msg.price,
+        }
+    }
 }
 
 impl Record for RecordEnum {
@@ -96,37 +103,41 @@ impl<'a> Record for RecordEnumRef<'a> {
     }
 }
 
-// #[cfg(test)]
-// mod tests {
-//     use super::*;
-//     use crate::records::{
-//         as_u8_slice, transmute_header_bytes, transmute_record, transmute_record_bytes,
-//     };
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use crate::records::BidAskPair;
 
-//     #[test]
-//     fn test_construction_record_enum() {
-//         let record = RecordEnum::Mbp1(Mbp1Msg {
-//             hd: RecordHeader::new::<Mbp1Msg>(1, 1622471124),
-//             price: 1000,
-//             size: 10,
-//             action: 1,
-//             side: 1,
-//             flags: 0,
-//             ts_recv: 123456789098765,
-//             ts_in_delta: 12345,
-//             sequence: 123456,
-//         });
+    #[test]
+    fn test_encode_decode_record_enum() {
+        let record_enum = RecordEnum::Mbp1(Mbp1Msg {
+            hd: RecordHeader::new::<Mbp1Msg>(1, 1622471124),
+            price: 1000,
+            size: 10,
+            action: 1,
+            side: 1,
+            depth: 0,
+            ts_recv: 123456789098765,
+            ts_in_delta: 12345,
+            sequence: 123456,
+            levels: [BidAskPair {
+                bid_px: 1,
+                ask_px: 2,
+                bid_sz: 2,
+                ask_sz: 2,
+                bid_ct: 1,
+                ask_ct: 3,
+            }],
+        });
 
-//         // Test
-//         let bytes = record.as_ref();
+        // Test
+        let record_ref = record_enum.to_record_ref();
+        let bytes = record_ref.as_ref();
+        let new_ref = unsafe { RecordRef::new(bytes) };
+        let ref_enum = RecordEnumRef::from_ref(new_ref).unwrap();
+        let decoded = ref_enum.to_owned();
 
-//         //
-//         let decoded: Mbp1Msg = unsafe { transmute_record_bytes(bytes).unwrap() };
-
-//         // Validate
-//         assert_eq!(decoded, record);
-//     }
-
-//     #[test]
-//     fn test_transmute_record_enum() {}
-// }
+        // Validate
+        assert_eq!(decoded, record_enum);
+    }
+}
