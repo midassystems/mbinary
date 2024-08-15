@@ -1,8 +1,9 @@
 # lib.pyi
 from abc import ABC
-from typing import Dict, List
+from typing import Dict, List, Optional
 from enum import Enum
 from typing import SupportsBytes
+import pandas
 
 class Side(Enum):
     ASK: str
@@ -86,12 +87,29 @@ class BufferStore(SupportsBytes):
     def decode_to_array(self) -> List[RecordMsg]: ...
     @staticmethod
     def from_file(file_path: str) -> BufferStore: ...
+    def decode_to_df(self) -> pandas.DataFrame: ...
+    def replay(self) -> Optional[RecordMsg]: ...
 
-class RecordMsg(ABC):
+class RecordMsg:
     def __init__(self) -> None: ...
+    @property
+    def hd(self) -> RecordHeader: ...
+    @property
+    def price(self) -> int: ...
 
 class RecordHeader:
+    """docs testing"""
     def __init__(self, instrument_id: int, ts_event: int) -> None: ...
+    @property
+    def ts_event(self) -> int: ...
+    """
+    Returns the timestamp of the event.
+    """
+    @property
+    def instrument_id(self) -> int: ...
+    """
+    Returns the timestamp of the event.
+    """
 
 class BidAskPair:
     def __init__(
@@ -114,6 +132,8 @@ class OhlcvMsg(RecordMsg):
         close: int,
         volume: int,
     ) -> None: ...
+    @property
+    def price(self) -> int: ...
 
 class Mbp1Msg(RecordMsg):
     def __init__(
@@ -129,3 +149,5 @@ class Mbp1Msg(RecordMsg):
         sequence: int,
         levels: List[BidAskPair],
     ) -> None: ...
+    @property
+    def price(self) -> int: ...

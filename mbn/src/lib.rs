@@ -1,6 +1,7 @@
 pub const METADATA_LENGTH: usize = 100;
 pub mod backtest;
 pub mod decode;
+pub mod decode_iterator;
 pub mod encode;
 pub mod enums;
 pub mod error;

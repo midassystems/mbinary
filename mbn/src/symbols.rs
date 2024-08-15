@@ -5,12 +5,15 @@ use std::collections::HashMap;
 #[cfg(feature = "python")]
 use pyo3::pyclass;
 
+/// Struct representing a financial instrument.
 #[derive(Debug, Clone, Serialize, Deserialize, FromRow)]
 pub struct Instrument {
+    /// Instrument ticker.
     pub ticker: String,
+    /// Instrument name e.g. Apple Inc.
     pub name: String,
+    /// Midas unique instrument id number.
     pub instrument_id: Option<u32>,
-    // pub stype: SType
 }
 
 impl Instrument {
@@ -23,9 +26,11 @@ impl Instrument {
     }
 }
 
+/// Struct created by Midas server to map instrument ids to tickers.
 #[cfg_attr(feature = "python", pyclass(get_all, set_all, dict, module = "mbn"))]
 #[derive(Debug, Clone, Default, PartialEq, Eq)]
 pub struct SymbolMap {
+    /// Maps {id : ticker}.
     pub map: HashMap<u32, String>,
 }
 
@@ -44,6 +49,7 @@ impl SymbolMap {
         self.map.get(&id).cloned()
     }
 
+    /// Binary encodes struct for response, shouldn't be used directly.
     pub fn serialize(&self) -> Vec<u8> {
         let mut bytes = Vec::new();
         let map_len = self.map.len() as u32;
@@ -57,6 +63,7 @@ impl SymbolMap {
         bytes
     }
 
+    /// Decodes the binary response from Midas server, shouldn't need to be used directly.
     pub fn deserialize(bytes: &[u8], offset: &mut usize) -> Self {
         let map_len = u32::from_le_bytes(bytes[*offset..*offset + 4].try_into().unwrap()) as usize;
         *offset += 4;

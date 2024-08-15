@@ -22,7 +22,7 @@ pub enum Side {
     None = b'N',
 }
 
-// Handles the converting of variant to type char
+/// Handles the converting of variant to type char
 impl From<Side> for char {
     fn from(side: Side) -> Self {
         u8::from(side) as char
@@ -86,24 +86,6 @@ impl fmt::Display for Action {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         write!(f, "{}", char::from(*self))
     }
-}
-
-/// Constants for the bit flag record fields.
-pub mod flags {
-    /// Indicates it's the last message in the packet from the venue for a given
-    /// `instrument_id`.
-    pub const LAST: u8 = 1 << 7;
-    /// Indicates a top-of-book message, not an individual order.
-    pub const TOB: u8 = 1 << 6;
-    /// Indicates the message was sourced from a replay, such as a snapshot server.
-    pub const SNAPSHOT: u8 = 1 << 5;
-    /// Indicates an aggregated price level message, not an individual order.
-    pub const MBP: u8 = 1 << 4;
-    /// Indicates the `ts_recv` value is inaccurate due to clock issues or packet
-    /// reordering.
-    pub const BAD_TS_RECV: u8 = 1 << 3;
-    /// Indicates an unrecoverable gap was detected in the channel.
-    pub const MAYBE_BAD_BOOK: u8 = 1 << 2;
 }
 
 #[cfg_attr(feature = "python", derive(strum::EnumIter, strum::AsRefStr))]

@@ -17,15 +17,7 @@ fn test_integration_test() {
 
     let metadata = Metadata::new(Schema::Mbp1, 1234567898765, 123456765432, symbol_map);
 
-    // Record
-    // let ohlcv_msg1 = OhlcvMsg {
-    //     hd: RecordHeader::new::<OhlcvMsg>(1, 1622471124),
-    //     open: 100,
-    //     high: 200,
-    //     low: 50,
-    //     close: 150,
-    //     volume: 1000,
-    // };
+    // Records
     let record1 = Mbp1Msg {
         hd: RecordHeader::new::<Mbp1Msg>(1, 1622471124),
         price: 1000,
@@ -65,32 +57,18 @@ fn test_integration_test() {
             ask_ct: 3,
         }],
     };
-    // let ohlcv_msg2 = OhlcvMsg {
-    //     hd: RecordHeader::new::<OhlcvMsg>(2, 1622471125),
-    //     open: 110,
-    //     high: 210,
-    //     low: 55,
-    //     close: 155,
-    //     volume: 1100,
-    // };
 
     let record_ref1: RecordRef = (&record1).into();
     let record_ref2: RecordRef = (&record2).into();
     let records = &[record_ref1, record_ref2];
 
     let mut buffer = Vec::new();
+
+    // Encode
     let mut encoder = CombinedEncoder::new(&mut buffer);
     encoder
         .encode_metadata_and_records(&metadata, records)
         .expect("Error on encoding");
-
-    println!("{:?}", buffer);
-    // let binary_string: String = buffer
-    //     .iter()
-    //     .map(|byte| format!("\\x{:02x}", byte))
-    //     .collect();
-
-    // println!("{}", binary_string);
 
     // Test
     let cursor = Cursor::new(buffer);
@@ -100,7 +78,6 @@ fn test_integration_test() {
         .expect("Error decoding metadata.");
 
     // Validate
-    println!("{:?}", decoded);
     assert_eq!(decoded.0.unwrap(), metadata);
     assert_eq!(
         decoded.1,

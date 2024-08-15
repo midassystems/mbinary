@@ -1,3 +1,4 @@
+use crate::decode_iterator::DecoderIterator;
 use crate::metadata::Metadata;
 use crate::record_enum::RecordEnum;
 use crate::record_ref::*;
@@ -24,6 +25,10 @@ impl<R: Read> CombinedDecoder<R> {
     pub fn decode_all_records(&mut self) -> io::Result<Vec<RecordEnum>> {
         let mut record_decoder = RecordDecoder::new(&mut self.reader);
         record_decoder.decode_to_owned()
+    }
+
+    pub fn decode_iterator(&mut self) -> DecoderIterator<R> {
+        DecoderIterator::new(&mut self.reader)
     }
 
     pub fn decode_metadata_and_records(
@@ -89,6 +94,10 @@ where
             }
         }
         Ok(records)
+    }
+
+    pub fn decode_iterator(&mut self) -> DecoderIterator<R> {
+        DecoderIterator::new(&mut self.reader)
     }
 
     pub fn decode_ref(&mut self) -> io::Result<Option<RecordRef>> {
@@ -326,5 +335,62 @@ mod tests {
             decoded.1,
             [RecordEnum::Ohlcv(ohlcv_msg1), RecordEnum::Ohlcv(ohlcv_msg2)]
         );
+    }
+
+    #[test]
+    fn test_iter_decode() {
+        // Setup
+        let ohlcv_msg1 = OhlcvMsg {
+            hd: RecordHeader::new::<OhlcvMsg>(1, 1622471124),
+            open: 100,
+            high: 200,
+            low: 50,
+            close: 150,
+            volume: 1000,
+        };
+
+        let ohlcv_msg2 = OhlcvMsg {
+            hd: RecordHeader::new::<OhlcvMsg>(2, 1622471125),
+            open: 110,
+            high: 210,
+            low: 55,
+            close: 155,
+            volume: 1100,
+        };
+
+        // Encode
+        let mut buffer = Vec::new();
+        {
+            let mut encoder = RecordEncoder::new(&mut buffer);
+            let record_ref1: RecordRef = (&ohlcv_msg1).into();
+            let record_ref2: RecordRef = (&ohlcv_msg2).into();
+            encoder
+                .encode_records(&[record_ref1, record_ref2])
+                .expect("Encoding failed");
+        }
+
+        // Decode
+        let cursor = Cursor::new(buffer);
+        let mut decoder = RecordDecoder::new(cursor);
+        let iter = decoder.decode_iterator();
+
+        // Test
+        let mut i = 0;
+        for record in iter {
+            match record {
+                Ok(record) => {
+                    // Process the record
+                    if i == 0 {
+                        assert_eq!(record, RecordEnum::Ohlcv(ohlcv_msg1.clone()));
+                    } else {
+                        assert_eq!(record, RecordEnum::Ohlcv(ohlcv_msg2.clone()));
+                    }
+                    i = i + 1;
+                }
+                Err(e) => {
+                    eprintln!("Error processing record: {:?}", e);
+                }
+            }
+        }
     }
 }

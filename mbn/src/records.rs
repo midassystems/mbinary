@@ -8,17 +8,18 @@ use std::{mem, os::raw::c_char, ptr::NonNull, slice};
 #[cfg(feature = "python")]
 use pyo3::pyclass;
 
-/// Record Header struct
+/// Trait to access common header across records.
 pub trait Record {
     fn header(&self) -> &RecordHeader;
 }
 
-/// Trait to check if a type has a specific RType
+/// Trait to check if a type has a specific RType property.
 pub trait HasRType {
     fn has_rtype(rtype: u8) -> bool;
     fn rtype_byte() -> u8;
 }
 
+/// Constant data across all records.
 #[repr(C)]
 #[cfg_attr(feature = "python", pyclass(get_all, set_all, dict, module = "mbn"))]
 #[derive(Clone, Debug, PartialEq, Eq, Hash, Serialize, Deserialize)]
@@ -55,7 +56,7 @@ impl RecordHeader {
     }
 }
 
-/// A level.
+/// Order book level e.g. MBP1 would contain the top level.
 #[repr(C)]
 #[cfg_attr(feature = "python", pyclass(get_all, set_all, dict, module = "mbn"))]
 #[derive(Clone, Serialize, Deserialize, Debug, PartialEq, Eq, Hash)]
@@ -73,6 +74,7 @@ pub struct BidAskPair {
     /// The ask order count.
     pub ask_ct: u32,
 }
+
 impl From<dbn::BidAskPair> for BidAskPair {
     fn from(dbn_pair: dbn::BidAskPair) -> Self {
         BidAskPair {
@@ -186,7 +188,6 @@ impl AsRef<[u8]> for OhlcvMsg {
     }
 }
 
-// Transmutation
 /// Transmutes entire byte slices header and record
 pub unsafe fn transmute_record_bytes<T: HasRType>(bytes: &[u8]) -> Option<T> {
     assert!(
@@ -326,6 +327,7 @@ mod tests {
             }],
         };
 
+        // Test
         let bytes = record.as_ref();
         let decoded_header: &RecordHeader = unsafe { transmute_header_bytes(bytes).unwrap() };
 
@@ -356,6 +358,7 @@ mod tests {
             }],
         };
 
+        // Test
         let bytes = unsafe { as_u8_slice(&record) };
 
         // Test

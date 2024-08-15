@@ -2,11 +2,8 @@ use crate::decode::CombinedDecoder;
 use crate::metadata::Metadata;
 use pyo3::exceptions::PyIOError;
 use pyo3::prelude::*;
-use pyo3::types::PyBytes;
+use pyo3::types::{PyBytes, PyDict};
 use std::io::Cursor;
-
-//TODO :
-//1. Decode to a dataframe structure
 
 #[cfg_attr(feature = "python", pyo3::pyclass(module = "mbn"))]
 pub struct BufferStore {
@@ -52,6 +49,52 @@ impl BufferStore {
         })
     }
 
+    pub fn replay(&mut self, py: Python) -> Option<PyObject> {
+        let mut iter = self.decoder.decode_iterator();
+
+        match iter.next() {
+            Some(Ok(record)) => Some(record.into_py(py)),
+            Some(Err(e)) => {
+                PyIOError::new_err(e.to_string()).restore(py);
+                None
+            }
+            None => None, // End of iteration
+        }
+    }
+
+    pub fn decode_to_df(&mut self, py: Python) -> PyResult<PyObject> {
+        // Use the existing `decode_to_array` to get the list of PyObject
+        let flat_array: Vec<PyObject> = self.decode_to_array()?;
+
+        // Map instrument_id to symbols using the metadata mappings
+        let mappings = self.metadata.mappings.map.clone();
+
+        // Convert to DataFrame using the dictionaries returned by `__dict__`
+        let dicts: Vec<_> = flat_array
+            .iter()
+            .map(|obj| {
+                let dict_obj = obj.call_method0(py, "__dict__")?; // Create a binding for the temporary value
+                let dict = dict_obj.downcast_bound::<PyDict>(py)?; // Now use the bound value
+
+                // Get the instrument_id from the dict, handling the PyResult<Option<PyAny>>
+                if let Some(instrument_id_obj) = dict.get_item("instrument_id")? {
+                    // Extract the instrument_id as a u32
+                    let instrument_id: u32 = instrument_id_obj.extract()?;
+
+                    // Set the corresponding symbol
+                    if let Some(symbol) = mappings.get(&instrument_id) {
+                        dict.set_item("symbol", symbol)?;
+                    }
+                }
+                Ok(dict.to_object(py))
+            })
+            .collect::<PyResult<Vec<_>>>()?;
+
+        let pandas = py.import_bound("pandas")?;
+        let df = pandas.call_method1("DataFrame", (dicts,))?;
+        Ok(df.into())
+    }
+
     pub fn write_to_file(&self, file_path: &str) -> PyResult<()> {
         std::fs::write(file_path, &self.buffer).map_err(|e| PyIOError::new_err(e.to_string()))
     }
@@ -63,81 +106,4 @@ impl BufferStore {
         let py_bytes = PyBytes::new_bound(py, &buffer);
         Ok(BufferStore::py_new(&py_bytes))
     }
-
-    // pub fn decode_to_dataframe(&mut self, py: Python) -> PyResult<DataFrame> {
-    //     // Decode all records
-    //     let records: Vec<RecordEnum> = self
-    //         .decoder
-    //         .decode_all_records()
-    //         .map_err(|e| PyIOError::new_err(e.to_string()))?;
-
-    //     // Convert RecordEnum to their underlying message types and collect them
-    //     let ohlcv_records: Vec<OhlcvMsg> = records
-    //         .into_iter()
-    //         .filter_map(|rec| {
-    //             if let RecordEnum::Ohlcv(msg) = rec {
-    //                 Some(msg)
-    //             } else {
-    //                 None
-    //             }
-    //         })
-    //         .collect();
-
-    //     // Create vectors to hold each column
-    //     let lengths: Vec<u32> = ohlcv_records
-    //         .iter()
-    //         .map(|msg| msg.hd.length as u32)
-    //         .collect();
-    //     let rtypes: Vec<u32> = ohlcv_records
-    //         .iter()
-    //         .map(|msg| msg.hd.rtype as u32)
-    //         .collect();
-    //     let instrument_ids: Vec<u32> = ohlcv_records
-    //         .iter()
-    //         .map(|msg| msg.hd.instrument_id as u32)
-    //         .collect();
-    //     let ts_events: Vec<u64> = ohlcv_records.iter().map(|msg| msg.hd.ts_event).collect();
-    //     let opens: Vec<i64> = ohlcv_records.iter().map(|msg| msg.open).collect();
-    //     let highs: Vec<i64> = ohlcv_records.iter().map(|msg| msg.high).collect();
-    //     let lows: Vec<i64> = ohlcv_records.iter().map(|msg| msg.low).collect();
-    //     let closes: Vec<i64> = ohlcv_records.iter().map(|msg| msg.close).collect();
-    //     let volumes: Vec<u64> = ohlcv_records.iter().map(|msg| msg.volume).collect();
-
-    //     // Create a DataFrame
-    //     let df = DataFrame::new(vec![
-    //         Series::new("length", lengths),
-    //         Series::new("rtype", rtypes),
-    //         Series::new("instrument_id", instrument_ids),
-    //         Series::new("ts_event", ts_events),
-    //         Series::new("open", opens),
-    //         Series::new("high", highs),
-    //         Series::new("low", lows),
-    //         Series::new("close", closes),
-    //         Series::new("volume", volumes),
-    //     ])
-    //     .map_err(|e| PyIOError::new_err(e.to_string()))?;
-    //     println!("{:?}", df);
-
-    //     // Convert the DataFrame to a PyDataFrame (or similar PyO3 compatible structure)
-    //     // let py_df = PyDataFrame::new(df);
-
-    //     Ok(df)
-    // }
 }
-
-// #[pyclass]
-// struct PyDataFrame {
-//     df: DataFrame,
-// }
-
-// #[pymethods]
-// impl PyDataFrame {
-//     #[new]
-//     fn new(df: DataFrame) -> Self {
-//         PyDataFrame { df }
-//     }
-
-//     pub fn to_string(&self) -> String {
-//         format!("{:?}", self.df)
-//     }
-// }
