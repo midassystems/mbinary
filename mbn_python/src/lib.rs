@@ -3,7 +3,7 @@ use mbn::{
     metadata::Metadata,
     python::buffer::BufferStore,
     python::records::RecordMsg,
-    records::{Mbp1Msg, OhlcvMsg, RecordHeader},
+    records::{BidAskPair, Mbp1Msg, OhlcvMsg, RecordHeader},
     symbols::SymbolMap,
 };
 use pyo3::{prelude::*, PyClass};
@@ -26,6 +26,7 @@ fn python_mbn(_py: Python<'_>, m: &Bound<PyModule>) -> PyResult<()> {
     checked_add_class::<RecordHeader>(m)?;
     checked_add_class::<OhlcvMsg>(m)?;
     checked_add_class::<Mbp1Msg>(m)?;
+    checked_add_class::<BidAskPair>(m)?;
     checked_add_class::<BufferStore>(m)?;
     checked_add_class::<RecordMsg>(m)?;
 

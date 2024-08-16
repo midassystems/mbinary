@@ -915,6 +915,15 @@ dependencies = [
 ]
 
 [[package]]
+name = "mbn_python"
+version = "0.1.0"
+dependencies = [
+ "mbn",
+ "pyo3",
+ "pyo3-build-config",
+]
+
+[[package]]
 name = "md-5"
 version = "0.10.6"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -1294,15 +1303,6 @@ dependencies = [
  "pyo3-build-config",
  "quote",
  "syn 2.0.71",
-]
-
-[[package]]
-name = "python_mbn"
-version = "0.1.0"
-dependencies = [
- "mbn",
- "pyo3",
- "pyo3-build-config",
 ]
 
 [[package]]
