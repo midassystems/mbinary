@@ -311,7 +311,7 @@ mod tests {
             hd: RecordHeader::new::<Mbp1Msg>(1, 1622471124),
             price: 1000,
             size: 10,
-            action: 1,
+            action: Action::Add.into(),
             side: 1,
             depth: 0,
             ts_recv: 123456789098765,
@@ -326,6 +326,7 @@ mod tests {
                 ask_ct: 3,
             }],
         };
+        println!("{:?}", record);
 
         // Test
         let bytes = record.as_ref();

@@ -48,7 +48,7 @@ impl Action {
     }
 
     #[classmethod]
-    fn from_int(_cls: &Bound<'_, PyType>, value: u8) -> PyResult<Self> {
+    pub fn from_int(_cls: &Bound<'_, PyType>, value: u8) -> PyResult<Self> {
         let char: char = value as char;
         Self::py_from_str(_cls, char)
     }

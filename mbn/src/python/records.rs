@@ -1,39 +1,11 @@
-use crate::record_enum::RecordEnum;
-use crate::records::{BidAskPair, Mbp1Msg, OhlcvMsg, Record, RecordHeader};
+use crate::enums::{Action, RType, Side};
+use crate::records::{BidAskPair, Mbp1Msg, OhlcvMsg, RecordHeader};
+use crate::PRICE_SCALE;
 use pyo3::prelude::*;
 use pyo3::types::PyDict;
-use std::os::raw::c_char;
 
 #[cfg_attr(feature = "python", pyclass(dict, module = "mbn"))]
-pub struct RecordMsg {
-    inner: RecordEnum,
-}
-
-#[pymethods]
-impl RecordMsg {
-    #[getter]
-    fn hd(&self) -> RecordHeader {
-        self.inner.header().clone()
-    }
-
-    #[getter]
-    fn price(&self) -> i64 {
-        self.inner.price()
-    }
-}
-
-#[pymethods]
-impl RecordHeader {
-    #[getter]
-    fn ts_event(&self) -> u64 {
-        self.ts_event
-    }
-
-    #[getter]
-    fn instrument_id(&self) -> u32 {
-        self.instrument_id
-    }
-}
+pub struct RecordMsg;
 
 #[pymethods]
 impl BidAskPair {
@@ -55,17 +27,28 @@ impl BidAskPair {
             ask_ct,
         }
     }
+
+    #[getter]
+    fn pretty_bid_px(&self) -> f64 {
+        self.bid_px as f64 / PRICE_SCALE as f64
+    }
+
+    #[getter]
+    fn pretty_ask_px(&self) -> f64 {
+        self.ask_px as f64 / PRICE_SCALE as f64
+    }
 }
 
 #[pymethods]
 impl Mbp1Msg {
     #[new]
     fn py_new(
-        hd: RecordHeader,
+        instrument_id: u32,
+        ts_event: u64,
         price: i64,
         size: u32,
-        action: c_char,
-        side: c_char,
+        action: Action,
+        side: Side,
         depth: u8,
         ts_recv: u64,
         ts_in_delta: i32,
@@ -73,17 +56,47 @@ impl Mbp1Msg {
         levels: [BidAskPair; 1],
     ) -> Self {
         Mbp1Msg {
-            hd,
+            hd: RecordHeader::new::<Self>(instrument_id, ts_event),
             price,
             size,
-            action,
-            side,
+            action: action.into(),
+            side: side.into(),
             depth,
             ts_recv,
             ts_in_delta,
             sequence,
             levels,
         }
+    }
+
+    #[getter]
+    fn instrument_id(&self) -> u32 {
+        self.hd.instrument_id
+    }
+
+    #[getter]
+    fn ts_event(&self) -> u64 {
+        self.hd.ts_event
+    }
+
+    #[getter]
+    fn rtype(&self) -> RType {
+        self.hd.rtype()
+    }
+
+    #[getter]
+    fn pretty_price(&self) -> f64 {
+        self.price as f64 / PRICE_SCALE as f64
+    }
+
+    #[getter]
+    fn pretty_action(&self) -> Action {
+        Action::try_from(self.action as u8).unwrap()
+    }
+
+    #[getter]
+    fn pretty_side(&self) -> Side {
+        Side::try_from(self.side as u8).unwrap()
     }
 
     fn __str__(&self) -> String {
@@ -118,9 +131,17 @@ impl Mbp1Msg {
 #[pymethods]
 impl OhlcvMsg {
     #[new]
-    fn py_new(hd: RecordHeader, open: i64, high: i64, low: i64, close: i64, volume: u64) -> Self {
+    fn py_new(
+        instrument_id: u32,
+        ts_event: u64,
+        open: i64,
+        high: i64,
+        low: i64,
+        close: i64,
+        volume: u64,
+    ) -> Self {
         OhlcvMsg {
-            hd,
+            hd: RecordHeader::new::<Self>(instrument_id, ts_event),
             open,
             high,
             low,
@@ -128,9 +149,40 @@ impl OhlcvMsg {
             volume,
         }
     }
+
     #[getter]
-    fn price(&self) -> i64 {
-        self.close
+    fn instrument_id(&self) -> u32 {
+        self.hd.instrument_id
+    }
+
+    #[getter]
+    fn ts_event(&self) -> u64 {
+        self.hd.ts_event
+    }
+
+    #[getter]
+    fn rtype(&self) -> RType {
+        self.hd.rtype()
+    }
+
+    #[getter]
+    fn pretty_open(&self) -> f64 {
+        self.open as f64 / PRICE_SCALE as f64
+    }
+
+    #[getter]
+    fn pretty_close(&self) -> f64 {
+        self.close as f64 / PRICE_SCALE as f64
+    }
+
+    #[getter]
+    fn pretty_high(&self) -> f64 {
+        self.high as f64 / PRICE_SCALE as f64
+    }
+
+    #[getter]
+    fn pretty_low(&self) -> f64 {
+        self.low as f64 / PRICE_SCALE as f64
     }
 
     fn __str__(&self) -> String {

@@ -1,10 +1,10 @@
 [package]
-name = "python_mbn"
+name = "mbn_python"
 version = "0.1.0"
 edition = "2021"
 
 [lib]
-name = "python_mbn"
+name = "mbn_python"
 crate-type = ["cdylib"]
 
 [dependencies]

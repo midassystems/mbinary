@@ -1,7 +1,22 @@
 import unittest
-import pandas as pd
-from mbn import Side, Action, Schema, RType, SymbolMap, Metadata, BufferStore
-from mbn import RecordMsg, OhlcvMsg, Mbp1Msg
+from mbn import (
+    Side,
+    Action,
+    Schema,
+    RType,
+    SymbolMap,
+    Metadata,
+    BufferStore,
+    BidAskPair,
+    RecordMsg,
+    OhlcvMsg,
+    Mbp1Msg,
+)
+from pandas import pandas
+
+
+def handle_msg(msg: RecordMsg) -> int:
+    return msg.ts_event
 
 
 class IntegrationTests(unittest.TestCase):
@@ -115,232 +130,80 @@ class IntegrationTests(unittest.TestCase):
         mappings = symbol_map.map
         self.assertEqual(mappings, mappings)
 
-    def test_record_msg(self):
-        # Binary
-        bin = [
-            2,
-            141,
-            38,
-            251,
-            113,
-            31,
-            1,
-            0,
-            0,
-            248,
-            189,
-            152,
-            190,
-            28,
-            0,
-            0,
-            0,
-            2,
-            0,
-            0,
-            0,
-            1,
-            0,
-            0,
-            0,
-            4,
-            0,
-            0,
-            0,
-            65,
-            65,
-            80,
-            76,
-            2,
-            0,
-            0,
-            0,
-            4,
-            0,
-            0,
-            0,
-            84,
-            83,
-            76,
-            65,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            14,
-            2,
-            0,
-            0,
-            1,
-            0,
-            0,
-            0,
-            212,
-            241,
-            180,
-            96,
-            0,
-            0,
-            0,
-            0,
-            100,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            200,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            50,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            150,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            232,
-            3,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            14,
-            2,
-            0,
-            0,
-            2,
-            0,
-            0,
-            0,
-            213,
-            241,
-            180,
-            96,
-            0,
-            0,
-            0,
-            0,
-            110,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            210,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            55,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            155,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            76,
-            4,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-        ]
+    def test_bid_ask_properties(self):
+        pair = BidAskPair(1, 2, 3, 4, 5, 6)
+
+        # Validate
+        self.assertEqual(pair.bid_px, 1)
+        self.assertEqual(pair.ask_px, 2)
+        self.assertEqual(pair.bid_sz, 3)
+        self.assertEqual(pair.ask_sz, 4)
+        self.assertEqual(pair.bid_ct, 5)
+        self.assertEqual(pair.ask_ct, 6)
+        self.assertEqual(pair.pretty_bid_px, 1 / 1e9)
+        self.assertEqual(pair.pretty_ask_px, 2 / 1e9)
+
+    def test_ohlcvmsg_properties(self):
+        msg = OhlcvMsg(1, 123456765432, 1, 2, 3, 4, 100000)
 
         # Test
-        buffer_obj = BufferStore(bytes(bin))
+        self.assertEqual(msg.rtype, RType.OHLCV)
+        self.assertEqual(msg.instrument_id, 1)
+        self.assertEqual(msg.ts_event, 123456765432)
+        self.assertEqual(msg.open, 1)
+        self.assertEqual(msg.pretty_open, 1 / 1e9)
+        self.assertEqual(msg.high, 2)
+        self.assertEqual(msg.pretty_high, 2 / 1e9)
+        self.assertEqual(msg.low, 3)
+        self.assertEqual(msg.pretty_low, 3 / 1e9)
+        self.assertEqual(msg.close, 4)
+        self.assertEqual(msg.pretty_close, 4 / 1e9)
+        self.assertEqual(msg.volume, 100000)
+        # self.assert(msg, RecordMsg)
 
-        record = buffer_obj.replay()
-        while record is not None:
-            print(record.hd.ts_event)
-            print(record.price)
-            print(f"testing  {str(record)}")
-            record = buffer_obj.replay()
+    def test_mbpmsg_properties(self):
+        pair = BidAskPair(1, 2, 3, 4, 5, 6)
+        msg = Mbp1Msg(
+            1,
+            123456765432,
+            1,
+            2,
+            Action.ADD,
+            Side.ASK,
+            0,
+            3,
+            4,
+            5,
+            [pair],
+        )
+
+        # Test
+        self.assertEqual(msg.rtype, RType.MBP1)
+        self.assertEqual(msg.instrument_id, 1)
+        self.assertEqual(msg.ts_event, 123456765432)
+        self.assertEqual(msg.price, 1)
+        self.assertEqual(msg.pretty_price, 1 / 1e9)
+        self.assertEqual(msg.action, 65)
+        self.assertEqual(msg.pretty_action, Action.ADD)
+        self.assertEqual(msg.pretty_side, Side.ASK)
+        self.assertEqual(msg.side, 65)
+        self.assertEqual(msg.depth, 0)
+        self.assertEqual(msg.ts_recv, 3)
+        self.assertEqual(msg.ts_in_delta, 4)
+        self.assertEqual(msg.sequence, 5)
+        self.assertEqual(msg.levels[0].bid_px, pair.bid_px)
+        self.assertEqual(msg.levels[0].ask_px, pair.ask_px)
+        self.assertEqual(msg.levels[0].bid_sz, pair.bid_sz)
+        self.assertEqual(msg.levels[0].ask_sz, pair.ask_sz)
+        self.assertEqual(msg.levels[0].bid_ct, pair.bid_ct)
+        self.assertEqual(msg.levels[0].ask_ct, pair.ask_ct)
+
+    def test_msg_polymorphism(self):
+        msg = OhlcvMsg(1, 123456765432, 1, 2, 3, 4, 100000)
+
+        # Test
+        ts_event = handle_msg(msg)
+        self.assertEqual(ts_event, msg.ts_event)
 
     def test_buffer_store_file(self):
         # Binary
@@ -1075,8 +938,9 @@ class IntegrationTests(unittest.TestCase):
         # Test
         buffer_obj = BufferStore(bytes(bin))
 
+        # Valdiate
         df = buffer_obj.decode_to_df()
-        print(df)
+        self.assertIsInstance(df, pandas.DataFrame)
 
     def test_decode_replay(self):
         # Binary
@@ -1299,8 +1163,9 @@ class IntegrationTests(unittest.TestCase):
         buffer_obj = BufferStore(bytes(bin))
 
         record = buffer_obj.replay()
+        ts_event = 0
         while record is not None:
-            print(record)
+            self.assertTrue(record.ts_event > ts_event)
             record = buffer_obj.replay()
 
 
