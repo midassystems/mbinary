@@ -11,6 +11,7 @@ pub mod record_enum;
 pub mod record_ref;
 pub mod records;
 pub mod symbols;
+pub mod utils;
 
 #[cfg(feature = "python")]
 pub mod python;

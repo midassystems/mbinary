@@ -185,6 +185,11 @@ impl OhlcvMsg {
         self.low as f64 / PRICE_SCALE as f64
     }
 
+    #[getter]
+    fn pretty_price(&self) -> f64 {
+        self.close as f64 / PRICE_SCALE as f64
+    }
+
     fn __str__(&self) -> String {
         format!("{:?}", self)
     }

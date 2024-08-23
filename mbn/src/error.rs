@@ -1,3 +1,4 @@
+use chrono;
 use std::io;
 use thiserror::Error;
 
@@ -11,6 +12,8 @@ pub enum Error {
     Decode(String),
     #[error("Conversion error: {0}")]
     Conversion(String),
+    #[error("Parse Error : {0}")]
+    ParseError(#[from] chrono::ParseError),
 }
 
 impl Error {
