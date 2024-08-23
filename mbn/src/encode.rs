@@ -83,6 +83,13 @@ impl<W: Write> RecordEncoder<W> {
     }
 }
 
+pub fn write_to_file(file_path: &str, buffer: &[u8]) -> io::Result<()> {
+    let mut file = std::fs::File::create(file_path)?;
+    file.write_all(buffer)?;
+    file.flush()?;
+    Ok(())
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -123,19 +130,19 @@ mod tests {
     fn test_encode_decode_records() {
         let ohlcv_msg1 = OhlcvMsg {
             hd: RecordHeader::new::<OhlcvMsg>(1, 1622471124),
-            open: 100,
-            high: 200,
-            low: 50,
-            close: 150,
+            open: 100000000000,
+            high: 200000000000,
+            low: 50000000000,
+            close: 150000000000,
             volume: 1000,
         };
 
         let ohlcv_msg2 = OhlcvMsg {
             hd: RecordHeader::new::<OhlcvMsg>(2, 1622471125),
-            open: 110,
-            high: 210,
-            low: 55,
-            close: 155,
+            open: 110000000000,
+            high: 210000000000,
+            low: 55000000000,
+            close: 155000000000,
             volume: 1100,
         };
 
@@ -148,6 +155,7 @@ mod tests {
         encoder
             .encode_records(&[record_ref1, record_ref2])
             .expect("Encoding failed");
+        // println!("{:?}", buffer);
 
         // Validate
         let cursor = Cursor::new(buffer);
@@ -193,21 +201,21 @@ mod tests {
 
         // Record
         let ohlcv_msg1 = OhlcvMsg {
-            hd: RecordHeader::new::<OhlcvMsg>(1, 1622471124),
-            open: 100,
-            high: 200,
-            low: 50,
-            close: 150,
-            volume: 1000,
+            hd: RecordHeader::new::<OhlcvMsg>(1, 1724287878000000000),
+            open: 100000000000,
+            high: 200000000000,
+            low: 50000000000,
+            close: 150000000000,
+            volume: 1000000000000,
         };
 
         let ohlcv_msg2 = OhlcvMsg {
-            hd: RecordHeader::new::<OhlcvMsg>(2, 1622471125),
-            open: 110,
-            high: 210,
-            low: 55,
-            close: 155,
-            volume: 1100,
+            hd: RecordHeader::new::<OhlcvMsg>(2, 1724289878000000000),
+            open: 110000000000,
+            high: 210000000000,
+            low: 55000000000,
+            close: 155000000000,
+            volume: 1100000000000,
         };
 
         let record_ref1: RecordRef = (&ohlcv_msg1).into();
@@ -220,7 +228,7 @@ mod tests {
         encoder
             .encode_metadata_and_records(&metadata, records)
             .expect("Error on encoding");
-
+        println!("{:?}", buffer);
         // Validate
         assert!(buffer.len() > 0);
     }
