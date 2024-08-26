@@ -136,20 +136,27 @@ where
     }
 }
 
-pub fn decoder_from_file(file_path: &str) -> io::Result<RecordDecoder<Cursor<Vec<u8>>>> {
-    // Open the file
-    let mut file = std::fs::File::open(file_path)?;
+pub fn decoder_from_file(file_path: &str) -> io::Result<RecordDecoder<std::fs::File>> {
+    // Open the file directly and pass it to the RecordDecoder
+    let file = std::fs::File::open(file_path)?;
 
-    // Read the file into a buffer
-    let mut buffer = Vec::new();
-    file.read_to_end(&mut buffer)?;
-
-    // Create a Cursor from the buffer
-    let cursor = Cursor::new(buffer);
-
-    // Return the RecordDecoder using the cursor
-    Ok(RecordDecoder::new(cursor))
+    // Return the RecordDecoder using the file as the reader
+    Ok(RecordDecoder::new(file))
 }
+// pub fn decoder_from_file(file_path: &str) -> io::Result<RecordDecoder<Cursor<Vec<u8>>>> {
+//     // Open the file
+//     let mut file = std::fs::File::open(file_path)?;
+
+//     // Read the file into a buffer
+//     let mut buffer = Vec::new();
+//     file.read_to_end(&mut buffer)?;
+
+//     // Create a Cursor from the buffer
+//     let cursor = Cursor::new(buffer);
+
+//     // Return the RecordDecoder using the cursor
+//     Ok(RecordDecoder::new(cursor))
+// }
 
 #[cfg(test)]
 mod tests {
