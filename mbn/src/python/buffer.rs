@@ -1,4 +1,5 @@
 use crate::decode::CombinedDecoder;
+use crate::enums::Action;
 use crate::metadata::Metadata;
 use crate::utils::unix_nanos_to_date;
 use crate::PRICE_SCALE;
@@ -92,6 +93,17 @@ impl BufferStore {
                         dict.set_item("symbol", symbol)?;
                     }
                 }
+                // Outputs char instead of number
+                if let Some(action_obj) = dict.get_item("action")? {
+                    let action: u8 = action_obj.extract()?;
+                    dict.set_item("action", action as char)?;
+                }
+
+                if let Some(side_obj) = dict.get_item("side")? {
+                    let side: u8 = side_obj.extract()?;
+                    dict.set_item("side", side as char)?;
+                }
+
                 if pretty_ts {
                     if let Some(ts_obj) = dict.get_item("ts_event")? {
                         let ts_event: i64 = ts_obj.extract()?;
@@ -123,6 +135,14 @@ impl BufferStore {
                         let price: i64 = price_obj.extract()?;
                         dict.set_item("price", (price as f64) / (PRICE_SCALE as f64))?;
                     }
+                    if let Some(ask_px_obj) = dict.get_item("ask_px")? {
+                        let ask_px: i64 = ask_px_obj.extract()?;
+                        dict.set_item("ask_px", (ask_px as f64) / (PRICE_SCALE as f64))?;
+                    }
+                    if let Some(bid_px_obj) = dict.get_item("bid_px")? {
+                        let bid_px: i64 = bid_px_obj.extract()?;
+                        dict.set_item("bid_px", (bid_px as f64) / (PRICE_SCALE as f64))?;
+                    }
                 }
 
                 Ok(dict.to_object(py))
@@ -133,39 +153,6 @@ impl BufferStore {
         let df = pandas.call_method1("DataFrame", (dicts,))?;
         Ok(df.into())
     }
-
-    // pub fn decode_to_df(&mut self, py: Python) -> PyResult<PyObject> {
-    //     // Use the existing `decode_to_array` to get the list of PyObject
-    //     let flat_array: Vec<PyObject> = self.decode_to_array()?;
-
-    //     // Map instrument_id to symbols using the metadata mappings
-    //     let mappings = self.metadata.mappings.map.clone();
-
-    //     // Convert to DataFrame using the dictionaries returned by `__dict__`
-    //     let dicts: Vec<_> = flat_array
-    //         .iter()
-    //         .map(|obj| {
-    //             let dict_obj = obj.call_method0(py, "__dict__")?; // Create a binding for the temporary value
-    //             let dict = dict_obj.downcast_bound::<PyDict>(py)?; // Now use the bound value
-
-    //             // Get the instrument_id from the dict, handling the PyResult<Option<PyAny>>
-    //             if let Some(instrument_id_obj) = dict.get_item("instrument_id")? {
-    //                 // Extract the instrument_id as a u32
-    //                 let instrument_id: u32 = instrument_id_obj.extract()?;
-
-    //                 // Set the corresponding symbol
-    //                 if let Some(symbol) = mappings.get(&instrument_id) {
-    //                     dict.set_item("symbol", symbol)?;
-    //                 }
-    //             }
-    //             Ok(dict.to_object(py))
-    //         })
-    //         .collect::<PyResult<Vec<_>>>()?;
-
-    //     let pandas = py.import_bound("pandas")?;
-    //     let df = pandas.call_method1("DataFrame", (dicts,))?;
-    //     Ok(df.into())
-    // }
 
     pub fn write_to_file(&self, file_path: &str) -> PyResult<()> {
         std::fs::write(file_path, &self.buffer).map_err(|e| PyIOError::new_err(e.to_string()))
