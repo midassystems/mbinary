@@ -3,8 +3,10 @@ use crate::metadata::Metadata;
 use crate::record_enum::RecordEnum;
 use crate::record_ref::*;
 use crate::records::RecordHeader;
-use std::io::{self, Cursor, Read};
+use std::fs::File;
+use std::io::{self, BufReader, Cursor, Read};
 use std::mem;
+use tracing::{error, info, warn};
 
 use crate::METADATA_LENGTH; // Import the constant
 
@@ -136,7 +138,23 @@ where
     }
 }
 
+// pub fn decoder_from_file(file_path: &str) -> io::Result<RecordDecoder<BufReader<File>>> {
+//     info!("In file decoder");
+//     // Open the file
+//     let file = File::open(file_path)?;
+//     info!("got file.");
+
+//     // Wrap the file in a buffered reader for efficient, incremental reading
+//     let buffered_reader = BufReader::new(file);
+//     info!("created buffer");
+
+//     // Return the RecordDecoder using the buffered reader
+//     Ok(RecordDecoder::new(buffered_reader))
+// }
+
 pub fn decoder_from_file(file_path: &str) -> io::Result<RecordDecoder<std::fs::File>> {
+    info!("In file decoder");
+
     // Open the file directly and pass it to the RecordDecoder
     let file = std::fs::File::open(file_path)?;
 
