@@ -8,6 +8,10 @@ pub struct RecordRef<'a> {
     ptr: NonNull<RecordHeader>,
     _marker: PhantomData<&'a RecordHeader>,
 }
+// Safety: RecordRef is safe to send and share across threads as long as the underlying data
+// it points to is not mutated unsafely.
+unsafe impl<'a> Send for RecordRef<'a> {}
+unsafe impl<'a> Sync for RecordRef<'a> {}
 
 impl<'a> RecordRef<'a> {
     pub unsafe fn new(buffer: &'a [u8]) -> Self {

@@ -30,6 +30,10 @@ pub struct RecordHeader {
     pub ts_event: u64,
 }
 
+// Implementing Send and Sync for RecordHeader
+unsafe impl Send for RecordHeader {}
+unsafe impl Sync for RecordHeader {}
+
 impl RecordHeader {
     // Allows length to remaind u8 regardless of size
     pub const LENGTH_MULTIPLIER: usize = 4;
@@ -99,6 +103,7 @@ pub struct Mbp1Msg {
     pub action: c_char,
     pub side: c_char,
     pub depth: u8,
+    pub flags: u8,
     pub ts_recv: u64,
     pub ts_in_delta: i32,
     pub sequence: u32,
@@ -140,6 +145,7 @@ impl From<dbn::Mbp1Msg> for Mbp1Msg {
             action: item.action,
             side: item.side,
             depth: item.depth,
+            flags: item.flags.raw(),
             ts_recv: item.ts_recv,
             ts_in_delta: item.ts_in_delta,
             sequence: item.sequence,
@@ -256,6 +262,7 @@ mod tests {
             action: Action::Modify.into(),
             side: Side::Bid.into(),
             depth: 0,
+            flags: 0,
             ts_recv: 123456789098765,
             ts_in_delta: 12345,
             sequence: 123456,
@@ -285,6 +292,7 @@ mod tests {
             action: 1,
             side: 1,
             depth: 0,
+            flags: 0,
             ts_recv: 123456789098765,
             ts_in_delta: 12345,
             sequence: 123456,
@@ -314,6 +322,7 @@ mod tests {
             action: Action::Add.into(),
             side: 1,
             depth: 0,
+            flags: 0,
             ts_recv: 123456789098765,
             ts_in_delta: 12345,
             sequence: 123456,
@@ -326,7 +335,6 @@ mod tests {
                 ask_ct: 3,
             }],
         };
-        println!("{:?}", record);
 
         // Test
         let bytes = record.as_ref();
@@ -346,6 +354,7 @@ mod tests {
             action: 1,
             side: 1,
             depth: 0,
+            flags: 0,
             ts_recv: 123456789098765,
             ts_in_delta: 12345,
             sequence: 123456,

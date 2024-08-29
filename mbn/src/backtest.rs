@@ -2,7 +2,7 @@ use bigdecimal::BigDecimal;
 use serde::{Deserialize, Serialize};
 use sqlx::FromRow;
 
-#[derive(Deserialize, Serialize, FromRow, Debug, Clone)]
+#[derive(Deserialize, Serialize, FromRow, Debug, Clone, PartialEq)]
 pub struct BacktestData {
     pub backtest_id: Option<u16>,
     pub backtest_name: String,
@@ -14,7 +14,7 @@ pub struct BacktestData {
     pub signals: Vec<Signals>,
 }
 
-#[derive(Deserialize, Serialize, FromRow, Debug, Clone)]
+#[derive(Deserialize, Serialize, FromRow, Debug, Clone, PartialEq)]
 pub struct Parameters {
     pub strategy_name: String,
     pub capital: f64,
@@ -26,7 +26,7 @@ pub struct Parameters {
     pub tickers: serde_json::Value,
 }
 
-#[derive(Deserialize, Serialize, FromRow, Debug, Clone)]
+#[derive(Deserialize, Serialize, FromRow, Debug, Clone, PartialEq)]
 pub struct StaticStats {
     pub total_trades: i32,
     pub total_winning_trades: i32,
@@ -53,7 +53,7 @@ pub struct StaticStats {
     pub sortino_ratio: f64,
 }
 
-#[derive(Deserialize, Serialize, FromRow, Debug, Clone)]
+#[derive(Deserialize, Serialize, FromRow, Debug, Clone, PartialEq, Eq)]
 pub struct PeriodTimeseriesStats {
     pub timestamp: i64,
     pub equity_value: BigDecimal,
@@ -62,7 +62,7 @@ pub struct PeriodTimeseriesStats {
     pub period_return: BigDecimal,
 }
 
-#[derive(Deserialize, Serialize, FromRow, Debug, Clone)]
+#[derive(Deserialize, Serialize, FromRow, Debug, Clone, PartialEq, Eq)]
 pub struct DailyTimeseriesStats {
     pub timestamp: i64,
     pub equity_value: BigDecimal,
@@ -71,7 +71,7 @@ pub struct DailyTimeseriesStats {
     pub period_return: BigDecimal,
 }
 
-#[derive(Deserialize, Serialize, FromRow, Debug, Clone)]
+#[derive(Deserialize, Serialize, FromRow, Debug, Clone, PartialEq, Eq)]
 pub struct Trades {
     pub trade_id: i32,
     pub leg_id: i32,
@@ -84,7 +84,7 @@ pub struct Trades {
     pub fees: BigDecimal,
 }
 
-#[derive(Deserialize, Serialize, FromRow, Debug, Clone)]
+#[derive(Deserialize, Serialize, FromRow, Debug, Clone, PartialEq, Eq)]
 pub struct Signals {
     pub timestamp: i64,
     pub trade_instructions: serde_json::Value,
