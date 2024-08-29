@@ -125,6 +125,7 @@ mod tests {
             action: 1,
             side: 1,
             depth: 0,
+            flags: 0,
             ts_recv: 123456789098765,
             ts_in_delta: 12345,
             sequence: 123456,

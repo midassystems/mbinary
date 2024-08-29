@@ -1,5 +1,4 @@
 use crate::decode::CombinedDecoder;
-use crate::enums::Action;
 use crate::metadata::Metadata;
 use crate::utils::unix_nanos_to_date;
 use crate::PRICE_SCALE;
@@ -160,7 +159,6 @@ impl BufferStore {
 
     #[staticmethod]
     pub fn from_file(file_path: &str, py: Python) -> PyResult<Self> {
-        // let buffer = std::fs::read(file_path).map_err(|e| PyIOError::new_err(e.to_string()))?;
         let buffer = std::fs::read(file_path).map_err(|e| PyIOError::new_err(e.to_string()))?;
         let py_bytes = PyBytes::new_bound(py, &buffer);
         Ok(BufferStore::py_new(&py_bytes))

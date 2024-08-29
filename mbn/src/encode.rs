@@ -228,7 +228,7 @@ mod tests {
         encoder
             .encode_metadata_and_records(&metadata, records)
             .expect("Error on encoding");
-        println!("{:?}", buffer);
+
         // Validate
         assert!(buffer.len() > 0);
     }

@@ -202,6 +202,7 @@ class Mbp1Msg(RecordMsg):
         action: str,
         side: str,
         depth: int,
+        flags: int,
         ts_recv: int,
         ts_in_delta: int,
         sequence: int,
@@ -223,6 +224,8 @@ class Mbp1Msg(RecordMsg):
     def side(self) -> int: ...
     @property
     def depth(self) -> int: ...
+    @property
+    def flags(self) -> int: ...
     @property
     def ts_recv(self) -> int: ...
     @property

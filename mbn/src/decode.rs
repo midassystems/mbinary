@@ -4,9 +4,8 @@ use crate::record_enum::RecordEnum;
 use crate::record_ref::*;
 use crate::records::RecordHeader;
 use std::fs::File;
-use std::io::{self, BufReader, Cursor, Read};
+use std::io::{self, BufReader, Read};
 use std::mem;
-use tracing::{error, info, warn};
 
 use crate::METADATA_LENGTH; // Import the constant
 
@@ -138,42 +137,21 @@ where
     }
 }
 
-// pub fn decoder_from_file(file_path: &str) -> io::Result<RecordDecoder<BufReader<File>>> {
-//     info!("In file decoder");
-//     // Open the file
-//     let file = File::open(file_path)?;
-//     info!("got file.");
+pub fn decoder_from_file(file_path: &str) -> io::Result<RecordDecoder<BufReader<File>>> {
+    let file = File::open(file_path)?;
 
-//     // Wrap the file in a buffered reader for efficient, incremental reading
-//     let buffered_reader = BufReader::new(file);
-//     info!("created buffer");
-
-//     // Return the RecordDecoder using the buffered reader
-//     Ok(RecordDecoder::new(buffered_reader))
-// }
-
-pub fn decoder_from_file(file_path: &str) -> io::Result<RecordDecoder<std::fs::File>> {
-    info!("In file decoder");
-
-    // Open the file directly and pass it to the RecordDecoder
-    let file = std::fs::File::open(file_path)?;
-
-    // Return the RecordDecoder using the file as the reader
-    Ok(RecordDecoder::new(file))
+    // Wrap the file in a buffered reader for efficient, incremental reading
+    let buffered_reader = BufReader::new(file);
+    Ok(RecordDecoder::new(buffered_reader))
 }
-// pub fn decoder_from_file(file_path: &str) -> io::Result<RecordDecoder<Cursor<Vec<u8>>>> {
-//     // Open the file
-//     let mut file = std::fs::File::open(file_path)?;
 
-//     // Read the file into a buffer
-//     let mut buffer = Vec::new();
-//     file.read_to_end(&mut buffer)?;
-
-//     // Create a Cursor from the buffer
-//     let cursor = Cursor::new(buffer);
-
-//     // Return the RecordDecoder using the cursor
-//     Ok(RecordDecoder::new(cursor))
+// // pub fn decoder_from_file(file_path: &str) -> io::Result<RecordDecoder<BufReader<File>>> {
+// pub fn decoder_from_file(file_path: &str) -> io::Result<RecordDecoder<File>> {
+//     let file = File::open(file_path)?;
+//     //     // Wrap the file in a buffered reader for efficient, incremental reading
+//     //     let buffered_reader = BufReader::new(file);
+//     //     info!("created buffer");
+//     Ok(RecordDecoder::new(file))
 // }
 
 #[cfg(test)]
