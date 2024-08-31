@@ -116,6 +116,7 @@ impl Mbp1Msg {
         dict.set_item("size", self.size).unwrap();
         dict.set_item("action", self.action).unwrap();
         dict.set_item("side", self.side).unwrap();
+        dict.set_item("flags", self.flags).unwrap();
         dict.set_item("depth", self.depth).unwrap();
         dict.set_item("ts_recv", self.ts_recv).unwrap();
         dict.set_item("ts_in_delta", self.ts_in_delta).unwrap();
