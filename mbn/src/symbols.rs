@@ -49,6 +49,11 @@ impl SymbolMap {
         self.map.get(&id).cloned()
     }
 
+    /// Merges another SymbolMap into this one.
+    pub fn merge(&mut self, other: &SymbolMap) {
+        self.map.extend(other.map.clone());
+    }
+
     /// Binary encodes struct for response, shouldn't be used directly.
     pub fn serialize(&self) -> Vec<u8> {
         let mut bytes = Vec::new();
