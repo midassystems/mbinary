@@ -348,14 +348,14 @@ mod tests {
     #[test]
     fn test_transmute_record_bytes() {
         let record = Mbp1Msg {
-            hd: RecordHeader::new::<Mbp1Msg>(1, 1622471124),
+            hd: RecordHeader::new::<Mbp1Msg>(1, 1725734014000000000),
             price: 1000,
             size: 10,
-            action: 1,
+            action: Action::Trade as i8,
             side: 1,
             depth: 0,
             flags: 0,
-            ts_recv: 123456789098765,
+            ts_recv: 1725734014000000000,
             ts_in_delta: 12345,
             sequence: 123456,
             levels: [BidAskPair {
