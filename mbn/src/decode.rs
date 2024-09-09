@@ -39,6 +39,16 @@ impl<R: Read> CombinedDecoder<R> {
         let records = self.decode_all_records()?;
         Ok((metadata, records))
     }
+
+    pub fn from_file(file_path: &str) -> io::Result<CombinedDecoder<BufReader<File>>> {
+        let file = File::open(file_path)?;
+
+        // Wrap the file in a buffered reader for efficient, incremental reading
+        let buffered_reader = BufReader::new(file);
+
+        // Return a new CombinedDecoder that uses the buffered reader
+        Ok(CombinedDecoder::new(buffered_reader))
+    }
 }
 
 pub struct MetadataDecoder<R> {
@@ -144,15 +154,6 @@ pub fn decoder_from_file(file_path: &str) -> io::Result<RecordDecoder<BufReader<
     let buffered_reader = BufReader::new(file);
     Ok(RecordDecoder::new(buffered_reader))
 }
-
-// // pub fn decoder_from_file(file_path: &str) -> io::Result<RecordDecoder<BufReader<File>>> {
-// pub fn decoder_from_file(file_path: &str) -> io::Result<RecordDecoder<File>> {
-//     let file = File::open(file_path)?;
-//     //     // Wrap the file in a buffered reader for efficient, incremental reading
-//     //     let buffered_reader = BufReader::new(file);
-//     //     info!("created buffer");
-//     Ok(RecordDecoder::new(file))
-// }
 
 #[cfg(test)]
 mod tests {
