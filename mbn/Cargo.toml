@@ -19,6 +19,9 @@ chrono = "0.4"
 tracing = "0.1"
 tracing-subscriber = { version = "0.3", features = ["fmt", "env-filter", "json"] }
 
+[dev-dependencies]
+tokio = "1.40.0"
+
 [lib]
 crate-type = ["rlib"]
 
