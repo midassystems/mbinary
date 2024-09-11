@@ -161,6 +161,7 @@ mod tests {
     use crate::encode::MetadataEncoder;
     use crate::encode::{CombinedEncoder, RecordEncoder};
     use crate::enums::{RType, Schema};
+    use crate::error::Result;
     use crate::records::{as_u8_slice, OhlcvMsg};
     use crate::symbols::SymbolMap;
     use std::io::Cursor;
@@ -411,5 +412,29 @@ mod tests {
                 }
             }
         }
+    }
+
+    #[tokio::test]
+    async fn test_from_file() -> Result<()> {
+        let file_path = "tests/bulk_update_GLBX.MDP3_continuous_2024-01-01_2024-01-02.bin";
+
+        // Test
+        let mut decoder = decoder_from_file(&file_path)?;
+        let mut decode_iter = decoder.decode_iterator();
+
+        while let Some(record_result) = decode_iter.next() {
+            match record_result {
+                Ok(record) => match record {
+                    RecordEnum::Mbp1(msg) => {
+                        println!("FROM File : {:?}", msg);
+                    }
+                    _ => unimplemented!(),
+                },
+                Err(e) => {
+                    println!("{:?}", e);
+                }
+            }
+        }
+        Ok(())
     }
 }
