@@ -44,13 +44,6 @@ impl RecordEnum {
             RecordEnum::Ohlcv(msg) => msg as &dyn Record,
         }
     }
-
-    // pub fn price(&self) -> i64 {
-    //     match self {
-    //         RecordEnum::Ohlcv(msg) => msg.close,
-    //         RecordEnum::Mbp1(msg) => msg.price,
-    //     }
-    // }
 }
 impl AsRef<[u8]> for RecordEnum {
     fn as_ref(&self) -> &[u8] {
