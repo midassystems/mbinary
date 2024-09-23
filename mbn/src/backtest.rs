@@ -2,6 +2,8 @@ use bigdecimal::BigDecimal;
 use serde::{Deserialize, Serialize};
 use sqlx::FromRow;
 
+use crate::enums::Schema;
+
 #[derive(Deserialize, Serialize, FromRow, Debug, Clone, PartialEq)]
 pub struct BacktestData {
     pub backtest_id: Option<u16>,
@@ -18,6 +20,7 @@ pub struct BacktestData {
 pub struct Parameters {
     pub strategy_name: String,
     pub capital: f64,
+    pub schema: String,
     pub data_type: String,
     pub train_start: i64,
     pub train_end: i64,

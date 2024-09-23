@@ -1,5 +1,6 @@
 use crate::error::{Error, Result};
 use num_enum::{IntoPrimitive, TryFromPrimitive};
+use serde::{Deserialize, Serialize};
 use std::fmt;
 use std::str::FromStr;
 
@@ -94,7 +95,9 @@ impl fmt::Display for Action {
     pyclass(module = "mbn", rename_all = "SCREAMING_SNAKE_CASE", eq, eq_int)
 )]
 #[repr(u8)]
-#[derive(Debug, Clone, Copy, PartialEq, Eq, TryFromPrimitive, IntoPrimitive)]
+#[derive(
+    Debug, Deserialize, Serialize, Clone, Copy, PartialEq, Eq, TryFromPrimitive, IntoPrimitive,
+)]
 pub enum Schema {
     Mbp1 = 1,
     Ohlcv1S = 2,
