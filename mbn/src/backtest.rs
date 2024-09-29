@@ -2,8 +2,6 @@ use bigdecimal::BigDecimal;
 use serde::{Deserialize, Serialize};
 use sqlx::FromRow;
 
-use crate::enums::Schema;
-
 #[derive(Deserialize, Serialize, FromRow, Debug, Clone, PartialEq)]
 pub struct BacktestData {
     pub backtest_id: Option<u16>,

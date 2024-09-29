@@ -11,6 +11,9 @@ from mbn import (
     RecordMsg,
     OhlcvMsg,
     Mbp1Msg,
+    TradeMsg,
+    # TbboMsg,
+    BboMsg,
 )
 from pandas import pandas
 
@@ -192,6 +195,67 @@ class IntegrationTests(unittest.TestCase):
         self.assertEqual(msg.depth, 0)
         self.assertEqual(msg.ts_recv, 3)
         self.assertEqual(msg.ts_in_delta, 4)
+        self.assertEqual(msg.sequence, 5)
+        self.assertEqual(msg.levels[0].bid_px, pair.bid_px)
+        self.assertEqual(msg.levels[0].ask_px, pair.ask_px)
+        self.assertEqual(msg.levels[0].bid_sz, pair.bid_sz)
+        self.assertEqual(msg.levels[0].ask_sz, pair.ask_sz)
+        self.assertEqual(msg.levels[0].bid_ct, pair.bid_ct)
+        self.assertEqual(msg.levels[0].ask_ct, pair.ask_ct)
+
+    def test_trademsg_properties(self):
+        msg = TradeMsg(
+            1,
+            123456765432,
+            1,
+            2,
+            Action.TRADE,
+            Side.ASK,
+            0,
+            0,
+            3,
+            4,
+            5,
+        )
+
+        # Test
+        self.assertEqual(msg.rtype, RType.TRADE)
+        self.assertEqual(msg.instrument_id, 1)
+        self.assertEqual(msg.ts_event, 123456765432)
+        self.assertEqual(msg.price, 1)
+        self.assertEqual(msg.pretty_price, 1 / 1e9)
+        self.assertEqual(msg.action, 84)
+        self.assertEqual(msg.pretty_action, Action.TRADE)
+        self.assertEqual(msg.pretty_side, Side.ASK)
+        self.assertEqual(msg.side, 65)
+        self.assertEqual(msg.depth, 0)
+        self.assertEqual(msg.ts_recv, 3)
+        self.assertEqual(msg.ts_in_delta, 4)
+        self.assertEqual(msg.sequence, 5)
+
+    def test_bbomsg_properties(self):
+        pair = BidAskPair(1, 2, 3, 4, 5, 6)
+        msg = BboMsg(
+            1,
+            123456765432,
+            1,
+            2,
+            Side.ASK,
+            0,
+            3,
+            5,
+            [pair],
+        )
+
+        # Test
+        self.assertEqual(msg.rtype, RType.BBO)
+        self.assertEqual(msg.instrument_id, 1)
+        self.assertEqual(msg.ts_event, 123456765432)
+        self.assertEqual(msg.price, 1)
+        self.assertEqual(msg.pretty_price, 1 / 1e9)
+        self.assertEqual(msg.pretty_side, Side.ASK)
+        self.assertEqual(msg.side, 65)
+        self.assertEqual(msg.ts_recv, 3)
         self.assertEqual(msg.sequence, 5)
         self.assertEqual(msg.levels[0].bid_px, pair.bid_px)
         self.assertEqual(msg.levels[0].ask_px, pair.ask_px)
