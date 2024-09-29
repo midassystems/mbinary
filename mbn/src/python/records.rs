@@ -1,5 +1,5 @@
 use crate::enums::{Action, RType, Side};
-use crate::records::{BidAskPair, Mbp1Msg, OhlcvMsg, RecordHeader};
+use crate::records::{BboMsg, BidAskPair, Mbp1Msg, OhlcvMsg, RecordHeader, TradeMsg};
 use crate::PRICE_SCALE;
 use pyo3::prelude::*;
 use pyo3::types::PyDict;
@@ -38,6 +38,8 @@ impl BidAskPair {
         self.ask_px as f64 / PRICE_SCALE as f64
     }
 }
+// #[pymethods]
+// impl TbboMsg {}
 
 #[pymethods]
 impl Mbp1Msg {
@@ -69,6 +71,11 @@ impl Mbp1Msg {
             sequence,
             levels,
         }
+    }
+
+    #[setter]
+    fn set_instrument_id(&mut self, instrument_id: u32) {
+        self.hd.instrument_id = instrument_id;
     }
 
     #[getter]
@@ -132,6 +139,179 @@ impl Mbp1Msg {
 }
 
 #[pymethods]
+impl TradeMsg {
+    #[new]
+    fn py_new(
+        instrument_id: u32,
+        ts_event: u64,
+        price: i64,
+        size: u32,
+        action: Action,
+        side: Side,
+        flags: u8,
+        depth: u8,
+        ts_recv: u64,
+        ts_in_delta: i32,
+        sequence: u32,
+    ) -> Self {
+        TradeMsg {
+            hd: RecordHeader::new::<Self>(instrument_id, ts_event),
+            price,
+            size,
+            action: action.into(),
+            side: side.into(),
+            flags,
+            depth,
+            ts_recv,
+            ts_in_delta,
+            sequence,
+        }
+    }
+
+    // Allows for over ride of insturment id incase, not using the midas instrument_id
+    #[setter]
+    fn set_instrument_id(&mut self, instrument_id: u32) {
+        self.hd.instrument_id = instrument_id;
+    }
+
+    #[getter]
+    fn instrument_id(&self) -> u32 {
+        self.hd.instrument_id
+    }
+
+    #[getter]
+    fn ts_event(&self) -> u64 {
+        self.hd.ts_event
+    }
+
+    #[getter]
+    fn rtype(&self) -> RType {
+        self.hd.rtype()
+    }
+
+    #[getter]
+    fn pretty_price(&self) -> f64 {
+        self.price as f64 / PRICE_SCALE as f64
+    }
+
+    #[getter]
+    fn pretty_action(&self) -> Action {
+        Action::try_from(self.action as u8).unwrap()
+    }
+
+    #[getter]
+    fn pretty_side(&self) -> Side {
+        Side::try_from(self.side as u8).unwrap()
+    }
+
+    fn __str__(&self) -> String {
+        format!("{:?}", self)
+    }
+
+    fn __dict__(&self, py: Python) -> Py<PyDict> {
+        let dict = PyDict::new_bound(py);
+        dict.set_item("length", self.hd.length).unwrap();
+        dict.set_item("rtype", self.hd.rtype).unwrap();
+        dict.set_item("instrument_id", self.hd.instrument_id)
+            .unwrap();
+        dict.set_item("ts_event", self.hd.ts_event).unwrap();
+        dict.set_item("price", self.price).unwrap();
+        dict.set_item("size", self.size).unwrap();
+        dict.set_item("action", self.action).unwrap();
+        dict.set_item("side", self.side).unwrap();
+        dict.set_item("flags", self.flags).unwrap();
+        dict.set_item("depth", self.depth).unwrap();
+        dict.set_item("ts_recv", self.ts_recv).unwrap();
+        dict.set_item("ts_in_delta", self.ts_in_delta).unwrap();
+        dict.set_item("sequence", self.sequence).unwrap();
+        dict.into()
+    }
+}
+
+#[pymethods]
+impl BboMsg {
+    #[new]
+    fn py_new(
+        instrument_id: u32,
+        ts_event: u64,
+        price: i64,
+        size: u32,
+        side: Side,
+        flags: u8,
+        ts_recv: u64,
+        sequence: u32,
+        levels: [BidAskPair; 1],
+    ) -> Self {
+        BboMsg {
+            hd: RecordHeader::new::<Self>(instrument_id, ts_event),
+            price,
+            size,
+            side: side.into(),
+            flags,
+            ts_recv,
+            sequence,
+            levels,
+        }
+    }
+
+    #[setter]
+    fn set_instrument_id(&mut self, instrument_id: u32) {
+        self.hd.instrument_id = instrument_id;
+    }
+
+    #[getter]
+    fn instrument_id(&self) -> u32 {
+        self.hd.instrument_id
+    }
+
+    #[getter]
+    fn ts_event(&self) -> u64 {
+        self.hd.ts_event
+    }
+
+    #[getter]
+    fn rtype(&self) -> RType {
+        self.hd.rtype()
+    }
+
+    #[getter]
+    fn pretty_price(&self) -> f64 {
+        self.price as f64 / PRICE_SCALE as f64
+    }
+
+    #[getter]
+    fn pretty_side(&self) -> Side {
+        Side::try_from(self.side as u8).unwrap()
+    }
+
+    fn __str__(&self) -> String {
+        format!("{:?}", self)
+    }
+
+    fn __dict__(&self, py: Python) -> Py<PyDict> {
+        let dict = PyDict::new_bound(py);
+        dict.set_item("length", self.hd.length).unwrap();
+        dict.set_item("rtype", self.hd.rtype).unwrap();
+        dict.set_item("instrument_id", self.hd.instrument_id)
+            .unwrap();
+        dict.set_item("ts_event", self.hd.ts_event).unwrap();
+        dict.set_item("price", self.price).unwrap();
+        dict.set_item("size", self.size).unwrap();
+        dict.set_item("side", self.side).unwrap();
+        dict.set_item("flags", self.flags).unwrap();
+        dict.set_item("ts_recv", self.ts_recv).unwrap();
+        dict.set_item("sequence", self.sequence).unwrap();
+        dict.set_item("bid_px", self.levels[0].bid_px).unwrap();
+        dict.set_item("ask_px", self.levels[0].ask_px).unwrap();
+        dict.set_item("bid_sz", self.levels[0].bid_sz).unwrap();
+        dict.set_item("ask_sz", self.levels[0].ask_sz).unwrap();
+        dict.set_item("bid_ct", self.levels[0].bid_ct).unwrap();
+        dict.set_item("ask_ct", self.levels[0].ask_ct).unwrap();
+        dict.into()
+    }
+}
+
+#[pymethods]
 impl OhlcvMsg {
     #[new]
     fn py_new(
@@ -151,6 +331,11 @@ impl OhlcvMsg {
             close,
             volume,
         }
+    }
+
+    #[setter]
+    fn set_instrument_id(&mut self, instrument_id: u32) {
+        self.hd.instrument_id = instrument_id;
     }
 
     #[getter]

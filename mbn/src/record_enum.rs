@@ -1,6 +1,6 @@
 use crate::enums::RType;
 use crate::record_ref::RecordRef;
-use crate::records::{Mbp1Msg, OhlcvMsg, Record, RecordHeader};
+use crate::records::{BboMsg, Mbp1Msg, OhlcvMsg, Record, RecordHeader, TbboMsg, TradeMsg};
 use serde::Serialize;
 
 #[cfg(feature = "python")]
@@ -10,6 +10,9 @@ use pyo3::prelude::*;
 pub enum RecordEnum {
     Mbp1(Mbp1Msg),
     Ohlcv(OhlcvMsg),
+    Trade(TradeMsg),
+    Tbbo(TbboMsg),
+    Bbo(BboMsg),
 }
 
 impl RecordEnum {
@@ -21,6 +24,15 @@ impl RecordEnum {
             RType::Ohlcv => rec_ref
                 .get::<OhlcvMsg>()
                 .map(|msg| RecordEnum::Ohlcv(msg.clone())),
+            RType::Trade => rec_ref
+                .get::<TradeMsg>()
+                .map(|msg| RecordEnum::Trade(msg.clone())),
+            RType::Tbbo => rec_ref
+                .get::<TbboMsg>()
+                .map(|msg| RecordEnum::Tbbo(msg.clone())),
+            RType::Bbo => rec_ref
+                .get::<BboMsg>()
+                .map(|msg| RecordEnum::Bbo(msg.clone())),
         }
     }
 
@@ -28,7 +40,9 @@ impl RecordEnum {
         match self {
             RecordEnum::Mbp1(record) => record.into(),
             RecordEnum::Ohlcv(record) => record.into(),
-            // Add cases for other record types if needed
+            RecordEnum::Tbbo(record) => record.into(),
+            RecordEnum::Bbo(record) => record.into(),
+            RecordEnum::Trade(record) => record.into(),
         }
     }
 
@@ -36,12 +50,18 @@ impl RecordEnum {
         match self {
             RecordEnum::Mbp1(msg) => RecordEnumRef::Mbp1(msg),
             RecordEnum::Ohlcv(msg) => RecordEnumRef::Ohlcv(msg),
+            RecordEnum::Trade(msg) => RecordEnumRef::Trade(msg),
+            RecordEnum::Tbbo(msg) => RecordEnumRef::Tbbo(msg),
+            RecordEnum::Bbo(msg) => RecordEnumRef::Bbo(msg),
         }
     }
     pub fn msg(&self) -> &dyn Record {
         match self {
             RecordEnum::Mbp1(msg) => msg as &dyn Record,
             RecordEnum::Ohlcv(msg) => msg as &dyn Record,
+            RecordEnum::Trade(msg) => msg as &dyn Record,
+            RecordEnum::Tbbo(msg) => msg as &dyn Record,
+            RecordEnum::Bbo(msg) => msg as &dyn Record,
         }
     }
 }
@@ -50,6 +70,9 @@ impl AsRef<[u8]> for RecordEnum {
         match self {
             RecordEnum::Mbp1(msg) => msg.as_ref(),
             RecordEnum::Ohlcv(msg) => msg.as_ref(),
+            RecordEnum::Trade(msg) => msg.as_ref(),
+            RecordEnum::Tbbo(msg) => msg.as_ref(),
+            RecordEnum::Bbo(msg) => msg.as_ref(),
         }
     }
 }
@@ -59,6 +82,9 @@ impl Record for RecordEnum {
         match self {
             RecordEnum::Mbp1(msg) => &msg.hd,
             RecordEnum::Ohlcv(msg) => &msg.hd,
+            RecordEnum::Trade(msg) => &msg.hd,
+            RecordEnum::Tbbo(msg) => &msg.hd,
+            RecordEnum::Bbo(msg) => &msg.hd,
         }
     }
 }
@@ -69,6 +95,9 @@ impl IntoPy<Py<PyAny>> for RecordEnum {
         match self {
             RecordEnum::Mbp1(msg) => msg.into_py(py).into(),
             RecordEnum::Ohlcv(msg) => msg.into_py(py).into(),
+            RecordEnum::Trade(msg) => msg.into_py(py).into(),
+            RecordEnum::Tbbo(msg) => msg.into_py(py).into(),
+            RecordEnum::Bbo(msg) => msg.into_py(py).into(),
         }
     }
 }
@@ -77,6 +106,9 @@ impl IntoPy<Py<PyAny>> for RecordEnum {
 pub enum RecordEnumRef<'a> {
     Mbp1(&'a Mbp1Msg),
     Ohlcv(&'a OhlcvMsg),
+    Trade(&'a TradeMsg),
+    Tbbo(&'a TbboMsg),
+    Bbo(&'a BboMsg),
 }
 
 impl<'a> RecordEnumRef<'a> {
@@ -84,6 +116,9 @@ impl<'a> RecordEnumRef<'a> {
         match rec_ref.header().rtype() {
             RType::Mbp1 => rec_ref.get::<Mbp1Msg>().map(RecordEnumRef::Mbp1),
             RType::Ohlcv => rec_ref.get::<OhlcvMsg>().map(RecordEnumRef::Ohlcv),
+            RType::Trade => rec_ref.get::<TradeMsg>().map(RecordEnumRef::Trade),
+            RType::Tbbo => rec_ref.get::<TbboMsg>().map(RecordEnumRef::Tbbo),
+            RType::Bbo => rec_ref.get::<BboMsg>().map(RecordEnumRef::Bbo),
         }
     }
 
@@ -91,6 +126,9 @@ impl<'a> RecordEnumRef<'a> {
         match self {
             RecordEnumRef::Mbp1(msg) => RecordEnum::Mbp1((*msg).clone()),
             RecordEnumRef::Ohlcv(msg) => RecordEnum::Ohlcv((*msg).clone()),
+            RecordEnumRef::Trade(msg) => RecordEnum::Trade((*msg).clone()),
+            RecordEnumRef::Tbbo(msg) => RecordEnum::Tbbo((*msg).clone()),
+            RecordEnumRef::Bbo(msg) => RecordEnum::Bbo((*msg).clone()),
         }
     }
 }
@@ -100,6 +138,9 @@ impl<'a> Record for RecordEnumRef<'a> {
         match self {
             RecordEnumRef::Mbp1(msg) => &msg.hd,
             RecordEnumRef::Ohlcv(msg) => &msg.hd,
+            RecordEnumRef::Trade(msg) => &msg.hd,
+            RecordEnumRef::Bbo(msg) => &msg.hd,
+            RecordEnumRef::Tbbo(msg) => &msg.hd,
         }
     }
 }

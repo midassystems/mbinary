@@ -154,6 +154,118 @@ impl From<dbn::Mbp1Msg> for Mbp1Msg {
     }
 }
 
+#[repr(C)]
+#[cfg_attr(feature = "python", pyclass(get_all, set_all, dict, module = "mbn"))]
+#[derive(Clone, Debug, PartialEq, Eq, Hash, Serialize, Deserialize, FromRow)]
+pub struct TradeMsg {
+    pub hd: RecordHeader,
+    pub price: i64,
+    pub size: u32,
+    pub action: c_char,
+    pub side: c_char,
+    pub depth: u8,
+    pub flags: u8,
+    pub ts_recv: u64,
+    pub ts_in_delta: i32,
+    pub sequence: u32,
+}
+
+impl Record for TradeMsg {
+    fn header(&self) -> &RecordHeader {
+        &self.hd
+    }
+}
+
+impl HasRType for TradeMsg {
+    fn has_rtype(rtype: u8) -> bool {
+        rtype == RType::Trade as u8
+    }
+
+    fn rtype_byte() -> u8 {
+        RType::Trade as u8
+    }
+}
+
+impl AsRef<[u8]> for TradeMsg {
+    fn as_ref(&self) -> &[u8] {
+        unsafe {
+            slice::from_raw_parts(
+                (self as *const TradeMsg) as *const u8,
+                mem::size_of::<TradeMsg>(),
+            )
+        }
+    }
+}
+impl From<dbn::TradeMsg> for TradeMsg {
+    fn from(item: dbn::TradeMsg) -> Self {
+        TradeMsg {
+            hd: RecordHeader::new::<TradeMsg>(item.hd.instrument_id, item.hd.ts_event),
+            price: item.price,
+            size: item.size,
+            action: item.action,
+            side: item.side,
+            depth: item.depth,
+            flags: item.flags.raw(),
+            ts_recv: item.ts_recv,
+            ts_in_delta: item.ts_in_delta,
+            sequence: item.sequence,
+        }
+    }
+}
+
+#[repr(C)]
+#[cfg_attr(feature = "python", pyclass(get_all, set_all, dict, module = "mbn"))]
+#[derive(Clone, Debug, PartialEq, Eq, Hash, Serialize, Deserialize, FromRow)]
+pub struct BboMsg {
+    pub hd: RecordHeader,
+    pub price: i64,
+    pub size: u32,
+    pub side: c_char,
+    pub flags: u8,
+    pub ts_recv: u64,
+    pub sequence: u32,
+    pub levels: [BidAskPair; 1],
+}
+
+impl Record for BboMsg {
+    fn header(&self) -> &RecordHeader {
+        &self.hd
+    }
+}
+
+impl HasRType for BboMsg {
+    fn has_rtype(rtype: u8) -> bool {
+        rtype == RType::Bbo as u8
+    }
+
+    fn rtype_byte() -> u8 {
+        RType::Bbo as u8
+    }
+}
+
+impl AsRef<[u8]> for BboMsg {
+    fn as_ref(&self) -> &[u8] {
+        unsafe { as_u8_slice(self) }
+    }
+}
+
+impl From<dbn::BboMsg> for BboMsg {
+    fn from(item: dbn::BboMsg) -> Self {
+        BboMsg {
+            hd: RecordHeader::new::<BboMsg>(item.hd.instrument_id, item.hd.ts_event),
+            price: item.price,
+            size: item.size,
+            side: item.side,
+            flags: item.flags.raw(),
+            ts_recv: item.ts_recv,
+            sequence: item.sequence,
+            levels: [BidAskPair::from(item.levels[0].clone())],
+        }
+    }
+}
+/// TBBO is jsut MBP1 where action is always Trade
+pub type TbboMsg = Mbp1Msg;
+
 /// OhlcvMsg struct
 #[repr(C)]
 #[cfg_attr(feature = "python", pyclass(get_all, set_all, dict, module = "mbn"))]
@@ -248,6 +360,7 @@ pub(crate) unsafe fn as_u8_slice<T: Sized>(data: &T) -> &[u8] {
 
 #[cfg(test)]
 mod tests {
+
     use crate::enums::{Action, Side};
 
     use super::*;
@@ -346,7 +459,7 @@ mod tests {
     }
 
     #[test]
-    fn test_transmute_record_bytes() {
+    fn test_transmute_record_mbp() {
         let record = Mbp1Msg {
             hd: RecordHeader::new::<Mbp1Msg>(1, 1725734014000000000),
             price: 1000,
@@ -373,6 +486,88 @@ mod tests {
 
         // Test
         let decoded_record: Mbp1Msg = unsafe { transmute_record_bytes(bytes).unwrap() };
+        assert_eq!(decoded_record, record);
+    }
+
+    #[test]
+    fn test_transmute_record_trade() {
+        let record = TradeMsg {
+            hd: RecordHeader::new::<TradeMsg>(1, 1725734014000000000),
+            price: 1000,
+            size: 10,
+            action: Action::Trade as i8,
+            side: 1,
+            depth: 0,
+            flags: 0,
+            ts_recv: 1725734014000000000,
+            ts_in_delta: 12345,
+            sequence: 123456,
+        };
+
+        // Test
+        let bytes = record.as_ref();
+
+        // Test
+        let decoded_record: TradeMsg = unsafe { transmute_record_bytes(bytes).unwrap() };
+        assert_eq!(decoded_record, record);
+    }
+
+    #[test]
+    fn test_transmute_record_tbbo() {
+        let record = TbboMsg {
+            hd: RecordHeader::new::<TbboMsg>(1, 1725734014000000000),
+            price: 1000,
+            size: 10,
+            action: Action::Trade as i8,
+            side: 1,
+            depth: 0,
+            flags: 0,
+            ts_recv: 1725734014000000000,
+            ts_in_delta: 12345,
+            sequence: 123456,
+            levels: [BidAskPair {
+                bid_px: 1,
+                ask_px: 2,
+                bid_sz: 2,
+                ask_sz: 2,
+                bid_ct: 1,
+                ask_ct: 3,
+            }],
+        };
+
+        // Test
+        let bytes = record.as_ref(); // as_u8_slice(&record) };
+
+        // Test
+        let decoded_record: TbboMsg = unsafe { transmute_record_bytes(bytes).unwrap() };
+        assert_eq!(decoded_record, record);
+    }
+
+    #[test]
+    fn test_transmute_record_bbo() {
+        let record = BboMsg {
+            hd: RecordHeader::new::<BboMsg>(1, 1725734014000000000),
+            price: 1000,
+            size: 10,
+            side: 1,
+            flags: 0,
+            ts_recv: 1725734014000000000,
+            sequence: 123456,
+            levels: [BidAskPair {
+                bid_px: 1,
+                ask_px: 2,
+                bid_sz: 2,
+                ask_sz: 2,
+                bid_ct: 1,
+                ask_ct: 3,
+            }],
+        };
+
+        // Test
+        let bytes = record.as_ref();
+
+        // Test
+        let decoded_record: BboMsg = unsafe { transmute_record_bytes(bytes).unwrap() };
         assert_eq!(decoded_record, record);
     }
 }
