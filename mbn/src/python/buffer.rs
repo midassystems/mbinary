@@ -41,7 +41,7 @@ impl BufferStore {
     pub fn decode_to_array(&mut self) -> PyResult<Vec<PyObject>> {
         let decoded = self
             .decoder
-            .decode_all_records()
+            .decode_records()
             .map_err(|e| PyIOError::new_err(e.to_string()))?;
         Python::with_gil(|py| {
             Ok(decoded

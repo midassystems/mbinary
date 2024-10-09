@@ -69,15 +69,13 @@ fn test_integration_test() {
     // Encode
     let mut encoder = CombinedEncoder::new(&mut buffer);
     encoder
-        .encode_metadata_and_records(&metadata, records)
+        .encode(&metadata, records)
         .expect("Error on encoding");
 
     // Test
     let cursor = Cursor::new(buffer);
     let mut decoder = CombinedDecoder::new(cursor);
-    let decoded = decoder
-        .decode_metadata_and_records()
-        .expect("Error decoding metadata.");
+    let decoded = decoder.decode().expect("Error decoding metadata.");
 
     // Validate
     assert_eq!(decoded.0.unwrap(), metadata);
