@@ -92,6 +92,17 @@ impl From<dbn::BidAskPair> for BidAskPair {
     }
 }
 
+impl PartialEq<dbn::BidAskPair> for BidAskPair {
+    fn eq(&self, other: &dbn::BidAskPair) -> bool {
+        self.bid_px == other.bid_px
+            && self.ask_px == other.ask_px
+            && self.bid_sz == other.bid_sz
+            && self.ask_sz == other.ask_sz
+            && self.bid_ct == other.bid_ct
+            && self.ask_ct == other.ask_ct
+    }
+}
+
 /// Mbp1Msg struct
 #[repr(C)]
 #[cfg_attr(feature = "python", pyclass(get_all, set_all, dict, module = "mbn"))]
@@ -154,6 +165,23 @@ impl From<dbn::Mbp1Msg> for Mbp1Msg {
     }
 }
 
+impl PartialEq<dbn::Mbp1Msg> for Mbp1Msg {
+    fn eq(&self, other: &dbn::Mbp1Msg) -> bool {
+        self.hd.ts_event == other.hd.ts_event
+            && self.price == other.price
+            && self.size == other.size
+            && self.action == other.action
+            && self.side == other.side
+            && self.depth == other.depth
+            && self.ts_recv == other.ts_recv
+            && self.ts_in_delta == other.ts_in_delta
+            && self.sequence == other.sequence
+            && self.levels[0] == other.levels[0]
+        // self.hd.instrument_id == other.hd.instrument_id
+        // && self. /flags == other.flags.raw()
+    }
+}
+
 #[repr(C)]
 #[cfg_attr(feature = "python", pyclass(get_all, set_all, dict, module = "mbn"))]
 #[derive(Clone, Debug, PartialEq, Eq, Hash, Serialize, Deserialize, FromRow)]
@@ -213,6 +241,22 @@ impl From<dbn::TradeMsg> for TradeMsg {
     }
 }
 
+impl PartialEq<dbn::TradeMsg> for TradeMsg {
+    fn eq(&self, other: &dbn::TradeMsg) -> bool {
+        self.hd.ts_event == other.hd.ts_event
+            && self.price == other.price
+            && self.size == other.size
+            && self.action == other.action
+            && self.side == other.side
+            && self.depth == other.depth
+            && self.ts_recv == other.ts_recv
+            && self.ts_in_delta == other.ts_in_delta
+            && self.sequence == other.sequence
+        // self.hd.instrument_id == other.hd.instrument_id
+        // && self. /flags == other.flags.raw()
+    }
+}
+
 #[repr(C)]
 #[cfg_attr(feature = "python", pyclass(get_all, set_all, dict, module = "mbn"))]
 #[derive(Clone, Debug, PartialEq, Eq, Hash, Serialize, Deserialize, FromRow)]
@@ -263,6 +307,21 @@ impl From<dbn::BboMsg> for BboMsg {
         }
     }
 }
+
+impl PartialEq<dbn::BboMsg> for BboMsg {
+    fn eq(&self, other: &dbn::BboMsg) -> bool {
+        self.hd.ts_event == other.hd.ts_event
+            && self.price == other.price
+            && self.size == other.size
+            && self.side == other.side
+            && self.ts_recv == other.ts_recv
+            && self.sequence == other.sequence
+            && self.levels[0] == other.levels[0]
+        // self.hd.instrument_id == other.hd.instrument_id
+        // && self. /flags == other.flags.raw()
+    }
+}
+
 /// TBBO is jsut MBP1 where action is always Trade
 pub type TbboMsg = Mbp1Msg;
 
@@ -303,6 +362,30 @@ impl AsRef<[u8]> for OhlcvMsg {
                 mem::size_of::<OhlcvMsg>(),
             )
         }
+    }
+}
+impl From<dbn::OhlcvMsg> for OhlcvMsg {
+    fn from(item: dbn::OhlcvMsg) -> Self {
+        OhlcvMsg {
+            hd: RecordHeader::new::<OhlcvMsg>(item.hd.instrument_id, item.hd.ts_event),
+            open: item.open,
+            high: item.high,
+            low: item.low,
+            close: item.close,
+            volume: item.volume,
+        }
+    }
+}
+
+impl PartialEq<dbn::OhlcvMsg> for OhlcvMsg {
+    fn eq(&self, other: &dbn::OhlcvMsg) -> bool {
+        self.hd.ts_event == other.hd.ts_event
+            && self.open == other.open
+            && self.high == other.high
+            && self.low == other.low
+            && self.close == other.close
+            && self.volume == other.volume
+        // self.hd.instrument_id == other.hd.instrument_id
     }
 }
 
@@ -361,9 +444,9 @@ pub(crate) unsafe fn as_u8_slice<T: Sized>(data: &T) -> &[u8] {
 #[cfg(test)]
 mod tests {
 
-    use crate::enums::{Action, Side};
-
     use super::*;
+    use crate::enums::{Action, Side};
+    use dbn::FlagSet;
 
     #[test]
     fn test_construct_record() {
@@ -569,5 +652,268 @@ mod tests {
         // Test
         let decoded_record: BboMsg = unsafe { transmute_record_bytes(bytes).unwrap() };
         assert_eq!(decoded_record, record);
+    }
+
+    #[test]
+    fn bidaskpair_eq() -> anyhow::Result<()> {
+        let dbn_pair = dbn::BidAskPair {
+            bid_px: 10000000,
+            ask_px: 200000,
+            bid_sz: 3000000,
+            ask_sz: 400000000,
+            bid_ct: 50000000,
+            ask_ct: 60000000,
+        };
+
+        let mbn_pair = BidAskPair::from(dbn_pair.clone());
+
+        // Test
+        assert!(mbn_pair == dbn_pair);
+
+        Ok(())
+    }
+
+    #[test]
+    fn bidaskpair_ineq() -> anyhow::Result<()> {
+        let dbn_pair = dbn::BidAskPair {
+            bid_px: 10000000,
+            ask_px: 200000,
+            bid_sz: 3000000,
+            ask_sz: 400000000,
+            bid_ct: 50000000,
+            ask_ct: 60000000,
+        };
+
+        let mut mbn_pair = BidAskPair::from(dbn_pair.clone());
+        mbn_pair.bid_px = 12343212;
+
+        // Test
+        assert!(mbn_pair != dbn_pair);
+
+        Ok(())
+    }
+
+    #[test]
+    fn mbp1_eq() -> anyhow::Result<()> {
+        let header = dbn::RecordHeader::new::<dbn::Mbp1Msg>(1, 1231, 1231, 1700000000000000);
+        let bid_ask = dbn::BidAskPair {
+            bid_px: 10000000,
+            ask_px: 200000,
+            bid_sz: 3000000,
+            ask_sz: 400000000,
+            bid_ct: 50000000,
+            ask_ct: 60000000,
+        };
+
+        let dbn_mbp = dbn::Mbp1Msg {
+            hd: header,
+            price: 12345676543,
+            size: 1234543,
+            action: 0,
+            side: 0,
+            flags: FlagSet::empty(),
+            depth: 10,
+            ts_recv: 1231,
+            ts_in_delta: 123432,
+            sequence: 23432,
+            levels: [bid_ask],
+        };
+
+        // Test
+        let mbn_mbp = Mbp1Msg::from(dbn_mbp.clone());
+        assert!(mbn_mbp == dbn_mbp);
+
+        Ok(())
+    }
+
+    #[test]
+    fn mbp1_ineq() -> anyhow::Result<()> {
+        let header = dbn::RecordHeader::new::<dbn::Mbp1Msg>(1, 1231, 1231, 1700000000000000);
+        let bid_ask = dbn::BidAskPair {
+            bid_px: 10000000,
+            ask_px: 200000,
+            bid_sz: 3000000,
+            ask_sz: 400000000,
+            bid_ct: 50000000,
+            ask_ct: 60000000,
+        };
+
+        let dbn_mbp = dbn::Mbp1Msg {
+            hd: header,
+            price: 12345676543,
+            size: 1234543,
+            action: 0,
+            side: 0,
+            flags: FlagSet::empty(),
+            depth: 10,
+            ts_recv: 1231,
+            ts_in_delta: 123432,
+            sequence: 23432,
+            levels: [bid_ask],
+        };
+
+        // Test
+        let mut mbn_mbp = Mbp1Msg::from(dbn_mbp.clone());
+        mbn_mbp.price = 123432343234323;
+        assert!(mbn_mbp != dbn_mbp);
+
+        Ok(())
+    }
+
+    #[test]
+    fn trades_eq() -> anyhow::Result<()> {
+        let header = dbn::RecordHeader::new::<dbn::TradeMsg>(1, 1231, 1231, 1700000000000000);
+
+        let dbn_record = dbn::TradeMsg {
+            hd: header,
+            price: 12345676543,
+            size: 1234543,
+            action: 0,
+            side: 0,
+            flags: FlagSet::empty(),
+            depth: 10,
+            ts_recv: 1231,
+            ts_in_delta: 123432,
+            sequence: 23432,
+        };
+
+        // Test
+        let mbn_record = TradeMsg::from(dbn_record.clone());
+        assert!(mbn_record == dbn_record);
+
+        Ok(())
+    }
+
+    #[test]
+    fn trades_ineq() -> anyhow::Result<()> {
+        let header = dbn::RecordHeader::new::<dbn::TradeMsg>(1, 1231, 1231, 1700000000000000);
+
+        let dbn_record = dbn::TradeMsg {
+            hd: header,
+            price: 12345676543,
+            size: 1234543,
+            action: 0,
+            side: 0,
+            flags: FlagSet::empty(),
+            depth: 10,
+            ts_recv: 1231,
+            ts_in_delta: 123432,
+            sequence: 23432,
+        };
+
+        // Test
+        let mut mbn_record = TradeMsg::from(dbn_record.clone());
+        mbn_record.price = 123432343234323;
+        assert!(mbn_record != dbn_record);
+
+        Ok(())
+    }
+    #[test]
+    fn bbo_eq() -> anyhow::Result<()> {
+        let header = dbn::RecordHeader::new::<dbn::BboMsg>(1, 1231, 1231, 1700000000000000);
+
+        let bid_ask = dbn::BidAskPair {
+            bid_px: 10000000,
+            ask_px: 200000,
+            bid_sz: 3000000,
+            ask_sz: 400000000,
+            bid_ct: 50000000,
+            ask_ct: 60000000,
+        };
+
+        let dbn_record = dbn::BboMsg {
+            hd: header,
+            price: 12345676543,
+            size: 1234543,
+            side: 0,
+            _reserved1: 0,
+            _reserved2: 0,
+            _reserved3: [0, 1, 2, 3],
+            flags: FlagSet::empty(),
+            ts_recv: 1231,
+            sequence: 23432,
+            levels: [bid_ask],
+        };
+
+        // Test
+        let mbn_record = BboMsg::from(dbn_record.clone());
+        assert!(mbn_record == dbn_record);
+
+        Ok(())
+    }
+
+    #[test]
+    fn bbo_ineq() -> anyhow::Result<()> {
+        let header = dbn::RecordHeader::new::<dbn::BboMsg>(1, 1231, 1231, 1700000000000000);
+
+        let bid_ask = dbn::BidAskPair {
+            bid_px: 10000000,
+            ask_px: 200000,
+            bid_sz: 3000000,
+            ask_sz: 400000000,
+            bid_ct: 50000000,
+            ask_ct: 60000000,
+        };
+
+        let dbn_record = dbn::BboMsg {
+            hd: header,
+            price: 12345676543,
+            size: 1234543,
+            side: 0,
+            _reserved1: 0,
+            _reserved2: 0,
+            _reserved3: [0, 1, 2, 3],
+            flags: FlagSet::empty(),
+            ts_recv: 1231,
+            sequence: 23432,
+            levels: [bid_ask],
+        };
+
+        // Test
+        let mut mbn_record = BboMsg::from(dbn_record.clone());
+        mbn_record.price = 123432343234323;
+        assert!(mbn_record != dbn_record);
+
+        Ok(())
+    }
+    #[test]
+    fn ohlcv_eq() -> anyhow::Result<()> {
+        let header = dbn::RecordHeader::new::<dbn::OhlcvMsg>(1, 1231, 1231, 1700000000000000);
+
+        let dbn_record = dbn::OhlcvMsg {
+            hd: header,
+            open: 1232123,
+            high: 234323432,
+            low: 1234212343,
+            close: 1234312345,
+            volume: 12342134,
+        };
+
+        // Test
+        let mbn_record = OhlcvMsg::from(dbn_record.clone());
+        assert!(mbn_record == dbn_record);
+
+        Ok(())
+    }
+
+    #[test]
+    fn ohlcv_ineq() -> anyhow::Result<()> {
+        let header = dbn::RecordHeader::new::<dbn::OhlcvMsg>(1, 1231, 1231, 1700000000000000);
+
+        let dbn_record = dbn::OhlcvMsg {
+            hd: header,
+            open: 234323423,
+            high: 23443234,
+            low: 231342134,
+            close: 32432321343,
+            volume: 12342134321,
+        };
+
+        // Test
+        let mut mbn_record = OhlcvMsg::from(dbn_record.clone());
+        mbn_record.open = 123432343234323;
+        assert!(mbn_record != dbn_record);
+
+        Ok(())
     }
 }

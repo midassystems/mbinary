@@ -65,6 +65,21 @@ impl RecordEnum {
         }
     }
 }
+
+impl PartialEq<dbn::RecordEnum> for RecordEnum {
+    fn eq(&self, other: &dbn::RecordEnum) -> bool {
+        match (self, other) {
+            // Match and compare Mbp1 variants
+            (RecordEnum::Mbp1(mbn_msg), dbn::RecordEnum::Mbp1(dbn_msg)) => mbn_msg.eq(dbn_msg),
+            (RecordEnum::Tbbo(mbn_msg), dbn::RecordEnum::Mbp1(dbn_msg)) => mbn_msg.eq(dbn_msg),
+            (RecordEnum::Trade(mbn_msg), dbn::RecordEnum::Trade(dbn_msg)) => mbn_msg.eq(dbn_msg),
+            (RecordEnum::Bbo(mbn_msg), dbn::RecordEnum::Bbo(dbn_msg)) => mbn_msg.eq(dbn_msg),
+            (RecordEnum::Ohlcv(mbn_msg), dbn::RecordEnum::Ohlcv(dbn_msg)) => mbn_msg.eq(dbn_msg),
+            _ => false,
+        }
+    }
+}
+
 impl AsRef<[u8]> for RecordEnum {
     fn as_ref(&self) -> &[u8] {
         match self {
@@ -149,6 +164,7 @@ impl<'a> Record for RecordEnumRef<'a> {
 mod tests {
     use super::*;
     use crate::records::BidAskPair;
+    use dbn::FlagSet;
 
     #[test]
     fn test_encode_decode_record_enum() {
@@ -182,5 +198,115 @@ mod tests {
 
         // Validate
         assert_eq!(decoded, record_enum);
+    }
+
+    #[test]
+    fn test_equality() -> anyhow::Result<()> {
+        // DBN
+        let header = dbn::RecordHeader::new::<dbn::Mbp1Msg>(1, 1231, 1231, 1622471124);
+        let bid_ask = dbn::BidAskPair {
+            bid_px: 10000000,
+            ask_px: 200000,
+            bid_sz: 3000000,
+            ask_sz: 400000000,
+            bid_ct: 50000000,
+            ask_ct: 60000000,
+        };
+
+        let dbn_mbp = dbn::Mbp1Msg {
+            hd: header,
+            price: 12345676543,
+            size: 1234543,
+            action: 0,
+            side: 0,
+            flags: FlagSet::empty(),
+            depth: 0,
+            ts_recv: 1231,
+            ts_in_delta: 123432,
+            sequence: 23432,
+            levels: [bid_ask],
+        };
+        let dbn_enum = dbn::RecordEnum::Mbp1(dbn_mbp);
+
+        //MBN
+        let mbn_enum = RecordEnum::Mbp1(Mbp1Msg {
+            hd: RecordHeader::new::<Mbp1Msg>(1, 1622471124),
+            price: 12345676543,
+            size: 1234543,
+            action: 0,
+            side: 0,
+            depth: 0,
+            flags: 0,
+            ts_recv: 1231,
+            ts_in_delta: 123432,
+            sequence: 23432,
+            levels: [BidAskPair {
+                bid_px: 10000000,
+                ask_px: 200000,
+                bid_sz: 3000000,
+                ask_sz: 400000000,
+                bid_ct: 50000000,
+                ask_ct: 60000000,
+            }],
+        });
+
+        assert!(mbn_enum == dbn_enum);
+
+        Ok(())
+    }
+
+    #[test]
+    fn test_inequality() -> anyhow::Result<()> {
+        // DBN
+        let header = dbn::RecordHeader::new::<dbn::Mbp1Msg>(1, 1231, 1231, 17777777777);
+        let bid_ask = dbn::BidAskPair {
+            bid_px: 10000000,
+            ask_px: 200000,
+            bid_sz: 3000000,
+            ask_sz: 400000000,
+            bid_ct: 50000000,
+            ask_ct: 60000000,
+        };
+
+        let dbn_mbp = dbn::Mbp1Msg {
+            hd: header,
+            price: 12345676543,
+            size: 1234543,
+            action: 0,
+            side: 0,
+            flags: FlagSet::empty(),
+            depth: 0,
+            ts_recv: 1231,
+            ts_in_delta: 123432,
+            sequence: 23432,
+            levels: [bid_ask],
+        };
+        let dbn_enum = dbn::RecordEnum::Mbp1(dbn_mbp);
+
+        //MBN
+        let mbn_enum = RecordEnum::Mbp1(Mbp1Msg {
+            hd: RecordHeader::new::<Mbp1Msg>(1, 1622471124),
+            price: 12345676543,
+            size: 1234543,
+            action: 0,
+            side: 0,
+            depth: 0,
+            flags: 0,
+            ts_recv: 1231,
+            ts_in_delta: 123432,
+            sequence: 23432,
+            levels: [BidAskPair {
+                bid_px: 10000000,
+                ask_px: 200000,
+                bid_sz: 3000000,
+                ask_sz: 400000000,
+                bid_ct: 50000000,
+                ask_ct: 60000000,
+            }],
+        });
+
+        assert!(mbn_enum != dbn_enum);
+
+        Ok(())
     }
 }
