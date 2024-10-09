@@ -2,6 +2,7 @@ use crate::metadata::Metadata;
 use crate::record_ref::*;
 use crate::METADATA_LENGTH;
 use std::io::{self, Write};
+use std::path::Path;
 
 pub struct CombinedEncoder<W> {
     writer: W,
@@ -27,11 +28,7 @@ impl<W: Write> CombinedEncoder<W> {
         record_encoder.encode_records(records)
     }
 
-    pub fn encode_metadata_and_records(
-        &mut self,
-        metadata: &Metadata,
-        records: &[RecordRef],
-    ) -> io::Result<()> {
+    pub fn encode(&mut self, metadata: &Metadata, records: &[RecordRef]) -> io::Result<()> {
         self.encode_metadata(metadata)?;
         self.encode_records(records)?;
         Ok(())
@@ -81,14 +78,24 @@ impl<W: Write> RecordEncoder<W> {
         self.writer.flush()?;
         Ok(())
     }
+
+    pub fn write_to_file(&self, file_path: &Path) -> io::Result<()>
+    where
+        W: AsRef<[u8]>, // Ensure W can be treated as a slice of bytes (like Vec<u8>)
+    {
+        let mut file = std::fs::File::create(file_path)?;
+        file.write_all(self.writer.as_ref())?; // Write the internal buffer to file
+        file.flush()?; // Ensure all data is flushed to disk
+        Ok(())
+    }
 }
 
-pub fn write_to_file(file_path: &str, buffer: &[u8]) -> io::Result<()> {
-    let mut file = std::fs::File::create(file_path)?;
-    file.write_all(buffer)?;
-    file.flush()?;
-    Ok(())
-}
+// pub fn write_to_file(file_path: &Path, buffer: &[u8]) -> io::Result<()> {
+//     let mut file = std::fs::File::create(file_path)?;
+//     file.write_all(buffer)?;
+//     file.flush()?;
+//     Ok(())
+// }
 
 #[cfg(test)]
 mod tests {
@@ -226,7 +233,7 @@ mod tests {
         let mut buffer = Vec::new();
         let mut encoder = CombinedEncoder::new(&mut buffer);
         encoder
-            .encode_metadata_and_records(&metadata, records)
+            .encode(&metadata, records)
             .expect("Error on encoding");
 
         // Validate

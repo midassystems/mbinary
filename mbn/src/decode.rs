@@ -6,6 +6,7 @@ use crate::records::RecordHeader;
 use std::fs::File;
 use std::io::{self, BufReader, Read};
 use std::mem;
+use std::path::Path;
 
 use crate::METADATA_LENGTH; // Import the constant
 
@@ -23,7 +24,7 @@ impl<R: Read> CombinedDecoder<R> {
         metadata_decoder.decode()
     }
 
-    pub fn decode_all_records(&mut self) -> io::Result<Vec<RecordEnum>> {
+    pub fn decode_records(&mut self) -> io::Result<Vec<RecordEnum>> {
         let mut record_decoder = RecordDecoder::new(&mut self.reader);
         record_decoder.decode_to_owned()
     }
@@ -32,16 +33,14 @@ impl<R: Read> CombinedDecoder<R> {
         DecoderIterator::new(&mut self.reader)
     }
 
-    pub fn decode_metadata_and_records(
-        &mut self,
-    ) -> io::Result<(Option<Metadata>, Vec<RecordEnum>)> {
+    pub fn decode(&mut self) -> io::Result<(Option<Metadata>, Vec<RecordEnum>)> {
         let metadata = self.decode_metadata()?;
-        let records = self.decode_all_records()?;
+        let records = self.decode_records()?;
         Ok((metadata, records))
     }
-
-    pub fn from_file(file_path: &str) -> io::Result<CombinedDecoder<BufReader<File>>> {
-        let file = File::open(file_path)?;
+    /// Accepts PathBuf, Path and str for file_path
+    pub fn from_file<P: AsRef<Path>>(file_path: P) -> io::Result<CombinedDecoder<BufReader<File>>> {
+        let file = File::open(file_path.as_ref())?;
 
         // Wrap the file in a buffered reader for efficient, incremental reading
         let buffered_reader = BufReader::new(file);
@@ -49,6 +48,16 @@ impl<R: Read> CombinedDecoder<R> {
         // Return a new CombinedDecoder that uses the buffered reader
         Ok(CombinedDecoder::new(buffered_reader))
     }
+
+    // pub fn from_file(file_path: &str) -> io::Result<CombinedDecoder<BufReader<File>>> {
+    //     let file = File::open(file_path)?;
+    //
+    //     // Wrap the file in a buffered reader for efficient, incremental reading
+    //     let buffered_reader = BufReader::new(file);
+    //
+    //     // Return a new CombinedDecoder that uses the buffered reader
+    //     Ok(CombinedDecoder::new(buffered_reader))
+    // }
 }
 
 pub struct MetadataDecoder<R> {
@@ -145,15 +154,23 @@ where
         // Safety: `read_buffer` is resized to contain at least `length` bytes.
         Ok(Some(unsafe { RecordRef::new(&self.read_buffer) }))
     }
+
+    pub fn from_file(file_path: &Path) -> io::Result<RecordDecoder<BufReader<File>>> {
+        let file = File::open(file_path)?;
+
+        // Wrap the file in a buffered reader for efficient, incremental reading
+        let buffered_reader = BufReader::new(file);
+        Ok(RecordDecoder::new(buffered_reader))
+    }
 }
 
-pub fn decoder_from_file(file_path: &str) -> io::Result<RecordDecoder<BufReader<File>>> {
-    let file = File::open(file_path)?;
-
-    // Wrap the file in a buffered reader for efficient, incremental reading
-    let buffered_reader = BufReader::new(file);
-    Ok(RecordDecoder::new(buffered_reader))
-}
+// pub fn record_decoder_from_file(file_path: &Path) -> io::Result<RecordDecoder<BufReader<File>>> {
+//     let file = File::open(file_path)?;
+//
+//     // Wrap the file in a buffered reader for efficient, incremental reading
+//     let buffered_reader = BufReader::new(file);
+//     Ok(RecordDecoder::new(buffered_reader))
+// }
 
 #[cfg(test)]
 mod tests {
@@ -165,6 +182,7 @@ mod tests {
     use crate::records::{as_u8_slice, OhlcvMsg};
     use crate::symbols::SymbolMap;
     use std::io::Cursor;
+    use std::path::PathBuf;
 
     #[test]
     fn test_decode_record() {
@@ -339,15 +357,13 @@ mod tests {
         let mut buffer = Vec::new();
         let mut encoder = CombinedEncoder::new(&mut buffer);
         encoder
-            .encode_metadata_and_records(&metadata, records)
+            .encode(&metadata, records)
             .expect("Error on encoding");
 
         // Test
         let cursor = Cursor::new(buffer);
         let mut decoder = CombinedDecoder::new(cursor);
-        let decoded = decoder
-            .decode_metadata_and_records()
-            .expect("Error decoding metadata.");
+        let decoded = decoder.decode().expect("Error decoding metadata.");
 
         // Validate
         assert_eq!(decoded.0.unwrap(), metadata);
@@ -415,11 +431,12 @@ mod tests {
     }
 
     #[tokio::test]
-    async fn test_from_file() -> Result<()> {
-        let file_path = "tests/bulk_update_GLBX.MDP3_continuous_2024-01-01_2024-01-02.bin";
+    async fn test_record_decoder_iter() -> Result<()> {
+        let file_path =
+            PathBuf::from("tests/bulk_update_GLBX.MDP3_continuous_2024-01-01_2024-01-02.bin");
 
         // Test
-        let mut decoder = decoder_from_file(&file_path)?;
+        let mut decoder = RecordDecoder::<BufReader<File>>::from_file(&file_path)?;
         let mut decode_iter = decoder.decode_iterator();
 
         while let Some(record_result) = decode_iter.next() {
@@ -435,6 +452,42 @@ mod tests {
                 }
             }
         }
+        Ok(())
+    }
+
+    #[tokio::test]
+    async fn test_record_decoder_from_file() -> Result<()> {
+        let file_path = PathBuf::from("tests/no_metadata_mbn.bin");
+
+        // Test
+        let mut decoder = RecordDecoder::<BufReader<File>>::from_file(&file_path)?;
+        // let mut records_ref = decoder.decode_ref()?;
+
+        // Validate
+        let mut all_records: Vec<RecordRef> = Vec::new();
+
+        if let Some(record_ref) = decoder.decode_ref()? {
+            // Push each record reference into the vector
+            all_records.push(record_ref);
+        }
+
+        // Now you can assert the length of the records
+        assert!(all_records.len() > 0, "No records were decoded");
+        Ok(())
+    }
+
+    #[tokio::test]
+    async fn test_combinder_decoder_from_file() -> Result<()> {
+        let file_path = PathBuf::from("tests/test.bin");
+
+        // Test
+        let mut decoder = CombinedDecoder::<BufReader<File>>::from_file(&file_path)?;
+
+        let (_metadata, records) = decoder.decode()?;
+
+        // Validate
+        assert!(records.len() > 0);
+
         Ok(())
     }
 }
