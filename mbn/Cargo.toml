@@ -13,8 +13,8 @@ strum = { version = "0.26", features = ["derive"], optional = true }
 sqlx = { version = "0.6", features = ["postgres","runtime-tokio-rustls", "runtime-actix-rustls", "macros", "bigdecimal", "json"] }
 pyo3 = { workspace = true, optional = true }
 bigdecimal = { version = "0.3", features = ["serde"] }
-dbn = "0.19.2"
-databento ={version="0.11.4"}
+dbn = "0.22.1"
+databento ="0.14.1"
 chrono = "0.4"
 tracing = "0.1"
 tracing-subscriber = { version = "0.3", features = ["fmt", "env-filter", "json"] }

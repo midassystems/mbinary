@@ -313,14 +313,13 @@ dependencies = [
 
 [[package]]
 name = "databento"
-version = "0.11.4"
+version = "0.14.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "4dd73bbde76acee9fd5810f28dbfc4bb8c926fc15fd3c46436152f9ca127a243"
+checksum = "b0a8e10687f1087612c9b9041e58084cb293cb3b17aa76df9e7aa7a70adff57e"
 dependencies = [
  "dbn",
  "futures",
  "hex",
- "log",
  "reqwest",
  "serde",
  "serde_json",
@@ -329,14 +328,15 @@ dependencies = [
  "time",
  "tokio",
  "tokio-util",
+ "tracing",
  "typed-builder",
 ]
 
 [[package]]
 name = "dbn"
-version = "0.19.2"
+version = "0.22.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "72aa17f1e03808c6f5fe10120b371da44292199104c3620ccefa47e0f6681204"
+checksum = "8aa7989e82a5f401c984beec175ef64e451fd815c13762f4a94a8d58ddb2400a"
 dependencies = [
  "async-compression",
  "csv",
@@ -354,9 +354,9 @@ dependencies = [
 
 [[package]]
 name = "dbn-macros"
-version = "0.19.2"
+version = "0.22.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "670dcf4a0d2383c54e9ee0d2cb9f474fe1b136bc0456eb595c4f539f1f6963a4"
+checksum = "32f915c673fd5d1fa8a9ca66512cbcd789667bb7655eaebf9699ca1b6c8334de"
 dependencies = [
  "proc-macro-crate",
  "proc-macro2",
@@ -2334,18 +2334,18 @@ checksum = "e421abadd41a4225275504ea4d6566923418b7f05506fbc9c0fe86ba7396114b"
 
 [[package]]
 name = "typed-builder"
-version = "0.18.2"
+version = "0.20.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "77739c880e00693faef3d65ea3aad725f196da38b22fdc7ea6ded6e1ce4d3add"
+checksum = "7e14ed59dc8b7b26cacb2a92bad2e8b1f098806063898ab42a3bd121d7d45e75"
 dependencies = [
  "typed-builder-macro",
 ]
 
 [[package]]
 name = "typed-builder-macro"
-version = "0.18.2"
+version = "0.20.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "1f718dfaf347dcb5b983bfc87608144b0bad87970aebcbea5ce44d2a30c08e63"
+checksum = "560b82d656506509d43abe30e0ba64c56b1953ab3d4fe7ba5902747a7a3cedd5"
 dependencies = [
  "proc-macro2",
  "quote",
