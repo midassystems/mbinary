@@ -72,8 +72,8 @@ impl PartialEq<dbn::RecordEnum> for RecordEnum {
             // Match and compare Mbp1 variants
             (RecordEnum::Mbp1(mbn_msg), dbn::RecordEnum::Mbp1(dbn_msg)) => mbn_msg.eq(dbn_msg),
             (RecordEnum::Tbbo(mbn_msg), dbn::RecordEnum::Mbp1(dbn_msg)) => mbn_msg.eq(dbn_msg),
+            (RecordEnum::Bbo(mbn_msg), dbn::RecordEnum::Mbp1(dbn_msg)) => mbn_msg.eq(dbn_msg),
             (RecordEnum::Trade(mbn_msg), dbn::RecordEnum::Trade(dbn_msg)) => mbn_msg.eq(dbn_msg),
-            (RecordEnum::Bbo(mbn_msg), dbn::RecordEnum::Bbo(dbn_msg)) => mbn_msg.eq(dbn_msg),
             (RecordEnum::Ohlcv(mbn_msg), dbn::RecordEnum::Ohlcv(dbn_msg)) => mbn_msg.eq(dbn_msg),
             _ => false,
         }
