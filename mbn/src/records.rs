@@ -308,19 +308,51 @@ impl From<dbn::BboMsg> for BboMsg {
     }
 }
 
-impl PartialEq<dbn::BboMsg> for BboMsg {
-    fn eq(&self, other: &dbn::BboMsg) -> bool {
-        self.hd.ts_event == other.hd.ts_event
-            && self.price == other.price
-            && self.size == other.size
-            && self.side == other.side
-            && self.ts_recv == other.ts_recv
-            && self.sequence == other.sequence
-            && self.levels[0] == other.levels[0]
-        // self.hd.instrument_id == other.hd.instrument_id
-        // && self. /flags == other.flags.raw()
+impl From<dbn::Mbp1Msg> for BboMsg {
+    fn from(item: dbn::Mbp1Msg) -> Self {
+        BboMsg {
+            hd: RecordHeader::new::<BboMsg>(item.hd.instrument_id, item.hd.ts_event),
+            price: item.price,
+            size: item.size,
+            side: item.side,
+            flags: item.flags.raw(),
+            ts_recv: item.ts_recv,
+            sequence: item.sequence,
+            levels: [BidAskPair::from(item.levels[0].clone())],
+        }
     }
 }
+
+impl PartialEq<dbn::Mbp1Msg> for BboMsg {
+    fn eq(&self, other: &dbn::Mbp1Msg) -> bool {
+        if other.price == dbn::UNDEF_PRICE {
+            self.ts_recv == other.ts_recv
+                && self.sequence == other.sequence
+                && self.levels[0] == other.levels[0]
+        } else {
+            // println!("USing mbp");
+            self.hd.ts_event == other.hd.ts_event
+                && self.price == other.price
+                && self.size == other.size
+                && self.side == other.side
+                && self.ts_recv == other.ts_recv
+                && self.sequence == other.sequence
+                && self.levels[0] == other.levels[0]
+        }
+    }
+}
+
+// impl PartialEq<dbn::BboMsg> for BboMsg {
+//     fn eq(&self, other: &dbn::BboMsg) -> bool {
+//         self.hd.ts_event == other.hd.ts_event
+//             && self.price == other.price
+//             && self.size == other.size
+//             && self.side == other.side
+//             && self.ts_recv == other.ts_recv
+//             && self.sequence == other.sequence
+//             && self.levels[0] == other.levels[0]
+//     }
+// }
 
 /// TBBO is jsut MBP1 where action is always Trade
 pub type TbboMsg = Mbp1Msg;
@@ -821,16 +853,16 @@ mod tests {
             ask_ct: 60000000,
         };
 
-        let dbn_record = dbn::BboMsg {
+        let dbn_record = dbn::Mbp1Msg {
             hd: header,
             price: 12345676543,
             size: 1234543,
+            action: 0,
             side: 0,
-            _reserved1: 0,
-            _reserved2: 0,
-            _reserved3: [0, 1, 2, 3],
             flags: FlagSet::empty(),
+            depth: 10,
             ts_recv: 1231,
+            ts_in_delta: 123432,
             sequence: 23432,
             levels: [bid_ask],
         };
@@ -855,16 +887,16 @@ mod tests {
             ask_ct: 60000000,
         };
 
-        let dbn_record = dbn::BboMsg {
+        let dbn_record = dbn::Mbp1Msg {
             hd: header,
             price: 12345676543,
             size: 1234543,
+            action: 0,
             side: 0,
-            _reserved1: 0,
-            _reserved2: 0,
-            _reserved3: [0, 1, 2, 3],
             flags: FlagSet::empty(),
+            depth: 10,
             ts_recv: 1231,
+            ts_in_delta: 123432,
             sequence: 23432,
             levels: [bid_ask],
         };
