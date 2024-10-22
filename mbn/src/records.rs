@@ -165,6 +165,24 @@ impl From<dbn::Mbp1Msg> for Mbp1Msg {
     }
 }
 
+impl From<&dbn::Mbp1Msg> for Mbp1Msg {
+    fn from(item: &dbn::Mbp1Msg) -> Self {
+        Mbp1Msg {
+            hd: RecordHeader::new::<Mbp1Msg>(item.hd.instrument_id, item.hd.ts_event),
+            price: item.price,
+            size: item.size,
+            action: item.action,
+            side: item.side,
+            depth: item.depth,
+            flags: item.flags.raw(),
+            ts_recv: item.ts_recv,
+            ts_in_delta: item.ts_in_delta,
+            sequence: item.sequence,
+            levels: [BidAskPair::from(item.levels[0].clone())], // Clone levels here too
+        }
+    }
+}
+
 impl PartialEq<dbn::Mbp1Msg> for Mbp1Msg {
     fn eq(&self, other: &dbn::Mbp1Msg) -> bool {
         self.hd.ts_event == other.hd.ts_event
