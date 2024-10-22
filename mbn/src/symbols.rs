@@ -1,6 +1,7 @@
 use serde::{Deserialize, Serialize};
 use sqlx::FromRow;
 use std::collections::HashMap;
+use std::io::{self, BufReader, Read};
 
 #[cfg(feature = "python")]
 use pyo3::pyclass;
@@ -68,23 +69,61 @@ impl SymbolMap {
         bytes
     }
 
-    /// Decodes the binary response from Midas server, shouldn't need to be used directly.
-    pub fn deserialize(bytes: &[u8], offset: &mut usize) -> Self {
-        let map_len = u32::from_le_bytes(bytes[*offset..*offset + 4].try_into().unwrap()) as usize;
+    pub fn deserialize(bytes: &[u8], offset: &mut usize) -> io::Result<Self> {
+        // Deserialize the length of the map (stored as a u32)
+        let map_len =
+            u32::from_le_bytes(bytes[*offset..*offset + 4].try_into().map_err(|_| {
+                io::Error::new(io::ErrorKind::InvalidData, "Failed to read map length")
+            })?) as usize;
         *offset += 4;
+
+        // Initialize an empty HashMap with the expected capacity
         let mut map = HashMap::with_capacity(map_len);
+
+        // Deserialize each key-value pair in the map
         for _ in 0..map_len {
-            let key = u32::from_le_bytes(bytes[*offset..*offset + 4].try_into().unwrap());
+            // Read the key (u32)
+            let key =
+                u32::from_le_bytes(bytes[*offset..*offset + 4].try_into().map_err(|_| {
+                    io::Error::new(io::ErrorKind::InvalidData, "Failed to read key")
+                })?);
             *offset += 4;
+
+            // Read the length of the value string (stored as u32)
             let value_len =
-                u32::from_le_bytes(bytes[*offset..*offset + 4].try_into().unwrap()) as usize;
+                u32::from_le_bytes(bytes[*offset..*offset + 4].try_into().map_err(|_| {
+                    io::Error::new(io::ErrorKind::InvalidData, "Failed to read value length")
+                })?) as usize;
             *offset += 4;
-            let value = String::from_utf8(bytes[*offset..*offset + value_len].to_vec()).unwrap();
+
+            // Extract the string value of `value_len` bytes
+            let value = String::from_utf8(bytes[*offset..*offset + value_len].to_vec())
+                .map_err(|err| io::Error::new(io::ErrorKind::InvalidData, err))?;
             *offset += value_len;
+
             map.insert(key, value);
         }
-        SymbolMap { map }
+
+        Ok(SymbolMap { map })
     }
+
+    // Decodes the binary response from Midas server, shouldn't need to be used directly.
+    // pub fn deserialize(bytes: &[u8], offset: &mut usize) -> Self {
+    //     let map_len = u32::from_le_bytes(bytes[*offset..*offset + 4].try_into().unwrap()) as usize;
+    //     *offset += 4;
+    //     let mut map = HashMap::with_capacity(map_len);
+    //     for _ in 0..map_len {
+    //         let key = u32::from_le_bytes(bytes[*offset..*offset + 4].try_into().unwrap());
+    //         *offset += 4;
+    //         let value_len =
+    //             u32::from_le_bytes(bytes[*offset..*offset + 4].try_into().unwrap()) as usize;
+    //         *offset += 4;
+    //         let value = String::from_utf8(bytes[*offset..*offset + value_len].to_vec()).unwrap();
+    //         *offset += value_len;
+    //         map.insert(key, value);
+    //     }
+    //     SymbolMap { map }
+    // }
 }
 
 #[cfg(test)]

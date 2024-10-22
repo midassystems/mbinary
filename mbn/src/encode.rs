@@ -116,7 +116,7 @@ impl<W: Write> RecordEncoder<W> {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use crate::decode::RecordDecoder;
+    use crate::decode::{AsyncDecoder, AsyncRecordDecoder, Decoder, RecordDecoder};
     use crate::enums::Schema;
     use crate::record_enum::RecordEnum;
     use crate::records::OhlcvMsg;
@@ -124,8 +124,8 @@ mod tests {
     use crate::symbols::SymbolMap;
     use std::io::Cursor;
 
-    #[test]
-    fn test_encode_record() {
+    #[tokio::test]
+    async fn test_encode_record() -> anyhow::Result<()> {
         let ohlcv_msg = OhlcvMsg {
             hd: RecordHeader::new::<OhlcvMsg>(1, 1622471124),
             open: 100,
@@ -143,14 +143,16 @@ mod tests {
 
         // Validate
         let cursor = Cursor::new(buffer);
-        let mut decoder = RecordDecoder::new(cursor);
-        let record_ref = decoder.decode_ref().unwrap().unwrap();
+        let mut decoder = AsyncDecoder::new(cursor).await?;
+        let record_ref = decoder.decode_ref().await?.unwrap();
         let decoded_record: &OhlcvMsg = record_ref.get().unwrap();
         assert_eq!(decoded_record, &ohlcv_msg);
+
+        Ok(())
     }
 
-    #[test]
-    fn test_encode_decode_records() {
+    #[tokio::test]
+    async fn test_encode_decode_records() -> anyhow::Result<()> {
         let ohlcv_msg1 = OhlcvMsg {
             hd: RecordHeader::new::<OhlcvMsg>(1, 1622471124),
             open: 100000000000,
@@ -182,16 +184,18 @@ mod tests {
 
         // Validate
         let cursor = Cursor::new(buffer);
-        let mut decoder = RecordDecoder::new(cursor);
-        let decoded_records = decoder.decode_to_owned().expect("Decoding failed");
+        let mut decoder = AsyncDecoder::new(cursor).await?;
+        let decoded_records = decoder.decode().await?;
 
         assert_eq!(decoded_records.len(), 2);
         assert_eq!(decoded_records[0], RecordEnum::Ohlcv(ohlcv_msg1));
         assert_eq!(decoded_records[1], RecordEnum::Ohlcv(ohlcv_msg2));
+
+        Ok(())
     }
 
-    #[test]
-    fn test_encode_metadata() {
+    #[tokio::test]
+    async fn test_encode_metadata() -> anyhow::Result<()> {
         let mut symbol_map = SymbolMap::new();
         symbol_map.add_instrument("AAPL", 1);
         symbol_map.add_instrument("TSLA", 2);
@@ -206,11 +210,12 @@ mod tests {
             .expect("Error metadata encoding.");
 
         // Validate
-        let decoded = Metadata::deserialize(&buffer);
+        let decoded = Metadata::deserialize(&buffer)?;
         assert_eq!(decoded.schema, metadata.schema);
         assert_eq!(decoded.start, metadata.start);
         assert_eq!(decoded.end, metadata.end);
         assert_eq!(decoded.mappings, metadata.mappings);
+        Ok(())
     }
 
     #[test]

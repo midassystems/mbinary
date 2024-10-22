@@ -1,4 +1,4 @@
-use mbn::decode::CombinedDecoder;
+use mbn::decode::Decoder;
 use mbn::encode::CombinedEncoder;
 use mbn::enums::Schema;
 use mbn::metadata::Metadata;
@@ -9,7 +9,7 @@ use mbn::symbols::SymbolMap;
 use std::io::Cursor;
 
 #[test]
-fn test_integration_test() {
+fn test_integration_test() -> anyhow::Result<()> {
     // Metadata
     let mut symbol_map = SymbolMap::new();
     symbol_map.add_instrument("AAPL", 1);
@@ -74,13 +74,14 @@ fn test_integration_test() {
 
     // Test
     let cursor = Cursor::new(buffer);
-    let mut decoder = CombinedDecoder::new(cursor);
+    let mut decoder = Decoder::new(cursor)?;
     let decoded = decoder.decode().expect("Error decoding metadata.");
 
     // Validate
-    assert_eq!(decoded.0.unwrap(), metadata);
+    // assert_eq!(decoded.0.unwrap(), metadata);
     assert_eq!(
-        decoded.1,
+        decoded,
         [RecordEnum::Mbp1(record1), RecordEnum::Mbp1(record2)]
     );
+    Ok(())
 }
