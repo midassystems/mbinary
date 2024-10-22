@@ -1,4 +1,4 @@
-use crate::decode::CombinedDecoder;
+use crate::decode::Decoder;
 use crate::metadata::Metadata;
 use crate::utils::unix_nanos_to_date;
 use crate::PRICE_SCALE;
@@ -11,26 +11,27 @@ use std::io::Cursor;
 pub struct BufferStore {
     buffer: Vec<u8>,
     metadata: Metadata,
-    decoder: CombinedDecoder<Cursor<Vec<u8>>>,
+    decoder: Decoder<Cursor<Vec<u8>>>,
 }
 
 #[pymethods]
 impl BufferStore {
     #[new]
-    pub fn py_new(data: &Bound<PyBytes>) -> Self {
+    pub fn py_new(data: &Bound<PyBytes>) -> PyResult<Self> {
         let buffer = data.as_bytes().to_vec();
         let cursor = Cursor::new(buffer.clone());
-        let mut decoder = CombinedDecoder::new(cursor);
-        let metadata = decoder
-            .decode_metadata()
-            .expect("Error decoding metadata")
-            .unwrap();
+        let mut decoder = Decoder::new(cursor)?;
+        let metadata = decoder.metadata().unwrap();
 
-        BufferStore {
+        // .decode_metadata()
+        // .expect("Error decoding metadata")
+        // .unwrap();
+
+        Ok(BufferStore {
             buffer,
             metadata,
             decoder,
-        }
+        })
     }
 
     #[getter]
@@ -41,8 +42,9 @@ impl BufferStore {
     pub fn decode_to_array(&mut self) -> PyResult<Vec<PyObject>> {
         let decoded = self
             .decoder
-            .decode_records()
+            .decode()
             .map_err(|e| PyIOError::new_err(e.to_string()))?;
+
         Python::with_gil(|py| {
             Ok(decoded
                 .into_iter()
@@ -161,6 +163,6 @@ impl BufferStore {
     pub fn from_file(file_path: &str, py: Python) -> PyResult<Self> {
         let buffer = std::fs::read(file_path).map_err(|e| PyIOError::new_err(e.to_string()))?;
         let py_bytes = PyBytes::new_bound(py, &buffer);
-        Ok(BufferStore::py_new(&py_bytes))
+        Ok(BufferStore::py_new(&py_bytes)?)
     }
 }

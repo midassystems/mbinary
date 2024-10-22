@@ -1,5 +1,6 @@
 use crate::enums::Schema;
 use crate::symbols::SymbolMap;
+use std::io::{self, BufReader, Read};
 
 #[cfg(feature = "python")]
 use pyo3::pyclass;
@@ -32,22 +33,62 @@ impl Metadata {
         bytes
     }
 
-    pub fn deserialize(bytes: &[u8]) -> Self {
+    pub fn deserialize(bytes: &[u8]) -> io::Result<Metadata> {
+        if bytes.len() < 17 {
+            return Err(io::Error::new(
+                io::ErrorKind::InvalidData,
+                "Insufficient data to deserialize metadata",
+            ));
+        }
+
         let mut offset = 0;
-        let schema = Schema::try_from(bytes[offset]).unwrap();
+        let schema = Schema::try_from(bytes[offset])
+            .map_err(|_| io::Error::new(io::ErrorKind::InvalidData, "Invalid schema value"))?;
         offset += 1;
-        let start = u64::from_le_bytes(bytes[offset..offset + 8].try_into().unwrap());
+
+        let start =
+            u64::from_le_bytes(bytes[offset..offset + 8].try_into().map_err(|_| {
+                io::Error::new(io::ErrorKind::InvalidData, "Invalid start timestamp")
+            })?);
         offset += 8;
-        let end = u64::from_le_bytes(bytes[offset..offset + 8].try_into().unwrap());
+
+        let end =
+            u64::from_le_bytes(bytes[offset..offset + 8].try_into().map_err(|_| {
+                io::Error::new(io::ErrorKind::InvalidData, "Invalid end timestamp")
+            })?);
         offset += 8;
-        let mappings = SymbolMap::deserialize(bytes, &mut offset);
-        Metadata {
+
+        let mappings = SymbolMap::deserialize(bytes, &mut offset).map_err(|_| {
+            io::Error::new(
+                io::ErrorKind::InvalidData,
+                "Failed to deserialize symbol mappings",
+            )
+        })?;
+
+        Ok(Metadata {
             schema,
             start,
             end,
             mappings,
-        }
+        })
     }
+
+    // pub fn deserialize(bytes: &[u8]) -> Self {
+    //     let mut offset = 0;
+    //     let schema = Schema::try_from(bytes[offset]).unwrap();
+    //     offset += 1;
+    //     let start = u64::from_le_bytes(bytes[offset..offset + 8].try_into().unwrap());
+    //     offset += 8;
+    //     let end = u64::from_le_bytes(bytes[offset..offset + 8].try_into().unwrap());
+    //     offset += 8;
+    //     let mappings = SymbolMap::deserialize(bytes, &mut offset);
+    //     Metadata {
+    //         schema,
+    //         start,
+    //         end,
+    //         mappings,
+    //     }
+    // }
 }
 
 #[cfg(test)]
@@ -55,7 +96,7 @@ mod tests {
     use super::*;
 
     #[test]
-    fn test_metadata_encoding() {
+    fn test_metadata_encoding() -> anyhow::Result<()> {
         let mut symbol_map = SymbolMap::new();
         symbol_map.add_instrument("AAPL", 1);
         symbol_map.add_instrument("TSLA", 2);
@@ -64,9 +105,10 @@ mod tests {
 
         // Test
         let bytes = metadata.serialize();
-        let decoded = Metadata::deserialize(&bytes);
+        let decoded = Metadata::deserialize(&bytes)?;
 
         // Validate
         assert_eq!(metadata, decoded);
+        Ok(())
     }
 }
