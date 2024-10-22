@@ -1,6 +1,7 @@
 use crate::metadata::Metadata;
 use crate::record_ref::*;
 use crate::METADATA_LENGTH;
+use std::fs::OpenOptions;
 use std::io::{self, Write};
 use std::path::Path;
 
@@ -83,11 +84,26 @@ impl<W: Write> RecordEncoder<W> {
     where
         W: AsRef<[u8]>, // Ensure W can be treated as a slice of bytes (like Vec<u8>)
     {
-        let mut file = std::fs::File::create(file_path)?;
+        // Open the file in append mode, create it if it doesn't exist
+        let mut file = OpenOptions::new()
+            .create(true) // Create the file if it doesn't exist
+            .append(true) // Append to the file if it exists
+            .open(file_path)?;
+
         file.write_all(self.writer.as_ref())?; // Write the internal buffer to file
         file.flush()?; // Ensure all data is flushed to disk
         Ok(())
     }
+
+    // pub fn write_to_file(&self, file_path: &Path) -> io::Result<()>
+    // where
+    //     W: AsRef<[u8]>, // Ensure W can be treated as a slice of bytes (like Vec<u8>)
+    // {
+    //     let mut file = std::fs::File::create(file_path)?;
+    //     file.write_all(self.writer.as_ref())?; // Write the internal buffer to file
+    //     file.flush()?; // Ensure all data is flushed to disk
+    //     Ok(())
+    // }
 }
 
 // pub fn write_to_file(file_path: &Path, buffer: &[u8]) -> io::Result<()> {
