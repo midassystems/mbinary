@@ -35,6 +35,7 @@ impl<W: Write> CombinedEncoder<W> {
         Ok(())
     }
 }
+
 pub struct MetadataEncoder<W> {
     writer: W,
     buffer: Vec<u8>,
@@ -82,41 +83,24 @@ impl<W: Write> RecordEncoder<W> {
 
     pub fn write_to_file(&self, file_path: &Path) -> io::Result<()>
     where
-        W: AsRef<[u8]>, // Ensure W can be treated as a slice of bytes (like Vec<u8>)
+        W: AsRef<[u8]>,
     {
         // Open the file in append mode, create it if it doesn't exist
         let mut file = OpenOptions::new()
-            .create(true) // Create the file if it doesn't exist
-            .append(true) // Append to the file if it exists
+            .create(true)
+            .append(true)
             .open(file_path)?;
 
-        file.write_all(self.writer.as_ref())?; // Write the internal buffer to file
-        file.flush()?; // Ensure all data is flushed to disk
+        file.write_all(self.writer.as_ref())?;
+        file.flush()?;
         Ok(())
     }
-
-    // pub fn write_to_file(&self, file_path: &Path) -> io::Result<()>
-    // where
-    //     W: AsRef<[u8]>, // Ensure W can be treated as a slice of bytes (like Vec<u8>)
-    // {
-    //     let mut file = std::fs::File::create(file_path)?;
-    //     file.write_all(self.writer.as_ref())?; // Write the internal buffer to file
-    //     file.flush()?; // Ensure all data is flushed to disk
-    //     Ok(())
-    // }
 }
-
-// pub fn write_to_file(file_path: &Path, buffer: &[u8]) -> io::Result<()> {
-//     let mut file = std::fs::File::create(file_path)?;
-//     file.write_all(buffer)?;
-//     file.flush()?;
-//     Ok(())
-// }
 
 #[cfg(test)]
 mod tests {
     use super::*;
-    use crate::decode::{AsyncDecoder, AsyncRecordDecoder, Decoder, RecordDecoder};
+    use crate::decode::AsyncDecoder;
     use crate::enums::Schema;
     use crate::record_enum::RecordEnum;
     use crate::records::OhlcvMsg;

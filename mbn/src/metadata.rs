@@ -1,6 +1,6 @@
 use crate::enums::Schema;
 use crate::symbols::SymbolMap;
-use std::io::{self, BufReader, Read};
+use std::io;
 
 #[cfg(feature = "python")]
 use pyo3::pyclass;
@@ -72,23 +72,6 @@ impl Metadata {
             mappings,
         })
     }
-
-    // pub fn deserialize(bytes: &[u8]) -> Self {
-    //     let mut offset = 0;
-    //     let schema = Schema::try_from(bytes[offset]).unwrap();
-    //     offset += 1;
-    //     let start = u64::from_le_bytes(bytes[offset..offset + 8].try_into().unwrap());
-    //     offset += 8;
-    //     let end = u64::from_le_bytes(bytes[offset..offset + 8].try_into().unwrap());
-    //     offset += 8;
-    //     let mappings = SymbolMap::deserialize(bytes, &mut offset);
-    //     Metadata {
-    //         schema,
-    //         start,
-    //         end,
-    //         mappings,
-    //     }
-    // }
 }
 
 #[cfg(test)]

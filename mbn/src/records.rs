@@ -178,7 +178,7 @@ impl From<&dbn::Mbp1Msg> for Mbp1Msg {
             ts_recv: item.ts_recv,
             ts_in_delta: item.ts_in_delta,
             sequence: item.sequence,
-            levels: [BidAskPair::from(item.levels[0].clone())], // Clone levels here too
+            levels: [BidAskPair::from(item.levels[0].clone())],
         }
     }
 }
@@ -195,8 +195,6 @@ impl PartialEq<dbn::Mbp1Msg> for Mbp1Msg {
             && self.ts_in_delta == other.ts_in_delta
             && self.sequence == other.sequence
             && self.levels[0] == other.levels[0]
-        // self.hd.instrument_id == other.hd.instrument_id
-        // && self. /flags == other.flags.raw()
     }
 }
 
@@ -270,8 +268,6 @@ impl PartialEq<dbn::TradeMsg> for TradeMsg {
             && self.ts_recv == other.ts_recv
             && self.ts_in_delta == other.ts_in_delta
             && self.sequence == other.sequence
-        // self.hd.instrument_id == other.hd.instrument_id
-        // && self. /flags == other.flags.raw()
     }
 }
 
@@ -348,7 +344,6 @@ impl PartialEq<dbn::Mbp1Msg> for BboMsg {
                 && self.sequence == other.sequence
                 && self.levels[0] == other.levels[0]
         } else {
-            // println!("USing mbp");
             self.hd.ts_event == other.hd.ts_event
                 && self.price == other.price
                 && self.size == other.size
@@ -359,18 +354,6 @@ impl PartialEq<dbn::Mbp1Msg> for BboMsg {
         }
     }
 }
-
-// impl PartialEq<dbn::BboMsg> for BboMsg {
-//     fn eq(&self, other: &dbn::BboMsg) -> bool {
-//         self.hd.ts_event == other.hd.ts_event
-//             && self.price == other.price
-//             && self.size == other.size
-//             && self.side == other.side
-//             && self.ts_recv == other.ts_recv
-//             && self.sequence == other.sequence
-//             && self.levels[0] == other.levels[0]
-//     }
-// }
 
 /// TBBO is jsut MBP1 where action is always Trade
 pub type TbboMsg = Mbp1Msg;
@@ -435,7 +418,6 @@ impl PartialEq<dbn::OhlcvMsg> for OhlcvMsg {
             && self.low == other.low
             && self.close == other.close
             && self.volume == other.volume
-        // self.hd.instrument_id == other.hd.instrument_id
     }
 }
 
@@ -617,7 +599,7 @@ mod tests {
         // Test
         let bytes = unsafe { as_u8_slice(&record) };
 
-        // Test
+        // Validate
         let decoded_record: Mbp1Msg = unsafe { transmute_record_bytes(bytes).unwrap() };
         assert_eq!(decoded_record, record);
     }
@@ -640,7 +622,7 @@ mod tests {
         // Test
         let bytes = record.as_ref();
 
-        // Test
+        // Validate
         let decoded_record: TradeMsg = unsafe { transmute_record_bytes(bytes).unwrap() };
         assert_eq!(decoded_record, record);
     }
@@ -669,9 +651,9 @@ mod tests {
         };
 
         // Test
-        let bytes = record.as_ref(); // as_u8_slice(&record) };
+        let bytes = record.as_ref();
 
-        // Test
+        // Validate
         let decoded_record: TbboMsg = unsafe { transmute_record_bytes(bytes).unwrap() };
         assert_eq!(decoded_record, record);
     }
@@ -699,7 +681,7 @@ mod tests {
         // Test
         let bytes = record.as_ref();
 
-        // Test
+        // Validate
         let decoded_record: BboMsg = unsafe { transmute_record_bytes(bytes).unwrap() };
         assert_eq!(decoded_record, record);
     }
