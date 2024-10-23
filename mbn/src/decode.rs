@@ -28,7 +28,7 @@ impl<R: Read> Decoder<R> {
         self.metadata.clone()
     }
 
-    pub fn decode(&mut self) -> std::io::Result<Vec<RecordEnum>> {
+    pub fn decode(&mut self) -> crate::error::Result<Vec<RecordEnum>> {
         // let mut record_decoder = RecordDecoder::new(&mut self.reader);
         Ok(self.decoder.decode_to_owned()?)
     }
@@ -113,20 +113,23 @@ where
         }
     }
 
-    pub fn decode_to_owned(&mut self) -> std::io::Result<Vec<RecordEnum>> {
+    pub fn decode_to_owned(&mut self) -> crate::error::Result<Vec<RecordEnum>> {
         let mut records = Vec::new();
         while let Some(record_ref) = self.decode_ref()? {
-            if let Some(record) = RecordEnum::from_ref(record_ref) {
-                records.push(record);
-            } else {
-                return Err(std::io::Error::new(
-                    std::io::ErrorKind::InvalidData,
-                    format!(
-                        "record with rtype {:?} could not be converted to the target type",
-                        record_ref.header().rtype()
-                    ),
-                ));
-            }
+            let record = RecordEnum::from_ref(record_ref)?;
+            records.push(record);
+
+            // if let Some(record) = RecordEnum::from_ref(record_ref) {
+            //     records.push(record);
+            // } else {
+            //     return Err(std::io::Error::new(
+            //         std::io::ErrorKind::InvalidData,
+            //         format!(
+            //             "record with rtype {:?} could not be converted to the target type",
+            //             record_ref.header().rtype()
+            //         ),
+            //     ));
+            // }
         }
         Ok(records)
     }
@@ -199,7 +202,7 @@ impl<R: AsyncBufRead + Unpin> AsyncDecoder<R> {
         self.metadata.clone()
     }
 
-    pub async fn decode(&mut self) -> tokio::io::Result<Vec<RecordEnum>> {
+    pub async fn decode(&mut self) -> crate::error::Result<Vec<RecordEnum>> {
         Ok(self.decoder.decode_to_owned().await?)
     }
 
@@ -276,20 +279,21 @@ where
         }
     }
 
-    pub async fn decode_to_owned(&mut self) -> tokio::io::Result<Vec<RecordEnum>> {
+    pub async fn decode_to_owned(&mut self) -> crate::error::Result<Vec<RecordEnum>> {
         let mut records = Vec::new();
         while let Some(record_ref) = self.decode_ref().await? {
-            if let Some(record) = RecordEnum::from_ref(record_ref) {
-                records.push(record);
-            } else {
-                return Err(tokio::io::Error::new(
-                    tokio::io::ErrorKind::InvalidData,
-                    format!(
-                        "record with rtype {:?} could not be converted to the target type",
-                        record_ref.header().rtype()
-                    ),
-                ));
-            }
+            let record = RecordEnum::from_ref(record_ref)?;
+            records.push(record);
+
+            // } else {
+            //     return Err(tokio::io::Error::new(
+            //         tokio::io::ErrorKind::InvalidData,
+            //         format!(
+            //             "record with rtype {:?} could not be converted to the target type",
+            //             record_ref.header().rtype()
+            //         ),
+            //     ));
+            // }
         }
         Ok(records)
     }

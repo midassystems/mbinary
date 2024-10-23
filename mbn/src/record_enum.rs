@@ -1,4 +1,5 @@
 use crate::enums::RType;
+use crate::error::{Error, Result};
 use crate::record_ref::RecordRef;
 use crate::records::{BboMsg, Mbp1Msg, OhlcvMsg, Record, RecordHeader, TbboMsg, TradeMsg};
 use serde::Serialize;
@@ -16,25 +17,50 @@ pub enum RecordEnum {
 }
 
 impl RecordEnum {
-    pub fn from_ref(rec_ref: RecordRef) -> Option<Self> {
+    pub fn from_ref(rec_ref: RecordRef) -> Result<Self> {
         match rec_ref.header().rtype() {
             RType::Mbp1 => rec_ref
                 .get::<Mbp1Msg>()
-                .map(|msg| RecordEnum::Mbp1(msg.clone())),
+                .map(|msg| RecordEnum::Mbp1(msg.clone()))
+                .ok_or(Error::InvalidRecordType("Mbp1")),
             RType::Ohlcv => rec_ref
                 .get::<OhlcvMsg>()
-                .map(|msg| RecordEnum::Ohlcv(msg.clone())),
+                .map(|msg| RecordEnum::Ohlcv(msg.clone()))
+                .ok_or(Error::InvalidRecordType("Ohlcv")),
             RType::Trade => rec_ref
                 .get::<TradeMsg>()
-                .map(|msg| RecordEnum::Trade(msg.clone())),
+                .map(|msg| RecordEnum::Trade(msg.clone()))
+                .ok_or(Error::InvalidRecordType("Trade")),
             RType::Tbbo => rec_ref
                 .get::<TbboMsg>()
-                .map(|msg| RecordEnum::Tbbo(msg.clone())),
+                .map(|msg| RecordEnum::Tbbo(msg.clone()))
+                .ok_or(Error::InvalidRecordType("Tbbo")),
             RType::Bbo => rec_ref
                 .get::<BboMsg>()
-                .map(|msg| RecordEnum::Bbo(msg.clone())),
+                .map(|msg| RecordEnum::Bbo(msg.clone()))
+                .ok_or(Error::InvalidRecordType("Bbo")),
         }
     }
+
+    // pub fn from_ref(rec_ref: RecordRef) -> Option<Self> {
+    //     match rec_ref.header().rtype() {
+    //         RType::Mbp1 => rec_ref
+    //             .get::<Mbp1Msg>()
+    //             .map(|msg| RecordEnum::Mbp1(msg.clone())),
+    //         RType::Ohlcv => rec_ref
+    //             .get::<OhlcvMsg>()
+    //             .map(|msg| RecordEnum::Ohlcv(msg.clone())),
+    //         RType::Trade => rec_ref
+    //             .get::<TradeMsg>()
+    //             .map(|msg| RecordEnum::Trade(msg.clone())),
+    //         RType::Tbbo => rec_ref
+    //             .get::<TbboMsg>()
+    //             .map(|msg| RecordEnum::Tbbo(msg.clone())),
+    //         RType::Bbo => rec_ref
+    //             .get::<BboMsg>()
+    //             .map(|msg| RecordEnum::Bbo(msg.clone())),
+    //     }
+    // }
 
     pub fn to_record_ref(&self) -> RecordRef {
         match self {
