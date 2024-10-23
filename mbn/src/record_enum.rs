@@ -42,26 +42,6 @@ impl RecordEnum {
         }
     }
 
-    // pub fn from_ref(rec_ref: RecordRef) -> Option<Self> {
-    //     match rec_ref.header().rtype() {
-    //         RType::Mbp1 => rec_ref
-    //             .get::<Mbp1Msg>()
-    //             .map(|msg| RecordEnum::Mbp1(msg.clone())),
-    //         RType::Ohlcv => rec_ref
-    //             .get::<OhlcvMsg>()
-    //             .map(|msg| RecordEnum::Ohlcv(msg.clone())),
-    //         RType::Trade => rec_ref
-    //             .get::<TradeMsg>()
-    //             .map(|msg| RecordEnum::Trade(msg.clone())),
-    //         RType::Tbbo => rec_ref
-    //             .get::<TbboMsg>()
-    //             .map(|msg| RecordEnum::Tbbo(msg.clone())),
-    //         RType::Bbo => rec_ref
-    //             .get::<BboMsg>()
-    //             .map(|msg| RecordEnum::Bbo(msg.clone())),
-    //     }
-    // }
-
     pub fn to_record_ref(&self) -> RecordRef {
         match self {
             RecordEnum::Mbp1(record) => record.into(),
@@ -152,6 +132,7 @@ pub enum RecordEnumRef<'a> {
     Bbo(&'a BboMsg),
 }
 
+//TODO: Adjust the from_ref to match RecordEnum
 impl<'a> RecordEnumRef<'a> {
     pub fn from_ref(rec_ref: RecordRef<'a>) -> Option<Self> {
         match rec_ref.header().rtype() {
