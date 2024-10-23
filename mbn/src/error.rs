@@ -14,6 +14,8 @@ pub enum Error {
     Conversion(String),
     #[error("Parse Error : {0}")]
     ParseError(#[from] chrono::ParseError),
+    #[error("Invalid Record Type : {0}")]
+    InvalidRecordType(&'static str),
 }
 
 impl Error {
