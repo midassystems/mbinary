@@ -1,4 +1,7 @@
 use mbn::{
+    backtest::{
+        BacktestData, Parameters, SignalInstructions, Signals, StaticStats, TimeseriesStats, Trades,
+    },
     enums::{Action, RType, Schema, Side},
     metadata::Metadata,
     python::buffer::BufferStore,
@@ -32,6 +35,13 @@ fn python_mbn(_py: Python<'_>, m: &Bound<PyModule>) -> PyResult<()> {
     checked_add_class::<BidAskPair>(m)?;
     checked_add_class::<BufferStore>(m)?;
     checked_add_class::<RecordMsg>(m)?;
+    checked_add_class::<BacktestData>(m)?;
+    checked_add_class::<StaticStats>(m)?;
+    checked_add_class::<Parameters>(m)?;
+    checked_add_class::<TimeseriesStats>(m)?;
+    checked_add_class::<Trades>(m)?;
+    checked_add_class::<Signals>(m)?;
+    checked_add_class::<SignalInstructions>(m)?;
 
     Ok(())
 }
