@@ -14,6 +14,13 @@ from mbn import (
     TradeMsg,
     # TbboMsg,
     BboMsg,
+    BacktestData,
+    Trades,
+    Signals,
+    Parameters,
+    TimeseriesStats,
+    StaticStats,
+    SignalInstructions,
 )
 from pandas import pandas
 
@@ -24,8 +31,326 @@ def handle_msg(msg: RecordMsg) -> int:
 
 class IntegrationTests(unittest.TestCase):
     def setUp(self) -> None:
+        self.parameters = Parameters(
+            strategy_name="Testing",
+            capital=10000,
+            schema="Ohlcv-1s",
+            data_type="BAR",
+            train_start=1730160814000000000,
+            train_end=1730160814000000000,
+            test_start=1730160814000000000,
+            test_end=1730160814000000000,
+            tickers=["test", "test2"],
+        )
+
+        self.static_stats = StaticStats(
+            total_trades=100,
+            total_winning_trades=50,
+            total_losing_trades=50,
+            avg_profit=1000000000000,
+            avg_profit_percent=10383783337737,
+            avg_gain=23323212233,
+            avg_gain_percent=24323234,
+            avg_loss=203982828,
+            avg_loss_percent=23432134323,
+            profitability_ratio=130213212323,
+            profit_factor=12342123431,
+            profit_and_loss_ratio=1234321343,
+            total_fees=123453234,
+            net_profit=1234323,
+            beginning_equity=12343234323,
+            ending_equity=12343234,
+            total_return=234532345,
+            daily_standard_deviation_percentage=23453234,
+            annual_standard_deviation_percentage=34543443,
+            max_drawdown_percentage_period=234543234,
+            max_drawdown_percentage_daily=23432345,
+            sharpe_ratio=23432343,
+            sortino_ratio=123453234543,
+        )
+
+        # Test
+        self.timeseries1 = TimeseriesStats(
+            timestamp=123700000000000,
+            equity_value=9999999,
+            percent_drawdown=2343234,
+            cumulative_return=2343234,
+            period_return=2345432345,
+        )
+
+        self.timeseries2 = TimeseriesStats(
+            timestamp=123700000000000,
+            equity_value=9999999,
+            percent_drawdown=2343234,
+            cumulative_return=2343234,
+            period_return=2345432345,
+        )
+        self.period_list = [self.timeseries1, self.timeseries2]
+
+        self.timeseries3 = TimeseriesStats(
+            timestamp=123700000000000,
+            equity_value=9999999,
+            percent_drawdown=2343234,
+            cumulative_return=2343234,
+            period_return=2345432345,
+        )
+
+        self.timeseries4 = TimeseriesStats(
+            timestamp=123700000000000,
+            equity_value=9999999,
+            percent_drawdown=2343234,
+            cumulative_return=2343234,
+            period_return=2345432345,
+        )
+        self.daily_list = [self.timeseries3, self.timeseries4]
+
+        self.trade1 = Trades(
+            trade_id=1,
+            leg_id=2,
+            timestamp=170000000000,
+            ticker="AAPL",
+            quantity=12,
+            avg_price=2345432,
+            trade_value=12343234,
+            action="BUY",
+            fees=2343,
+        )
+
+        self.trade2 = Trades(
+            trade_id=1,
+            leg_id=2,
+            timestamp=170000000000,
+            ticker="AAPL",
+            quantity=12,
+            avg_price=2345432,
+            trade_value=12343234,
+            action="BUY",
+            fees=2343,
+        )
+
+        self.trade_list = [self.trade1, self.trade2]
+
+        self.instructions = SignalInstructions(
+            ticker="AAPL",
+            order_type="MKT",
+            action="BUY",
+            trade_id=1,
+            leg_id=2,
+            weight=13213432,
+            quantity=2343,
+            limit_price="",
+            aux_price="",
+        )
+
+        self.signal1 = Signals(1234532345, [self.instructions])
+        self.signal2 = Signals(1234532345, [self.instructions])
+        self.signals_list = [self.signal1, self.signal2]
         return super().setUp()
 
+    # -- Backtest --
+    def test_backtest_data(self):
+
+        # Test
+        backtest = BacktestData(
+            None,
+            "Name",
+            self.parameters,
+            self.static_stats,
+            self.period_list,
+            self.daily_list,
+            self.trade_list,
+            self.signals_list,
+        )
+
+        # Validate
+        print(backtest.__dict__)
+
+    def test_parameters(self):
+        strategy_name = "Testing"
+        capital = 10000
+        schema = "Ohlcv-1s"
+        data_type = "BAR"
+        train_start = 1730160814000000000
+        train_end = 1730160814000000000
+        test_start = 1730160814000000000
+        test_end = 1730160814000000000
+        tickers = ["test", "test2"]
+
+        # Test
+        parameters = Parameters(
+            strategy_name,
+            capital,
+            schema,
+            data_type,
+            train_start,
+            train_end,
+            test_start,
+            test_end,
+            tickers,
+        )
+
+        # Validate
+        print(parameters.__dict__)
+
+    def test_static_stats(self):
+        total_trades = 100
+        total_winning_trades = 50
+        total_losing_trades = 50
+        avg_profit = 1000000000000
+        avg_profit_percent = 10383783337737
+        avg_gain = 23323212233
+        avg_gain_percent = 24323234
+        avg_loss = 203982828
+        avg_loss_percent = 23432134323
+        profitability_ratio = 130213212323
+        profit_factor = 12342123431
+        profit_and_loss_ratio = 1234321343
+        total_fees = 123453234
+        net_profit = 1234323
+        beginning_equity = 12343234323
+        ending_equity = 12343234
+        total_return = 234532345
+        daily_standard_deviation_percentage = 23453234
+        annual_standard_deviation_percentage = 34543443
+        max_drawdown_percentage_period = 234543234
+        max_drawdown_percentage_daily = 23432345
+        sharpe_ratio = 23432343
+        sortino_ratio = 123453234543
+
+        # Test
+        static_stats = StaticStats(
+            total_trades,
+            total_winning_trades,
+            total_losing_trades,
+            avg_profit,
+            avg_profit_percent,
+            avg_gain,
+            avg_gain_percent,
+            avg_loss,
+            avg_loss_percent,
+            profitability_ratio,
+            profit_factor,
+            profit_and_loss_ratio,
+            total_fees,
+            net_profit,
+            beginning_equity,
+            ending_equity,
+            total_return,
+            daily_standard_deviation_percentage,
+            annual_standard_deviation_percentage,
+            max_drawdown_percentage_period,
+            max_drawdown_percentage_daily,
+            sharpe_ratio,
+            sortino_ratio,
+        )
+
+        # Validate
+        print(static_stats.__dict__)
+
+    def test_timeseries(self):
+        timestamp = 123700000000000
+        equity_value = 9999999
+        percent_drawdown = 2343234
+        cumulative_return = 2343234
+        period_return = 2345432345
+
+        # Test
+        timeseries = TimeseriesStats(
+            timestamp,
+            equity_value,
+            percent_drawdown,
+            cumulative_return,
+            period_return,
+        )
+
+        # Validate
+        print(timeseries.__dict__)
+
+    def test_trades(self):
+        trade_id = 1
+        leg_id = 2
+        timestamp = 170000000000
+        ticker = "AAPL"
+        quantity = 12
+        avg_price = 2345432
+        trade_value = 12343234
+        action = "BUY"
+        fees = 2343
+
+        # Test
+        trade = Trades(
+            trade_id,
+            leg_id,
+            timestamp,
+            ticker,
+            quantity,
+            avg_price,
+            trade_value,
+            action,
+            fees,
+        )
+
+        # Validate
+        print(trade.__dict__)
+
+    def test_signal(self):
+        ticker = "AAPL"
+        order_type = "MKT"
+        action = "BUY"
+        trade_id = 1
+        leg_id = 2
+        weight = 13213432
+        quantity = 2343
+        limit_price = ""
+        aux_price = ""
+        timestamp = 1234532345
+
+        instructions = SignalInstructions(
+            ticker,
+            order_type,
+            action,
+            trade_id,
+            leg_id,
+            weight,
+            quantity,
+            limit_price,
+            aux_price,
+        )
+
+        # Test
+        signal = Signals(timestamp, [instructions])
+
+        # Validate
+        print(signal.__dict__)
+
+    def test_signalinstructions(self):
+        ticker = "AAPL"
+        order_type = "MKT"
+        action = "BUY"
+        trade_id = 1
+        leg_id = 2
+        weight = 13213432
+        quantity = 2343
+        limit_price = ""
+        aux_price = ""
+
+        # Test
+        instructions = SignalInstructions(
+            ticker,
+            order_type,
+            action,
+            trade_id,
+            leg_id,
+            weight,
+            quantity,
+            limit_price,
+            aux_price,
+        )
+
+        # Validate
+        print(instructions.__dict__)
+
+    # -- Records --
     def test_side(self):
         # Direct instantiation
         bid = Side.BID

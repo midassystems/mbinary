@@ -312,3 +312,108 @@ class BufferStore(SupportsBytes):
     def from_file(file_path: str) -> "BufferStore": ...
     def decode_to_df(self, pretty_ts: bool, pretty_px: bool) -> pandas.DataFrame: ...
     def replay(self) -> Optional[RecordMsg]: ...
+
+# -- Trading -- 
+
+class SignalInstructions:
+    def __init__(
+        self,
+        ticker: str,
+        order_type: str,
+        action: str,
+        trade_id: int,
+        leg_id: int,
+        weight: int,
+        quantity: int,
+        limit_price: str,
+        aux_price: str,
+    ) -> None: ...
+
+class Signals:
+    def __init__(
+         self,
+        timestamp: int, 
+        trade_instructions: List[SignalInstructions]
+    ) -> None: ...
+
+class Trades:
+    def __init__(
+        self,
+        trade_id: int,
+        leg_id: int,
+        timestamp: int,
+        ticker: str,
+        quantity: int,
+        avg_price: int,
+        trade_value: int,
+        action: str,
+        fees: int,
+    ) -> None: ...
+
+class TimeseriesStats: 
+    def __init__(
+        self,
+        timestamp: int,
+        equity_value: int,
+        percent_drawdown: int,
+        cumulative_return: int,
+        period_return: int,
+    ) -> None: ...
+
+class StaticStats:
+    def __init__(
+        self,
+        total_trades: int,
+        total_winning_trades: int,
+        total_losing_trades: int,
+        avg_profit: int,
+        avg_profit_percent: int,
+        avg_gain: int,
+        avg_gain_percent: int,
+        avg_loss: int,
+        avg_loss_percent: int,
+        profitability_ratio: int,
+        profit_factor: int,
+        profit_and_loss_ratio: int,
+        total_fees: int,
+        net_profit: int,
+        beginning_equity: int,
+        ending_equity: int,
+        total_return: int,
+        daily_standard_deviation_percentage: int,
+        annual_standard_deviation_percentage: int,
+        max_drawdown_percentage_period: int,
+        max_drawdown_percentage_daily: int,
+        sharpe_ratio: int,
+        sortino_ratio: int,
+    ) -> None: ...
+
+class Parameters:
+    def __init__(self,        
+        strategy_name: str,
+        capital: int,
+        schema: str,
+        data_type: str,
+        train_start: int,
+        train_end: int,
+        test_start: int,
+        test_end: int,
+        tickers: List[str],
+    ) -> None: ...
+
+class BacktestData:
+    def __init__(
+        self,
+        backtest_id: Optional[int],
+        backtest_name: str,
+        parameters: Parameters,
+        static_stats: StaticStats,
+        period_timeseries_stats: List[TimeseriesStats],
+        daily_timeseries_stats: List[TimeseriesStats],
+        trades: List[Trades],
+        signals: List[Signals]
+    ) -> None: ...
+
+
+
+
