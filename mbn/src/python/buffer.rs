@@ -23,10 +23,6 @@ impl BufferStore {
         let mut decoder = Decoder::new(cursor)?;
         let metadata = decoder.metadata().unwrap();
 
-        // .decode_metadata()
-        // .expect("Error decoding metadata")
-        // .unwrap();
-
         Ok(BufferStore {
             buffer,
             metadata,

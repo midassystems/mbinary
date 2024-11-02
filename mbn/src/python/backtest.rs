@@ -60,6 +60,7 @@ impl BacktestData {
             let dict = stat.__dict__(py);
             period_list.append(dict).unwrap();
         }
+        let _ = dict.set_item("period_timeseries_stats", &period_list);
 
         // Create a Python list to hold the trade instructions
         let daily_list = PyList::empty_bound(py);
@@ -68,6 +69,8 @@ impl BacktestData {
             daily_list.append(dict).unwrap();
         }
 
+        let _ = dict.set_item("daily_timeseries_stats", &daily_list);
+
         // Create a Python list to hold the trade instructions
         let trades_list = PyList::empty_bound(py);
         for stat in &self.trades {
@@ -75,12 +78,7 @@ impl BacktestData {
             trades_list.append(dict).unwrap();
         }
 
-        // Create a Python list to hold the trade instructions
-        let signal_list = PyList::empty_bound(py);
-        for stat in &self.signals {
-            let dict = stat.__dict__(py);
-            signal_list.append(dict).unwrap();
-        }
+        let _ = dict.set_item("trades", &trades_list);
 
         // Create a Python list to hold the trade instructions
         let signal_list = PyList::empty_bound(py);
@@ -88,6 +86,8 @@ impl BacktestData {
             let dict = stat.__dict__(py);
             signal_list.append(dict).unwrap();
         }
+        let _ = dict.set_item("signals", &signal_list);
+
         dict.into()
     }
 }
@@ -197,10 +197,13 @@ impl StaticStats {
         dict.set_item("avg_profit", &self.avg_profit).unwrap();
         dict.set_item("avg_profit_percent", self.avg_profit_percent)
             .unwrap();
+        dict.set_item("avg_gain", self.avg_gain).unwrap();
+        dict.set_item("avg_gain_percent", self.avg_gain_percent)
+            .unwrap();
         dict.set_item("avg_loss", self.avg_loss).unwrap();
         dict.set_item("avg_loss_percent", self.avg_loss_percent)
             .unwrap();
-        dict.set_item("profitability_ration", self.profitability_ratio)
+        dict.set_item("profitability_ratio", self.profitability_ratio)
             .unwrap();
         dict.set_item("profit_factor", &self.profit_factor).unwrap();
         dict.set_item("profit_and_loss_ratio", &self.profit_and_loss_ratio)
@@ -264,6 +267,9 @@ impl TimeseriesStats {
         dict.set_item("percent_drawdown", &self.percent_drawdown)
             .unwrap();
         dict.set_item("period_return", &self.period_return).unwrap();
+        dict.set_item("cumulative_return", &self.cumulative_return)
+            .unwrap();
+
         dict.into()
     }
 }
@@ -330,6 +336,8 @@ impl Signals {
             let instruction_dict = instruction.__dict__(py);
             trade_instructions_list.append(instruction_dict).unwrap();
         }
+        let _ = dict.set_item("trade_instructions", &trade_instructions_list);
+
         dict.into()
     }
 }
