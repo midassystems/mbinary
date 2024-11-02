@@ -8,7 +8,7 @@ use pyo3::types::{PyDict, PyList};
 impl BacktestData {
     #[new]
     #[pyo3(signature = (backtest_id = None, backtest_name=None, parameters=None, static_stats=None, period_timeseries_stats=None, daily_timeseries_stats=None, trades=None, signals=None))]
-    fn py_new(
+    pub fn py_new(
         backtest_id: Option<u16>,
         backtest_name: Option<String>,
         parameters: Option<Parameters>,
@@ -47,7 +47,7 @@ impl BacktestData {
             })?,
         })
     }
-    fn __dict__(&self, py: Python) -> Py<PyDict> {
+    pub fn __dict__(&self, py: Python) -> Py<PyDict> {
         let dict = PyDict::new_bound(py);
         dict.set_item("backtest_id", self.backtest_id).unwrap();
         dict.set_item("backtest_name", &self.backtest_name).unwrap();
@@ -95,7 +95,7 @@ impl BacktestData {
 #[pymethods]
 impl Parameters {
     #[new]
-    fn py_new(
+    pub fn py_new(
         strategy_name: String,
         capital: i64,
         schema: String,
@@ -118,7 +118,7 @@ impl Parameters {
             tickers,
         }
     }
-    fn __dict__(&self, py: Python) -> Py<PyDict> {
+    pub fn __dict__(&self, py: Python) -> Py<PyDict> {
         let dict = PyDict::new_bound(py);
         dict.set_item("strategy_name", &self.strategy_name).unwrap();
         dict.set_item("capital", self.capital).unwrap();
@@ -135,7 +135,7 @@ impl Parameters {
 #[pymethods]
 impl StaticStats {
     #[new]
-    fn py_new(
+    pub fn py_new(
         total_trades: i32,
         total_winning_trades: i32,
         total_losing_trades: i32,
@@ -187,7 +187,7 @@ impl StaticStats {
         }
     }
 
-    fn __dict__(&self, py: Python) -> Py<PyDict> {
+    pub fn __dict__(&self, py: Python) -> Py<PyDict> {
         let dict = PyDict::new_bound(py);
         dict.set_item("total_trades", &self.total_trades).unwrap();
         dict.set_item("total_winning_trades", self.total_winning_trades)
@@ -244,7 +244,7 @@ impl StaticStats {
 #[pymethods]
 impl TimeseriesStats {
     #[new]
-    fn py_new(
+    pub fn py_new(
         timestamp: i64,
         equity_value: i64,
         percent_drawdown: i64,
@@ -260,7 +260,7 @@ impl TimeseriesStats {
         }
     }
 
-    fn __dict__(&self, py: Python) -> Py<PyDict> {
+    pub fn __dict__(&self, py: Python) -> Py<PyDict> {
         let dict = PyDict::new_bound(py);
         dict.set_item("timestamp", &self.timestamp).unwrap();
         dict.set_item("equity_value", self.equity_value).unwrap();
@@ -277,7 +277,7 @@ impl TimeseriesStats {
 #[pymethods]
 impl Trades {
     #[new]
-    fn py_new(
+    pub fn py_new(
         trade_id: i32,
         leg_id: i32,
         timestamp: i64,
@@ -300,7 +300,7 @@ impl Trades {
             fees,
         }
     }
-    fn __dict__(&self, py: Python) -> Py<PyDict> {
+    pub fn __dict__(&self, py: Python) -> Py<PyDict> {
         let dict = PyDict::new_bound(py);
         dict.set_item("trade_id", self.trade_id).unwrap();
         dict.set_item("leg_id", self.leg_id).unwrap();
@@ -318,13 +318,13 @@ impl Trades {
 #[pymethods]
 impl Signals {
     #[new]
-    fn py_new(timestamp: i64, trade_instructions: Vec<SignalInstructions>) -> Self {
+    pub fn py_new(timestamp: i64, trade_instructions: Vec<SignalInstructions>) -> Self {
         Signals {
             timestamp,
             trade_instructions,
         }
     }
-    fn __dict__(&self, py: Python) -> Py<PyDict> {
+    pub fn __dict__(&self, py: Python) -> Py<PyDict> {
         let dict = PyDict::new_bound(py);
         dict.set_item("timestamp", &self.timestamp).unwrap();
 
@@ -345,7 +345,7 @@ impl Signals {
 #[pymethods]
 impl SignalInstructions {
     #[new]
-    fn py_new(
+    pub fn py_new(
         ticker: String,
         order_type: String,
         action: String,
@@ -368,7 +368,7 @@ impl SignalInstructions {
             aux_price,
         }
     }
-    fn __dict__(&self, py: Python) -> Py<PyDict> {
+    pub fn __dict__(&self, py: Python) -> Py<PyDict> {
         let dict = PyDict::new_bound(py);
         dict.set_item("ticker", &self.ticker).unwrap();
         dict.set_item("order_type", &self.order_type).unwrap();

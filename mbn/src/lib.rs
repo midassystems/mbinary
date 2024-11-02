@@ -6,6 +6,7 @@ pub mod decode_iterator;
 pub mod encode;
 pub mod enums;
 pub mod error;
+pub mod live;
 pub mod metadata;
 pub mod record_enum;
 pub mod record_ref;
