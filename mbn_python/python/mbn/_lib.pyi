@@ -416,4 +416,39 @@ class BacktestData:
 
 
 
+class AccountSummary:
+    def __init__(self,        
+        currency: str,
+        start_timestamp: int,
+        start_buying_power: int,
+        start_excess_liquidity: int,
+        start_full_available_funds: int,
+        start_full_init_margin_req: int,
+        start_full_maint_margin_req: int,
+        start_futures_pnl: int,
+        start_net_liquidation: int,
+        start_total_cash_balance: int,
+        start_unrealized_pnl: int,
+        end_timestamp: int,
+        end_buying_power: int,
+        end_excess_liquidity: int,
+        end_full_available_funds: int,
+        end_full_init_margin_req: int,
+        end_full_maint_margin_req: int,
+        end_futures_pnl: int,
+        end_net_liquidation: int,
+        end_total_cash_balance: int,
+        end_unrealized_pnl: int,
+    ) -> None: ...
+
+class LiveData:
+    def __init__(
+        self,
+        live_id: Optional[int],
+        parameters: Parameters,
+        trades: List[Trades],
+        signals: List[Signals],
+        account: AccountSummary,
+    ) -> None: ...
+
 

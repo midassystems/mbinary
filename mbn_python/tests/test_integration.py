@@ -20,6 +20,8 @@ from mbn import (
     TimeseriesStats,
     StaticStats,
     SignalInstructions,
+    AccountSummary,
+    LiveData,
 )
 from pandas import pandas
 
@@ -144,7 +146,140 @@ class IntegrationTests(unittest.TestCase):
         self.signal1 = Signals(1234532345, [self.instructions])
         self.signal2 = Signals(1234532345, [self.instructions])
         self.signals_list = [self.signal1, self.signal2]
+
+        self.account_summary = AccountSummary(
+            currency="USD",
+            start_timestamp=1704903000,
+            start_buying_power=2557567,
+            start_excess_liquidity=767270,
+            start_full_available_funds=767270,
+            start_full_init_margin_req=2823937,
+            start_full_maint_margin_req=2823938,
+            start_futures_pnl=-464883,
+            start_net_liquidation=767552392,
+            start_total_cash_balance=-11292332,
+            start_unrealized_pnl=0,
+            end_timestamp=1704904000,
+            end_buying_power=25355889282,
+            end_excess_liquidity=762034292,
+            end_full_available_funds=760676292,
+            end_full_init_margin_req=707499,
+            end_full_maint_margin_req=5716009,
+            end_futures_pnl=-487998,
+            end_net_liquidation=767751998,
+            end_total_cash_balance=76693599,
+            end_unrealized_pnl=-2899,
+        )
         return super().setUp()
+
+    # -- Live --
+    def test_live_data(self):
+        # Test
+        live = LiveData(
+            None,
+            self.parameters,
+            self.trade_list,
+            self.signals_list,
+            self.account_summary,
+        )
+
+        # Validate
+        expected = {
+            "live_id": None,
+            "parameters": {
+                "strategy_name": "Testing",
+                "capital": 10000,
+                "schema": "Ohlcv-1s",
+                "data_type": "BAR",
+                "train_start": 1730160814000000000,
+                "train_end": 1730160814000000000,
+                "test_start": 1730160814000000000,
+                "test_end": 1730160814000000000,
+                "tickers": ["test", "test2"],
+            },
+            "account": {
+                "currency": "USD",
+                "start_timestamp": 1704903000,
+                "start_buying_power": 2557567,
+                "start_excess_liquidity": 767270,
+                "start_full_available_funds": 767270,
+                "start_full_init_margin_req": 2823937,
+                "start_full_maint_margin_req": 2823938,
+                "start_futures_pnl": -464883,
+                "start_net_liquidation": 767552392,
+                "start_total_cash_balance": -11292332,
+                "start_unrealized_pnl": 0,
+                "end_timestamp": 1704904000,
+                "end_buying_power": 25355889282,
+                "end_excess_liquidity": 762034292,
+                "end_full_available_funds": 760676292,
+                "end_full_init_margin_req": 707499,
+                "end_full_maint_margin_req": 5716009,
+                "end_futures_pnl": -487998,
+                "end_net_liquidation": 767751998,
+                "end_total_cash_balance": 76693599,
+                "end_unrealized_pnl": -2899,
+            },
+            "trades": [
+                {
+                    "trade_id": 1,
+                    "leg_id": 2,
+                    "timestamp": 170000000000,
+                    "ticker": "AAPL",
+                    "quantity": 12,
+                    "avg_price": 2345432,
+                    "trade_value": 12343234,
+                    "action": "BUY",
+                    "fees": 2343,
+                },
+                {
+                    "trade_id": 1,
+                    "leg_id": 2,
+                    "timestamp": 170000000000,
+                    "ticker": "AAPL",
+                    "quantity": 12,
+                    "avg_price": 2345432,
+                    "trade_value": 12343234,
+                    "action": "BUY",
+                    "fees": 2343,
+                },
+            ],
+            "signals": [
+                {
+                    "timestamp": 1234532345,
+                    "trade_instructions": [
+                        {
+                            "ticker": "AAPL",
+                            "order_type": "MKT",
+                            "action": "BUY",
+                            "trade_id": 1,
+                            "leg_id": 2,
+                            "weight": 13213432,
+                            "quantity": 2343,
+                            "limit_price": "",
+                            "aux_price": "",
+                        }
+                    ],
+                },
+                {
+                    "timestamp": 1234532345,
+                    "trade_instructions": [
+                        {
+                            "ticker": "AAPL",
+                            "order_type": "MKT",
+                            "action": "BUY",
+                            "trade_id": 1,
+                            "leg_id": 2,
+                            "weight": 13213432,
+                            "quantity": 2343,
+                            "limit_price": "",
+                            "aux_price": "",
+                        }
+                    ],
+                },
+            ],
+        }
+        self.assertDictEqual(expected, live.__dict__())
 
     # -- Backtest --
     def test_backtest_data(self):
