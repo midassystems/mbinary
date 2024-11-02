@@ -12,7 +12,6 @@ from mbn import (
     OhlcvMsg,
     Mbp1Msg,
     TradeMsg,
-    # TbboMsg,
     BboMsg,
     BacktestData,
     Trades,
@@ -163,7 +162,137 @@ class IntegrationTests(unittest.TestCase):
         )
 
         # Validate
-        print(backtest.__dict__)
+        expected = {
+            "backtest_id": None,
+            "backtest_name": "Name",
+            "parameters": {
+                "strategy_name": "Testing",
+                "capital": 10000,
+                "schema": "Ohlcv-1s",
+                "data_type": "BAR",
+                "train_start": 1730160814000000000,
+                "train_end": 1730160814000000000,
+                "test_start": 1730160814000000000,
+                "test_end": 1730160814000000000,
+                "tickers": ["test", "test2"],
+            },
+            "static_stats": {
+                "total_trades": 100,
+                "total_winning_trades": 50,
+                "total_losing_trades": 50,
+                "avg_profit": 1000000000000,
+                "avg_profit_percent": 10383783337737,
+                "avg_gain": 23323212233,
+                "avg_gain_percent": 24323234,
+                "avg_loss": 203982828,
+                "avg_loss_percent": 23432134323,
+                "profitability_ratio": 130213212323,
+                "profit_factor": 12342123431,
+                "profit_and_loss_ratio": 1234321343,
+                "total_fees": 123453234,
+                "net_profit": 1234323,
+                "beginning_equity": 12343234323,
+                "ending_equity": 12343234,
+                "total_return": 234532345,
+                "daily_standard_deviation_percentage": 23453234,
+                "annual_standard_deviation_percentage": 34543443,
+                "max_drawdown_percentage_daily": 23432345,
+                "max_drawdown_percentage_period": 234543234,
+                "sharpe_ratio": 23432343,
+                "sortino_ratio": 123453234543,
+            },
+            "period_timeseries_stats": [
+                {
+                    "timestamp": 123700000000000,
+                    "equity_value": 9999999,
+                    "percent_drawdown": 2343234,
+                    "period_return": 2345432345,
+                    "cumulative_return": 2343234,
+                },
+                {
+                    "timestamp": 123700000000000,
+                    "equity_value": 9999999,
+                    "percent_drawdown": 2343234,
+                    "period_return": 2345432345,
+                    "cumulative_return": 2343234,
+                },
+            ],
+            "daily_timeseries_stats": [
+                {
+                    "timestamp": 123700000000000,
+                    "equity_value": 9999999,
+                    "percent_drawdown": 2343234,
+                    "period_return": 2345432345,
+                    "cumulative_return": 2343234,
+                },
+                {
+                    "timestamp": 123700000000000,
+                    "equity_value": 9999999,
+                    "percent_drawdown": 2343234,
+                    "period_return": 2345432345,
+                    "cumulative_return": 2343234,
+                },
+            ],
+            "trades": [
+                {
+                    "trade_id": 1,
+                    "leg_id": 2,
+                    "timestamp": 170000000000,
+                    "ticker": "AAPL",
+                    "quantity": 12,
+                    "avg_price": 2345432,
+                    "trade_value": 12343234,
+                    "action": "BUY",
+                    "fees": 2343,
+                },
+                {
+                    "trade_id": 1,
+                    "leg_id": 2,
+                    "timestamp": 170000000000,
+                    "ticker": "AAPL",
+                    "quantity": 12,
+                    "avg_price": 2345432,
+                    "trade_value": 12343234,
+                    "action": "BUY",
+                    "fees": 2343,
+                },
+            ],
+            "signals": [
+                {
+                    "timestamp": 1234532345,
+                    "trade_instructions": [
+                        {
+                            "ticker": "AAPL",
+                            "order_type": "MKT",
+                            "action": "BUY",
+                            "trade_id": 1,
+                            "leg_id": 2,
+                            "weight": 13213432,
+                            "quantity": 2343,
+                            "limit_price": "",
+                            "aux_price": "",
+                        }
+                    ],
+                },
+                {
+                    "timestamp": 1234532345,
+                    "trade_instructions": [
+                        {
+                            "ticker": "AAPL",
+                            "order_type": "MKT",
+                            "action": "BUY",
+                            "trade_id": 1,
+                            "leg_id": 2,
+                            "weight": 13213432,
+                            "quantity": 2343,
+                            "limit_price": "",
+                            "aux_price": "",
+                        }
+                    ],
+                },
+            ],
+        }
+        self.assertEqual(expected, backtest.__dict__())
 
     def test_parameters(self):
         strategy_name = "Testing"
@@ -190,7 +319,18 @@ class IntegrationTests(unittest.TestCase):
         )
 
         # Validate
-        print(parameters.__dict__)
+        expected = {
+            "strategy_name": "Testing",
+            "capital": 10000,
+            "schema": "Ohlcv-1s",
+            "data_type": "BAR",
+            "train_start": 1730160814000000000,
+            "train_end": 1730160814000000000,
+            "test_start": 1730160814000000000,
+            "test_end": 1730160814000000000,
+            "tickers": ["test", "test2"],
+        }
+        self.assertEqual(expected, parameters.__dict__())
 
     def test_static_stats(self):
         total_trades = 100
@@ -245,7 +385,32 @@ class IntegrationTests(unittest.TestCase):
         )
 
         # Validate
-        print(static_stats.__dict__)
+        expected = {
+            "total_trades": 100,
+            "total_winning_trades": 50,
+            "total_losing_trades": 50,
+            "avg_profit": 1000000000000,
+            "avg_profit_percent": 10383783337737,
+            "avg_gain": 23323212233,
+            "avg_gain_percent": 24323234,
+            "avg_loss": 203982828,
+            "avg_loss_percent": 23432134323,
+            "profitability_ratio": 130213212323,
+            "profit_factor": 12342123431,
+            "profit_and_loss_ratio": 1234321343,
+            "total_fees": 123453234,
+            "net_profit": 1234323,
+            "beginning_equity": 12343234323,
+            "ending_equity": 12343234,
+            "total_return": 234532345,
+            "daily_standard_deviation_percentage": 23453234,
+            "annual_standard_deviation_percentage": 34543443,
+            "max_drawdown_percentage_daily": 23432345,
+            "max_drawdown_percentage_period": 234543234,
+            "sharpe_ratio": 23432343,
+            "sortino_ratio": 123453234543,
+        }
+        self.assertEqual(expected, static_stats.__dict__())
 
     def test_timeseries(self):
         timestamp = 123700000000000
@@ -264,7 +429,14 @@ class IntegrationTests(unittest.TestCase):
         )
 
         # Validate
-        print(timeseries.__dict__)
+        expected = {
+            "timestamp": 123700000000000,
+            "equity_value": 9999999,
+            "percent_drawdown": 2343234,
+            "period_return": 2345432345,
+            "cumulative_return": 2343234,
+        }
+        self.assertEqual(expected, timeseries.__dict__())
 
     def test_trades(self):
         trade_id = 1
@@ -291,7 +463,18 @@ class IntegrationTests(unittest.TestCase):
         )
 
         # Validate
-        print(trade.__dict__)
+        expected = {
+            "trade_id": 1,
+            "leg_id": 2,
+            "timestamp": 170000000000,
+            "ticker": "AAPL",
+            "quantity": 12,
+            "avg_price": 2345432,
+            "trade_value": 12343234,
+            "action": "BUY",
+            "fees": 2343,
+        }
+        self.assertEqual(expected, trade.__dict__())
 
     def test_signal(self):
         ticker = "AAPL"
@@ -321,7 +504,23 @@ class IntegrationTests(unittest.TestCase):
         signal = Signals(timestamp, [instructions])
 
         # Validate
-        print(signal.__dict__)
+        expected = {
+            "timestamp": 1234532345,
+            "trade_instructions": [
+                {
+                    "ticker": "AAPL",
+                    "order_type": "MKT",
+                    "action": "BUY",
+                    "trade_id": 1,
+                    "leg_id": 2,
+                    "weight": 13213432,
+                    "quantity": 2343,
+                    "limit_price": "",
+                    "aux_price": "",
+                }
+            ],
+        }
+        self.assertEqual(expected, signal.__dict__())
 
     def test_signalinstructions(self):
         ticker = "AAPL"
@@ -348,7 +547,18 @@ class IntegrationTests(unittest.TestCase):
         )
 
         # Validate
-        print(instructions.__dict__)
+        expected = {
+            "ticker": "AAPL",
+            "order_type": "MKT",
+            "action": "BUY",
+            "trade_id": 1,
+            "leg_id": 2,
+            "weight": 13213432,
+            "quantity": 2343,
+            "limit_price": "",
+            "aux_price": "",
+        }
+        self.assertEqual(expected, instructions.__dict__())
 
     # -- Records --
     def test_side(self):

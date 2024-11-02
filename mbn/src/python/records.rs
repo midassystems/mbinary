@@ -38,8 +38,6 @@ impl BidAskPair {
         self.ask_px as f64 / PRICE_SCALE as f64
     }
 }
-// #[pymethods]
-// impl TbboMsg {}
 
 #[pymethods]
 impl Mbp1Msg {

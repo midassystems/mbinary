@@ -73,17 +73,6 @@ pub struct TimeseriesStats {
     pub period_return: i64,     // Scaled by 1e9
 }
 
-// #[repr(C)]
-// #[cfg_attr(feature = "python", pyclass(get_all, set_all, dict, module = "mbn"))]
-// #[derive(Deserialize, Serialize, FromRow, Debug, Clone, PartialEq, Eq)]
-// pub struct DailyTimeseriesStats {
-//     pub timestamp: i64,
-//     pub equity_value: i64,      // Scaled by 1e9
-//     pub percent_drawdown: i64,  // Scaled by 1e9
-//     pub cumulative_return: i64, // Scaled by 1e9
-//     pub period_return: i64,     // Scaled by 1e9
-// }
-
 #[repr(C)]
 #[cfg_attr(feature = "python", pyclass(get_all, set_all, dict, module = "mbn"))]
 #[derive(Deserialize, Serialize, FromRow, Debug, Clone, PartialEq, Eq)]
