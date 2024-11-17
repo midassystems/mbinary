@@ -340,9 +340,14 @@ impl From<dbn::Mbp1Msg> for BboMsg {
 impl PartialEq<dbn::Mbp1Msg> for BboMsg {
     fn eq(&self, other: &dbn::Mbp1Msg) -> bool {
         if other.price == dbn::UNDEF_PRICE {
-            self.ts_recv == other.ts_recv
-                && self.sequence == other.sequence
+            self.price == other.price
+                && self.size == other.size
+                && self.side == other.side
+                && self.ts_recv == other.ts_recv
                 && self.levels[0] == other.levels[0]
+
+            // self.ts_recv == other.ts_recv
+            // && self.sequence == other.sequence
         } else {
             self.hd.ts_event == other.hd.ts_event
                 && self.price == other.price
@@ -856,6 +861,40 @@ mod tests {
         let dbn_record = dbn::Mbp1Msg {
             hd: header,
             price: 12345676543,
+            size: 1234543,
+            action: 0,
+            side: 0,
+            flags: FlagSet::empty(),
+            depth: 10,
+            ts_recv: 1231,
+            ts_in_delta: 123432,
+            sequence: 23432,
+            levels: [bid_ask],
+        };
+
+        // Test
+        let mbn_record = BboMsg::from(dbn_record.clone());
+        assert!(mbn_record == dbn_record);
+
+        Ok(())
+    }
+
+    #[test]
+    fn bbo_eq_undef_price() -> anyhow::Result<()> {
+        let header = dbn::RecordHeader::new::<dbn::BboMsg>(1, 1231, 1231, 1700000000000000);
+
+        let bid_ask = dbn::BidAskPair {
+            bid_px: dbn::UNDEF_PRICE,
+            ask_px: 200000,
+            bid_sz: 3000000,
+            ask_sz: 400000000,
+            bid_ct: 50000000,
+            ask_ct: 60000000,
+        };
+
+        let dbn_record = dbn::Mbp1Msg {
+            hd: header,
+            price: dbn::UNDEF_PRICE,
             size: 1234543,
             action: 0,
             side: 0,
