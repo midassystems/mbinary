@@ -345,8 +345,6 @@ impl PartialEq<dbn::Mbp1Msg> for BboMsg {
                 && self.side == other.side
                 && self.ts_recv == other.ts_recv
                 && self.levels[0] == other.levels[0]
-
-            // self.ts_recv == other.ts_recv
             // && self.sequence == other.sequence
         } else {
             self.hd.ts_event == other.hd.ts_event
@@ -354,8 +352,8 @@ impl PartialEq<dbn::Mbp1Msg> for BboMsg {
                 && self.size == other.size
                 && self.side == other.side
                 && self.ts_recv == other.ts_recv
-                && self.sequence == other.sequence
                 && self.levels[0] == other.levels[0]
+            // && self.sequence == other.sequence
         }
     }
 }
@@ -984,6 +982,42 @@ mod tests {
         let mut mbn_record = OhlcvMsg::from(dbn_record.clone());
         mbn_record.open = 123432343234323;
         assert!(mbn_record != dbn_record);
+
+        Ok(())
+    }
+
+    #[test]
+    fn bbo_eq_undef_bidaspair_px() -> anyhow::Result<()> {
+        let header = dbn::RecordHeader::new::<dbn::BboMsg>(1, 1, 42009846, 1704183584805953819);
+
+        let bid_ask = dbn::BidAskPair {
+            bid_px: dbn::UNDEF_PRICE,
+            ask_px: 2220000000000,
+            bid_sz: 0,
+            ask_sz: 2,
+            bid_ct: 0,
+            ask_ct: 1,
+        };
+
+        let dbn_record = dbn::Mbp1Msg {
+            hd: header,
+            price: 2073700000000,
+            size: 3,
+            action: 0,
+            side: 66,
+            flags: FlagSet::empty(),
+            depth: 0,
+            ts_recv: 1704183600000000000,
+            ts_in_delta: 0,
+            sequence: 294640,
+            levels: [bid_ask],
+        };
+
+        // Test
+        let mbn_record = BboMsg::from(dbn_record.clone());
+
+        // Validate
+        assert!(mbn_record == dbn_record);
 
         Ok(())
     }
