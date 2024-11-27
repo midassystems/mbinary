@@ -3,26 +3,69 @@ use sqlx::FromRow;
 use std::collections::HashMap;
 use std::io;
 
+#[derive(Debug, Clone)]
+pub enum Vendors {
+    Databento,
+    Yfinance,
+}
+
+impl Into<String> for Vendors {
+    fn into(self) -> String {
+        match self {
+            Vendors::Databento => return "databento".to_string(),
+            Vendors::Yfinance => return "yfinance".to_string(),
+        }
+    }
+}
+
 #[cfg(feature = "python")]
 use pyo3::pyclass;
 
 /// Struct representing a financial instrument.
 #[derive(Debug, Clone, Serialize, Deserialize, FromRow)]
 pub struct Instrument {
+    /// Midas unique instrument id number.
+    pub instrument_id: Option<u32>,
     /// Instrument ticker.
     pub ticker: String,
     /// Instrument name e.g. Apple Inc.
     pub name: String,
-    /// Midas unique instrument id number.
-    pub instrument_id: Option<u32>,
+    /// Vendor Name
+    pub vendor: String,
+    // Vendor Specific
+    pub stype: Option<String>,
+    // Vendor specific
+    pub dataset: Option<String>,
+    /// Last date available in database
+    pub last_available: u64,
+    /// first date available in database
+    pub first_available: u64,
+    /// Active status
+    pub active: bool,
 }
 
 impl Instrument {
-    pub fn new(ticker: &str, name: &str, instrument_id: Option<u32>) -> Self {
+    pub fn new(
+        instrument_id: Option<u32>,
+        ticker: &str,
+        name: &str,
+        vendor: Vendors,
+        stype: Option<String>,
+        dataset: Option<String>,
+        last_available: u64,
+        first_available: u64,
+        active: bool,
+    ) -> Self {
         Self {
+            instrument_id,
             ticker: ticker.to_string(),
             name: name.to_string(),
-            instrument_id,
+            vendor: vendor.into(),
+            stype,
+            dataset,
+            last_available,
+            first_available,
+            active,
         }
     }
 }
@@ -114,12 +157,24 @@ mod tests {
         // Test
         let ticker = "AAPL";
         let name = "Apple Inc.";
-        let instrument = Instrument::new(ticker, name, None);
+        let instrument = Instrument::new(
+            None,
+            ticker,
+            name,
+            Vendors::Databento,
+            Some("continuous".to_string()),
+            Some("GLBX.MDP3".to_string()),
+            1,
+            1,
+            true,
+        );
 
         // Validate
         assert_eq!(instrument.ticker, ticker);
         assert_eq!(instrument.name, name);
         assert_eq!(instrument.instrument_id, None);
+
+        println!("{:?}", instrument);
     }
 
     #[test]
