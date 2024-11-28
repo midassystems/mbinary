@@ -14,5 +14,7 @@ pub mod records;
 pub mod symbols;
 pub mod utils;
 
+pub use error::{Error, Result};
+
 #[cfg(feature = "python")]
 pub mod python;

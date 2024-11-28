@@ -3,10 +3,24 @@ use sqlx::FromRow;
 use std::collections::HashMap;
 use std::io;
 
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, PartialEq, Eq)]
 pub enum Vendors {
     Databento,
     Yfinance,
+}
+
+impl TryFrom<&str> for Vendors {
+    type Error = crate::Error;
+
+    fn try_from(s: &str) -> crate::Result<Vendors> {
+        match s.to_lowercase().as_str() {
+            "databento" => Ok(Vendors::Databento),
+            "yfinance" => Ok(Vendors::Yfinance),
+            _ => Err(crate::Error::CustomError(
+                "Invalid vendor name.".to_string(),
+            )),
+        }
+    }
 }
 
 impl Into<String> for Vendors {
@@ -153,6 +167,26 @@ mod tests {
     use super::*;
 
     #[test]
+    fn test_vendors_into_str() {
+        // Test
+        let vendor = Vendors::Databento;
+        let vendor_str: String = vendor.into();
+
+        // Validate
+        assert_eq!("databento", vendor_str);
+    }
+
+    #[test]
+    fn test_vendors_from_str() {
+        // Test
+        let vendor_str = "databento";
+        let vendor = Vendors::try_from(vendor_str).expect("Error convert to Vendors.");
+
+        // Validate
+        assert_eq!(vendor, Vendors::Databento);
+    }
+
+    #[test]
     fn test_instrument() {
         // Test
         let ticker = "AAPL";
@@ -173,8 +207,6 @@ mod tests {
         assert_eq!(instrument.ticker, ticker);
         assert_eq!(instrument.name, name);
         assert_eq!(instrument.instrument_id, None);
-
-        println!("{:?}", instrument);
     }
 
     #[test]
