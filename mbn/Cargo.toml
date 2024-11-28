@@ -20,6 +20,7 @@ tracing = "0.1"
 tracing-subscriber = { version = "0.3", features = ["fmt", "env-filter", "json"] }
 tokio = "1.40.0"
 futures = "0.3"
+time = { version = "0.3", features = ["macros"] }
 
 [dev-dependencies]
 tokio = "1.40.0"
