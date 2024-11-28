@@ -12,6 +12,8 @@ pub enum Error {
     Decode(String),
     #[error("Conversion error: {0}")]
     Conversion(String),
+    #[error("Custom error: {0}")]
+    CustomError(String),
     #[error("Parse Error : {0}")]
     ParseError(#[from] chrono::ParseError),
     #[error("Invalid Record Type : {0}")]
