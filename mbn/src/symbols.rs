@@ -1,7 +1,9 @@
+use crate::{Error, Result};
 use serde::{Deserialize, Serialize};
 use sqlx::FromRow;
 use std::collections::HashMap;
 use std::io;
+use time::OffsetDateTime;
 
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub enum Vendors {
@@ -81,6 +83,22 @@ impl Instrument {
             first_available,
             active,
         }
+    }
+
+    /// Generic function to convert UNIX nanoseconds to OffsetDateTime
+    fn timestamp_to_datetime(&self, timestamp: u64) -> Result<OffsetDateTime> {
+        OffsetDateTime::from_unix_timestamp_nanos(timestamp as i128)
+            .map_err(|_| Error::DateError("Error: Invalid UNIX nanosecond timestamp".to_string()))
+    }
+
+    /// Retrieve `first_available` as OffsetDateTime
+    pub fn first_available_datetime(&self) -> Result<OffsetDateTime> {
+        self.timestamp_to_datetime(self.first_available)
+    }
+
+    /// Retrieve `last_available` as OffsetDateTime
+    pub fn last_available_datetime(&self) -> Result<OffsetDateTime> {
+        self.timestamp_to_datetime(self.last_available)
     }
 }
 
@@ -164,6 +182,8 @@ impl SymbolMap {
 
 #[cfg(test)]
 mod tests {
+    use time::macros::datetime;
+
     use super::*;
 
     #[test]
@@ -184,6 +204,56 @@ mod tests {
 
         // Validate
         assert_eq!(vendor, Vendors::Databento);
+    }
+
+    #[test]
+    fn test_instrument_first_offsetdatetime() {
+        let ticker = "AAPL";
+        let name = "Apple Inc.";
+        let instrument = Instrument::new(
+            None,
+            ticker,
+            name,
+            Vendors::Databento,
+            Some("continuous".to_string()),
+            Some("GLBX.MDP3".to_string()),
+            1730419200000000000,
+            1730419200000000000,
+            true,
+        );
+        // Test
+        let date = instrument
+            .first_available_datetime()
+            .expect("Error getting date");
+
+        // Validate
+        let expected_date = datetime!(2024-11-01 0:00 UTC); //OffsetDateTime::from("2024-11-01");
+        assert_eq!(expected_date, date);
+    }
+
+    #[test]
+    fn test_instrument_last_offsetdatetime() {
+        let ticker = "AAPL";
+        let name = "Apple Inc.";
+        let instrument = Instrument::new(
+            None,
+            ticker,
+            name,
+            Vendors::Databento,
+            Some("continuous".to_string()),
+            Some("GLBX.MDP3".to_string()),
+            1730419200000000000,
+            1730419200000000000,
+            true,
+        );
+        // Test
+        let date = instrument
+            .last_available_datetime()
+            .expect("Error getting date");
+
+        // Validate
+        let expected_date = datetime!(2024-11-01 0:00 UTC); //OffsetDateTime::from("2024-11-01");
+        assert_eq!(expected_date, date);
     }
 
     #[test]
