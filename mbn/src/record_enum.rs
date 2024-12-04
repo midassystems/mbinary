@@ -3,11 +3,12 @@ use crate::error::{Error, Result};
 use crate::record_ref::RecordRef;
 use crate::records::{BboMsg, Mbp1Msg, OhlcvMsg, Record, RecordHeader, TbboMsg, TradeMsg};
 use serde::Serialize;
+use std::hash::{Hash, Hasher};
 
 #[cfg(feature = "python")]
 use pyo3::prelude::*;
 
-#[derive(Debug, Clone, PartialEq, Eq, Serialize)]
+#[derive(Debug, Clone, Hash, PartialEq, Eq, Serialize)]
 pub enum RecordEnum {
     Mbp1(Mbp1Msg),
     Ohlcv(OhlcvMsg),
