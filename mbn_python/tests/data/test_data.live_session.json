@@ -1,0 +1,80 @@
+self.live_session_data={
+  "parameters": {
+      "strategy_name": "cointegrationzscore", 
+      "capital": 100000, 
+      "data_type": "BAR", 
+      "train_start": 1704862800, 
+      "train_end": 1704893000, 
+      "test_start": 1704903000, 
+      "test_end": 1705903000,  
+      "tickers": ["HE", "ZC"], 
+      "benchmark": ["^GSPC"]
+  }, 
+  "signals": [
+      {
+          "timestamp": 1704903000, 
+          "trade_instructions": [
+              {"ticker": "HE", "order_type": "MKT", "action": "SHORT", "trade_id": 1, "leg_id": 1, "weight": "-0.8689"}, 
+              {"ticker": "ZC", "order_type": "MKT", "action": "LONG", "trade_id": 1, "leg_id": 2, "weight": "0.1311"}
+          ]
+      }, 
+      {
+          "timestamp": 1704904000, 
+          "trade_instructions": [
+              {"ticker": "HE", "order_type": "MKT", "action": "SHORT", "trade_id": 1, "leg_id": 1, "weight": "-0.8689"}, 
+              {"ticker": "ZC", "order_type": "MKT", "action": "LONG", "trade_id": 1, "leg_id": 2, "weight": "0.1311"}
+          ]
+      }, 
+      {
+          "timestamp": 1704905000, 
+          "trade_instructions": [
+              {"ticker": "HE", "order_type": "MKT", "action": "SHORT", "trade_id": 1, "leg_id": 1, "weight": "-0.8689"}, 
+              {"ticker": "ZC", "order_type": "MKT", "action": "LONG", "trade_id": 1, "leg_id": 2, "weight": "0.1311"}
+          ]
+      }
+  ], 
+  "trades": [
+      {
+          "timestamp": 1704903000, 
+          "ticker": "HE", 
+          "quantity": 1, 
+          "avg_price": 91.45, 
+          "action": "SELL", 
+          "trade_value": 948444, 
+          "fees": 2.97,
+      },
+      {
+          "timestamp": 1704904000, 
+          "ticker": "ZC", 
+          "quantity": 1,  
+          "avg_price": 446.25,                                        
+          "action": "BUY", 
+          "trade_value": 234567, 
+          "fees": "2.97"
+      }
+  ], 
+  "account_data": [{
+      "start_buying_power": "2557567.234", 
+      "currency": "USD", 
+      "start_excess_liquidity": "767270.345", 
+      "start_full_available_funds": "767270.4837", 
+      "start_full_init_margin_req": "282.3937", 
+      "start_full_maint_margin_req": "282.3938", 
+      "start_futures_pnl": "-464.883", 
+      "start_net_liquidation": "767552.392", 
+      "start_total_cash_balance": "-11292.332", 
+      "start_unrealized_pnl": "0", 
+      "start_timestamp": 1704903000, 
+      "end_buying_power": "2535588.9282", 
+      "end_excess_liquidity": "762034.2928", 
+      "end_full_available_funds": "760676.292", 
+      "end_full_init_margin_req": "7074.99", 
+      "end_full_maint_margin_req": "5716.009", 
+      "end_futures_pnl": "-487.998", 
+      "end_net_liquidation": "767751.998", 
+      "end_total_cash_balance": "766935.99", 
+      "end_unrealized_pnl": "-28.99", 
+      "end_timestamp": 1704904000
+  }]
+}
+

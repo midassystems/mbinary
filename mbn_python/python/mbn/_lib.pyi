@@ -272,6 +272,7 @@ class Mbp1Msg(RecordMsg):
         ts_recv: int,
         ts_in_delta: int,
         sequence: int,
+        discrimincator: int,
         levels: List[BidAskPair],
     ) -> None: ...
     @property
@@ -298,6 +299,8 @@ class Mbp1Msg(RecordMsg):
     def ts_in_delta(self) -> int: ...
     @property
     def sequence(self) -> int: ...
+    @property
+    def discriminator(self) -> int: ...
     @property
     def levels(self) -> List[BidAskPair]: ...
 

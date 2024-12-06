@@ -118,6 +118,8 @@ pub struct Mbp1Msg {
     pub ts_recv: u64,
     pub ts_in_delta: i32,
     pub sequence: u32,
+    /// Differentiates records that are otherwise the same but not duplicates.
+    pub discriminator: u32,
     pub levels: [BidAskPair; 1],
 }
 
@@ -160,6 +162,7 @@ impl From<dbn::Mbp1Msg> for Mbp1Msg {
             ts_recv: item.ts_recv,
             ts_in_delta: item.ts_in_delta,
             sequence: item.sequence,
+            discriminator: 0,
             levels: [BidAskPair::from(item.levels[0].clone())],
         }
     }
@@ -178,6 +181,7 @@ impl From<&dbn::Mbp1Msg> for Mbp1Msg {
             ts_recv: item.ts_recv,
             ts_in_delta: item.ts_in_delta,
             sequence: item.sequence,
+            discriminator: 0,
             levels: [BidAskPair::from(item.levels[0].clone())],
         }
     }
@@ -497,6 +501,7 @@ mod tests {
             ts_recv: 123456789098765,
             ts_in_delta: 12345,
             sequence: 123456,
+            discriminator: 0,
             levels: [BidAskPair {
                 bid_px: 1,
                 ask_px: 2,
@@ -527,6 +532,7 @@ mod tests {
             ts_recv: 123456789098765,
             ts_in_delta: 12345,
             sequence: 123456,
+            discriminator: 0,
             levels: [BidAskPair {
                 bid_px: 1,
                 ask_px: 2,
@@ -557,6 +563,7 @@ mod tests {
             ts_recv: 123456789098765,
             ts_in_delta: 12345,
             sequence: 123456,
+            discriminator: 0,
             levels: [BidAskPair {
                 bid_px: 1,
                 ask_px: 2,
@@ -589,6 +596,7 @@ mod tests {
             ts_recv: 1725734014000000000,
             ts_in_delta: 12345,
             sequence: 123456,
+            discriminator: 0,
             levels: [BidAskPair {
                 bid_px: 1,
                 ask_px: 2,
@@ -643,6 +651,7 @@ mod tests {
             ts_recv: 1725734014000000000,
             ts_in_delta: 12345,
             sequence: 123456,
+            discriminator: 0,
             levels: [BidAskPair {
                 bid_px: 1,
                 ask_px: 2,

@@ -34,6 +34,21 @@ impl<W: Write> CombinedEncoder<W> {
         self.encode_records(records)?;
         Ok(())
     }
+
+    pub fn write_to_file(&self, file_path: &Path) -> io::Result<()>
+    where
+        W: AsRef<[u8]>,
+    {
+        // Open the file in append mode, create it if it doesn't exist
+        let mut file = OpenOptions::new()
+            .create(true)
+            .append(true)
+            .open(file_path)?;
+
+        file.write_all(self.writer.as_ref())?;
+        file.flush()?;
+        Ok(())
+    }
 }
 
 pub struct MetadataEncoder<W> {
@@ -99,14 +114,19 @@ impl<W: Write> RecordEncoder<W> {
 
 #[cfg(test)]
 mod tests {
+    use serial_test::serial;
+
     use super::*;
     use crate::decode::AsyncDecoder;
     use crate::enums::Schema;
     use crate::record_enum::RecordEnum;
+    use crate::records::BidAskPair;
+    use crate::records::Mbp1Msg;
     use crate::records::OhlcvMsg;
     use crate::records::RecordHeader;
     use crate::symbols::SymbolMap;
     use std::io::Cursor;
+    use std::path::PathBuf;
 
     #[tokio::test]
     async fn test_encode_record() -> anyhow::Result<()> {
@@ -243,5 +263,169 @@ mod tests {
 
         // Validate
         assert!(buffer.len() > 0);
+    }
+
+    #[tokio::test]
+    #[serial]
+    async fn test_encode_to_file_w_metadata() -> anyhow::Result<()> {
+        // Metadata
+        let mut symbol_map = SymbolMap::new();
+        symbol_map.add_instrument("AAPL", 1);
+        symbol_map.add_instrument("TSLA", 2);
+
+        let metadata = Metadata::new(Schema::Mbp1, 1234567898765, 123456765432, symbol_map);
+
+        // Record
+        let msg1 = Mbp1Msg {
+            hd: RecordHeader::new::<Mbp1Msg>(1, 1622471124),
+            price: 12345676543,
+            size: 1234543,
+            action: 0,
+            side: 0,
+            depth: 0,
+            flags: 0,
+            ts_recv: 1231,
+            ts_in_delta: 123432,
+            sequence: 23432,
+            discriminator: 0,
+            levels: [BidAskPair {
+                bid_px: 10000000,
+                ask_px: 200000,
+                bid_sz: 3000000,
+                ask_sz: 400000000,
+                bid_ct: 50000000,
+                ask_ct: 60000000,
+            }],
+        };
+        let msg2 = Mbp1Msg {
+            hd: RecordHeader::new::<Mbp1Msg>(1, 1622471124),
+            price: 12345676543,
+            size: 1234543,
+            action: 0,
+            side: 0,
+            depth: 0,
+            flags: 0,
+            ts_recv: 1231,
+            ts_in_delta: 123432,
+            sequence: 23432,
+            discriminator: 0,
+            levels: [BidAskPair {
+                bid_px: 10000000,
+                ask_px: 200000,
+                bid_sz: 3000000,
+                ask_sz: 400000000,
+                bid_ct: 50000000,
+                ask_ct: 60000000,
+            }],
+        };
+
+        let record_ref1: RecordRef = (&msg1).into();
+        let record_ref2: RecordRef = (&msg2).into();
+        let records = &[record_ref1, record_ref2];
+
+        let mut buffer = Vec::new();
+        let mut encoder = CombinedEncoder::new(&mut buffer);
+        encoder
+            .encode(&metadata, records)
+            .expect("Error on encoding");
+
+        // Test
+        let file = PathBuf::from("tests/mbp_w_metadata.bin");
+        let _ = encoder.write_to_file(&file);
+
+        // Validate
+        let mut decoder =
+            <AsyncDecoder<tokio::io::BufReader<tokio::fs::File>>>::from_file(file.clone()).await?;
+        let records = decoder.decode().await?;
+        let expected = vec![
+            RecordEnum::from_ref(record_ref1)?,
+            RecordEnum::from_ref(record_ref2)?,
+        ];
+
+        assert!(expected == records);
+
+        // Cleanup
+        if file.exists() {
+            std::fs::remove_file(&file).expect("Failed to delete the test file.");
+        }
+        Ok(())
+    }
+
+    #[tokio::test]
+    #[serial]
+    async fn test_encode_to_file_wout_metadata() -> anyhow::Result<()> {
+        // Record
+        let msg1 = Mbp1Msg {
+            hd: RecordHeader::new::<Mbp1Msg>(1, 1622471124),
+            price: 12345676543,
+            size: 1234543,
+            action: 0,
+            side: 0,
+            depth: 0,
+            flags: 0,
+            ts_recv: 1231,
+            ts_in_delta: 123432,
+            sequence: 23432,
+            discriminator: 0,
+            levels: [BidAskPair {
+                bid_px: 10000000,
+                ask_px: 200000,
+                bid_sz: 3000000,
+                ask_sz: 400000000,
+                bid_ct: 50000000,
+                ask_ct: 60000000,
+            }],
+        };
+        let msg2 = Mbp1Msg {
+            hd: RecordHeader::new::<Mbp1Msg>(1, 1622471124),
+            price: 12345676543,
+            size: 1234543,
+            action: 0,
+            side: 0,
+            depth: 0,
+            flags: 0,
+            ts_recv: 1231,
+            ts_in_delta: 123432,
+            sequence: 23432,
+            discriminator: 0,
+            levels: [BidAskPair {
+                bid_px: 10000000,
+                ask_px: 200000,
+                bid_sz: 3000000,
+                ask_sz: 400000000,
+                bid_ct: 50000000,
+                ask_ct: 60000000,
+            }],
+        };
+
+        let record_ref1: RecordRef = (&msg1).into();
+        let record_ref2: RecordRef = (&msg2).into();
+
+        let mut buffer = Vec::new();
+        let mut encoder = RecordEncoder::new(&mut buffer);
+        encoder
+            .encode_records(&[record_ref1, record_ref2])
+            .expect("Encoding failed");
+
+        // Test
+        let file = PathBuf::from("tests/mbp_wout_metadata.bin");
+        let _ = encoder.write_to_file(&file);
+
+        // Validate
+        let mut decoder =
+            <AsyncDecoder<tokio::io::BufReader<tokio::fs::File>>>::from_file(file.clone()).await?;
+        let records = decoder.decode().await?;
+        let expected = vec![
+            RecordEnum::from_ref(record_ref1)?,
+            RecordEnum::from_ref(record_ref2)?,
+        ];
+
+        assert!(expected == records);
+
+        // Cleanup
+        if file.exists() {
+            std::fs::remove_file(&file).expect("Failed to delete the test file.");
+        }
+        Ok(())
     }
 }

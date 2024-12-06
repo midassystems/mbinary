@@ -3,7 +3,7 @@ use crate::error::{Error, Result};
 use crate::record_ref::RecordRef;
 use crate::records::{BboMsg, Mbp1Msg, OhlcvMsg, Record, RecordHeader, TbboMsg, TradeMsg};
 use serde::Serialize;
-use std::hash::{Hash, Hasher};
+use std::hash::Hash;
 
 #[cfg(feature = "python")]
 use pyo3::prelude::*;
@@ -187,6 +187,7 @@ mod tests {
             ts_recv: 123456789098765,
             ts_in_delta: 12345,
             sequence: 123456,
+            discriminator: 0,
             levels: [BidAskPair {
                 bid_px: 1,
                 ask_px: 2,
@@ -248,6 +249,7 @@ mod tests {
             ts_recv: 1231,
             ts_in_delta: 123432,
             sequence: 23432,
+            discriminator: 0,
             levels: [BidAskPair {
                 bid_px: 10000000,
                 ask_px: 200000,
@@ -303,6 +305,7 @@ mod tests {
             ts_recv: 1231,
             ts_in_delta: 123432,
             sequence: 23432,
+            discriminator: 0,
             levels: [BidAskPair {
                 bid_px: 10000000,
                 ask_px: 200000,
