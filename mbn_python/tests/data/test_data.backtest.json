@@ -1,0 +1,118 @@
+{
+  "backtest_name": "testing123",
+  "parameters": {
+    "strategy_name": "cointegrationzscore",
+    "capital": 100000,
+    "data_type": "BAR",
+    "schema": "ohlcv-1h",
+    "train_start": 1704862800,
+    "train_end": 1704893000,
+    "test_start": 1704903000,
+    "test_end": 1705903000,
+    "tickers": [
+      "AAPL"
+    ],
+    "benchmark": [
+      "^GSPC"
+    ]
+  },
+  "static_stats": {
+    "total_trades": 153,
+    "total_winning_trades": 83,
+    "total_losing_trades": 70,
+    "avg_profit": 7034.166,
+    "avg_profit_percent": 4.4286,
+    "avg_gain": 54631.6735,
+    "avg_gain_percent": 4.4286,
+    "avg_loss": -49402.8786,
+    "avg_loss_percent": 0.0,
+    "profitability_ratio": 0.5425,
+    "profit_factor": 1.3112,
+    "profit_and_loss_ratio": 1.1058,
+    "total_fees": -260.1,
+    "net_profit": 4277.4,
+    "beginning_equity": 1000000.0,
+    "ending_equity": 1004277.4,
+    "total_return": 0.004277,
+    "daily_standard_deviation_percentage": 4.261882,
+    "annual_standard_deviation_percentage": 67.655276,
+    "max_drawdown_percentage_period": -0.013609,
+    "max_drawdown_percentage_daily": -127.0,
+    "sharpe_ratio": 6.771709,
+    "sortino_ratio": 13.604839
+  },
+  "period_timeseries_stats": [
+    {
+      "timestamp": 1704903000,
+      "equity_value": 10000.0,
+      "percent_drawdown": 9.9,
+      "cumulative_return": -0.09,
+      "period_return": 79.9,
+      "daily_strategy_return": "0.330",
+      "daily_benchmark_return": "0.00499"
+    },
+    {
+      "timestamp": 1704904000,
+      "equity_value": 10000.0,
+      "percent_drawdown": 9.9,
+      "cumulative_return": -0.09,
+      "period_return": 79.9,
+      "daily_strategy_return": "0.087",
+      "daily_benchmark_return": "0.009"
+    }
+  ],
+  "daily_timeseries_stats": [
+    {
+      "timestamp": 1704903000,
+      "equity_value": 10000.0,
+      "percent_drawdown": 9.9,
+      "cumulative_return": -0.09,
+      "period_return": 79.9,
+      "daily_strategy_return": "0.330",
+      "daily_benchmark_return": "0.00499"
+    },
+    {
+      "timestamp": 1704904000,
+      "equity_value": 10000.0,
+      "percent_drawdown": 9.9,
+      "cumulative_return": -0.09,
+      "period_return": 79.9,
+      "daily_strategy_return": "0.087",
+      "daily_benchmark_return": "0.009"
+    }
+  ],
+  "trades": [
+    {
+      "trade_id": 1,
+      "leg_id": 1,
+      "timestamp": 1704903000,
+      "ticker": "AAPL",
+      "quantity": 4,
+      "avg_price": 130.74,
+      "trade_value": -522.96,
+      "action": "BUY",
+      "fees": 0.0
+    }
+  ],
+  "signals": [
+    {
+      "timestamp": 1704903000,
+      "trade_instructions": [
+        {
+          "ticker": "AAPL",
+          "action": "BUY",
+          "trade_id": 1,
+          "leg_id": 1,
+          "weight": 0.05
+        },
+        {
+          "ticker": "MSFT",
+          "action": "SELL",
+          "trade_id": 1,
+          "leg_id": 2,
+          "weight": 0.05
+        }
+      ]
+    }
+  ]
+}

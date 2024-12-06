@@ -29,6 +29,7 @@ fn test_integration_test() -> anyhow::Result<()> {
         ts_recv: 123456789098765,
         ts_in_delta: 12345,
         sequence: 123456,
+        discriminator: 0,
         levels: [BidAskPair {
             bid_px: 1,
             ask_px: 2,
@@ -50,6 +51,7 @@ fn test_integration_test() -> anyhow::Result<()> {
         ts_recv: 123456789098765,
         ts_in_delta: 12345,
         sequence: 123456,
+        discriminator: 1,
         levels: [BidAskPair {
             bid_px: 1,
             ask_px: 2,

@@ -54,6 +54,7 @@ impl Mbp1Msg {
         ts_recv: u64,
         ts_in_delta: i32,
         sequence: u32,
+        discriminator: u32,
         levels: [BidAskPair; 1],
     ) -> Self {
         Mbp1Msg {
@@ -67,6 +68,7 @@ impl Mbp1Msg {
             ts_recv,
             ts_in_delta,
             sequence,
+            discriminator,
             levels,
         }
     }
@@ -126,6 +128,7 @@ impl Mbp1Msg {
         dict.set_item("ts_recv", self.ts_recv).unwrap();
         dict.set_item("ts_in_delta", self.ts_in_delta).unwrap();
         dict.set_item("sequence", self.sequence).unwrap();
+        dict.set_item("discriminator", self.discriminator).unwrap();
         dict.set_item("bid_px", self.levels[0].bid_px).unwrap();
         dict.set_item("ask_px", self.levels[0].ask_px).unwrap();
         dict.set_item("bid_sz", self.levels[0].bid_sz).unwrap();
