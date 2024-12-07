@@ -35,15 +35,20 @@ impl<W: Write> CombinedEncoder<W> {
         Ok(())
     }
 
-    pub fn write_to_file(&self, file_path: &Path) -> io::Result<()>
+    pub fn write_to_file(&self, file_path: &Path, append: bool) -> io::Result<()>
     where
         W: AsRef<[u8]>,
     {
-        // Open the file in append mode, create it if it doesn't exist
-        let mut file = OpenOptions::new()
-            .create(true)
-            .append(true)
-            .open(file_path)?;
+        let mut options = OpenOptions::new();
+        options.create(true);
+
+        if append {
+            options.append(true);
+        } else {
+            options.write(true).truncate(true);
+        }
+
+        let mut file = options.open(file_path)?;
 
         file.write_all(self.writer.as_ref())?;
         file.flush()?;
@@ -96,15 +101,20 @@ impl<W: Write> RecordEncoder<W> {
         Ok(())
     }
 
-    pub fn write_to_file(&self, file_path: &Path) -> io::Result<()>
+    pub fn write_to_file(&self, file_path: &Path, append: bool) -> io::Result<()>
     where
         W: AsRef<[u8]>,
     {
-        // Open the file in append mode, create it if it doesn't exist
-        let mut file = OpenOptions::new()
-            .create(true)
-            .append(true)
-            .open(file_path)?;
+        let mut options = OpenOptions::new();
+        options.create(true);
+
+        if append {
+            options.append(true);
+        } else {
+            options.write(true).truncate(true);
+        }
+
+        let mut file = options.open(file_path)?;
 
         file.write_all(self.writer.as_ref())?;
         file.flush()?;
@@ -331,7 +341,7 @@ mod tests {
 
         // Test
         let file = PathBuf::from("tests/mbp_w_metadata.bin");
-        let _ = encoder.write_to_file(&file);
+        let _ = encoder.write_to_file(&file, false);
 
         // Validate
         let mut decoder =
@@ -353,6 +363,7 @@ mod tests {
 
     #[tokio::test]
     #[serial]
+    // #[ignore]
     async fn test_encode_to_file_wout_metadata() -> anyhow::Result<()> {
         // Record
         let msg1 = Mbp1Msg {
@@ -409,7 +420,7 @@ mod tests {
 
         // Test
         let file = PathBuf::from("tests/mbp_wout_metadata.bin");
-        let _ = encoder.write_to_file(&file);
+        let _ = encoder.write_to_file(&file, false);
 
         // Validate
         let mut decoder =
