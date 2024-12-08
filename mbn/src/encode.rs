@@ -4,6 +4,7 @@ use crate::METADATA_LENGTH;
 use std::fs::OpenOptions;
 use std::io::{self, Write};
 use std::path::Path;
+use tokio::io::{AsyncWrite, AsyncWriteExt};
 
 pub struct CombinedEncoder<W> {
     writer: W,
@@ -122,6 +123,58 @@ impl<W: Write> RecordEncoder<W> {
     }
 }
 
+// -- Aysnc --
+
+pub struct AsyncRecordEncoder<W> {
+    writer: W,
+}
+
+impl<W> AsyncRecordEncoder<W>
+where
+    W: AsyncWrite + Unpin,
+{
+    pub fn new(writer: W) -> Self {
+        AsyncRecordEncoder { writer }
+    }
+
+    pub async fn encode_record<'a>(&mut self, record: &'a RecordRef<'a>) -> tokio::io::Result<()> {
+        let bytes = record.as_ref();
+        self.writer.write_all(bytes).await?;
+        Ok(())
+    }
+
+    pub async fn encode_records<'a>(
+        &mut self,
+        records: &'a [RecordRef<'a>],
+    ) -> tokio::io::Result<()> {
+        for record in records {
+            self.encode_record(record).await?;
+        }
+        self.writer.flush().await?;
+        Ok(())
+    }
+    pub async fn write_to_file(
+        file_path: &Path,
+        append: bool,
+        buffer: &[u8],
+    ) -> tokio::io::Result<()> {
+        let mut options = tokio::fs::OpenOptions::new();
+        options.create(true);
+
+        if append {
+            options.append(true);
+        } else {
+            options.write(true).truncate(true);
+        }
+
+        let mut file = options.open(file_path).await?;
+
+        file.write_all(buffer).await?;
+        file.flush().await?;
+        Ok(())
+    }
+}
+
 #[cfg(test)]
 mod tests {
     use serial_test::serial;
@@ -137,6 +190,80 @@ mod tests {
     use crate::symbols::SymbolMap;
     use std::io::Cursor;
     use std::path::PathBuf;
+
+    #[tokio::test]
+    async fn test_async_encode_record() -> anyhow::Result<()> {
+        let ohlcv_msg = OhlcvMsg {
+            hd: RecordHeader::new::<OhlcvMsg>(1, 1622471124),
+            open: 100,
+            high: 200,
+            low: 50,
+            close: 150,
+            volume: 1000,
+        };
+        let record_ref: RecordRef = (&ohlcv_msg).into();
+
+        // Test
+        let mut buffer = Vec::new();
+        let mut encoder = AsyncRecordEncoder::new(&mut buffer);
+        encoder
+            .encode_record(&record_ref)
+            .await
+            .expect("Encoding failed");
+
+        // Validate
+        let cursor = Cursor::new(buffer);
+        let mut decoder = AsyncDecoder::new(cursor).await?;
+        let record_ref = decoder.decode_ref().await?.unwrap();
+        let decoded_record: &OhlcvMsg = record_ref.get().unwrap();
+        assert_eq!(decoded_record, &ohlcv_msg);
+
+        Ok(())
+    }
+
+    #[tokio::test]
+    async fn test_async_encode_records() -> anyhow::Result<()> {
+        let ohlcv_msg1 = OhlcvMsg {
+            hd: RecordHeader::new::<OhlcvMsg>(1, 1622471124),
+            open: 100000000000,
+            high: 200000000000,
+            low: 50000000000,
+            close: 150000000000,
+            volume: 1000,
+        };
+
+        let ohlcv_msg2 = OhlcvMsg {
+            hd: RecordHeader::new::<OhlcvMsg>(2, 1622471125),
+            open: 110000000000,
+            high: 210000000000,
+            low: 55000000000,
+            close: 155000000000,
+            volume: 1100,
+        };
+
+        let record_ref1: RecordRef = (&ohlcv_msg1).into();
+        let record_ref2: RecordRef = (&ohlcv_msg2).into();
+
+        // Test
+        let mut buffer = Vec::new();
+        let mut encoder = AsyncRecordEncoder::new(&mut buffer);
+        encoder
+            .encode_records(&[record_ref1, record_ref2])
+            .await
+            .expect("Encoding failed");
+        // println!("{:?}", buffer);
+
+        // Validate
+        let cursor = Cursor::new(buffer);
+        let mut decoder = AsyncDecoder::new(cursor).await?;
+        let decoded_records = decoder.decode().await?;
+
+        assert_eq!(decoded_records.len(), 2);
+        assert_eq!(decoded_records[0], RecordEnum::Ohlcv(ohlcv_msg1));
+        assert_eq!(decoded_records[1], RecordEnum::Ohlcv(ohlcv_msg2));
+
+        Ok(())
+    }
 
     #[tokio::test]
     async fn test_encode_record() -> anyhow::Result<()> {
