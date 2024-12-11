@@ -22,6 +22,7 @@ from mbn import (
     SignalInstructions,
     AccountSummary,
     LiveData,
+    PyRecordEncoder,
 )
 from pandas import pandas
 
@@ -949,6 +950,30 @@ class IntegrationTests(unittest.TestCase):
         # Test
         ts_event = handle_msg(msg)
         self.assertEqual(ts_event, msg.ts_event)
+
+    def test_encode(self):
+        pair = BidAskPair(1, 2, 3, 4, 5, 6)
+        msg = Mbp1Msg(
+            1,
+            123456765432,
+            1,
+            2,
+            Action.ADD,
+            Side.ASK,
+            0,
+            0,
+            3,
+            4,
+            5,
+            0,
+            [pair],
+        )
+
+        encoder = PyRecordEncoder()
+        encoder.encode_records([msg])
+        binary = encoder.get_encoded_data()
+
+        self.assertTrue(len(binary) > 0)
 
     def test_buffer_store_to_file(self):
 

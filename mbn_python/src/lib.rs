@@ -6,6 +6,7 @@ use mbn::{
     live::{AccountSummary, LiveData},
     metadata::Metadata,
     python::buffer::BufferStore,
+    python::encode::PyRecordEncoder,
     python::records::RecordMsg,
     records::{BboMsg, BidAskPair, Mbp1Msg, OhlcvMsg, RecordHeader, TbboMsg, TradeMsg},
     symbols::SymbolMap,
@@ -45,6 +46,7 @@ fn python_mbn(_py: Python<'_>, m: &Bound<PyModule>) -> PyResult<()> {
     checked_add_class::<SignalInstructions>(m)?;
     checked_add_class::<LiveData>(m)?;
     checked_add_class::<AccountSummary>(m)?;
+    checked_add_class::<PyRecordEncoder>(m)?;
 
     Ok(())
 }
