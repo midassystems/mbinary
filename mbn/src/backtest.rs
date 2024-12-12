@@ -26,10 +26,10 @@ pub struct Parameters {
     pub capital: i64,
     pub schema: String,
     pub data_type: String,
-    pub train_start: i64,
-    pub train_end: i64,
-    pub test_start: i64,
-    pub test_end: i64,
+    pub start: i64,
+    pub end: i64,
+    // pub test_start: i64,
+    // pub test_end: i64,
     pub tickers: Vec<String>,
 }
 

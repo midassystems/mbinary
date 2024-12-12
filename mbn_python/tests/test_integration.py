@@ -45,10 +45,8 @@ class IntegrationTests(unittest.TestCase):
             capital=10000,
             schema="Ohlcv-1s",
             data_type="BAR",
-            train_start=1730160814000000000,
-            train_end=1730160814000000000,
-            test_start=1730160814000000000,
-            test_end=1730160814000000000,
+            start=1730160814000000000,
+            end=1730160814000000000,
             tickers=["test", "test2"],
         )
 
@@ -199,10 +197,8 @@ class IntegrationTests(unittest.TestCase):
                 "capital": 10000,
                 "schema": "Ohlcv-1s",
                 "data_type": "BAR",
-                "train_start": 1730160814000000000,
-                "train_end": 1730160814000000000,
-                "test_start": 1730160814000000000,
-                "test_end": 1730160814000000000,
+                "start": 1730160814000000000,
+                "end": 1730160814000000000,
                 "tickers": ["test", "test2"],
             },
             "account": {
@@ -313,10 +309,8 @@ class IntegrationTests(unittest.TestCase):
                 "capital": 10000,
                 "schema": "Ohlcv-1s",
                 "data_type": "BAR",
-                "train_start": 1730160814000000000,
-                "train_end": 1730160814000000000,
-                "test_start": 1730160814000000000,
-                "test_end": 1730160814000000000,
+                "start": 1730160814000000000,
+                "end": 1730160814000000000,
                 "tickers": ["test", "test2"],
             },
             "static_stats": {
@@ -442,10 +436,8 @@ class IntegrationTests(unittest.TestCase):
         capital = 10000
         schema = "Ohlcv-1s"
         data_type = "BAR"
-        train_start = 1730160814000000000
-        train_end = 1730160814000000000
-        test_start = 1730160814000000000
-        test_end = 1730160814000000000
+        start = 1730160814000000000
+        end = 1730160814000000000
         tickers = ["test", "test2"]
 
         # Test
@@ -454,10 +446,8 @@ class IntegrationTests(unittest.TestCase):
             capital,
             schema,
             data_type,
-            train_start,
-            train_end,
-            test_start,
-            test_end,
+            start,
+            end,
             tickers,
         )
 
@@ -467,10 +457,8 @@ class IntegrationTests(unittest.TestCase):
             "capital": 10000,
             "schema": "Ohlcv-1s",
             "data_type": "BAR",
-            "train_start": 1730160814000000000,
-            "train_end": 1730160814000000000,
-            "test_start": 1730160814000000000,
-            "test_end": 1730160814000000000,
+            "start": 1730160814000000000,
+            "end": 1730160814000000000,
             "tickers": ["test", "test2"],
         }
         self.assertEqual(expected, parameters.__dict__())

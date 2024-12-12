@@ -100,10 +100,8 @@ impl Parameters {
         capital: i64,
         schema: String,
         data_type: String,
-        train_start: i64,
-        train_end: i64,
-        test_start: i64,
-        test_end: i64,
+        start: i64,
+        end: i64,
         tickers: Vec<String>,
     ) -> Self {
         Parameters {
@@ -111,10 +109,8 @@ impl Parameters {
             capital,
             schema,
             data_type,
-            train_start,
-            train_end,
-            test_start,
-            test_end,
+            start,
+            end,
             tickers,
         }
     }
@@ -124,10 +120,8 @@ impl Parameters {
         dict.set_item("capital", self.capital).unwrap();
         dict.set_item("schema", &self.schema).unwrap();
         dict.set_item("data_type", &self.data_type).unwrap();
-        dict.set_item("train_start", self.train_start).unwrap();
-        dict.set_item("train_end", self.train_end).unwrap();
-        dict.set_item("test_start", self.test_start).unwrap();
-        dict.set_item("test_end", self.test_end).unwrap();
+        dict.set_item("start", self.start).unwrap();
+        dict.set_item("end", self.end).unwrap();
         dict.set_item("tickers", &self.tickers).unwrap();
         dict.into()
     }
