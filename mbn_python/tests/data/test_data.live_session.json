@@ -3,10 +3,8 @@ self.live_session_data={
       "strategy_name": "cointegrationzscore", 
       "capital": 100000, 
       "data_type": "BAR", 
-      "train_start": 1704862800, 
-      "train_end": 1704893000, 
-      "test_start": 1704903000, 
-      "test_end": 1705903000,  
+      "start": 1704862800, 
+      "end": 1704893000, 
       "tickers": ["HE", "ZC"], 
       "benchmark": ["^GSPC"]
   }, 

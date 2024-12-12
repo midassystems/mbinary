@@ -397,10 +397,8 @@ class Parameters:
         capital: int,
         schema: str,
         data_type: str,
-        train_start: int,
-        train_end: int,
-        test_start: int,
-        test_end: int,
+        start: int,
+        end: int,
         tickers: List[str],
     ) -> None: ...
 
