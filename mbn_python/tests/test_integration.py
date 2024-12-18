@@ -68,6 +68,7 @@ class IntegrationTests(unittest.TestCase):
             beginning_equity=12343234323,
             ending_equity=12343234,
             total_return=234532345,
+            annualized_return=234532345,
             daily_standard_deviation_percentage=23453234,
             annual_standard_deviation_percentage=34543443,
             max_drawdown_percentage_period=234543234,
@@ -119,6 +120,7 @@ class IntegrationTests(unittest.TestCase):
             quantity=12,
             avg_price=2345432,
             trade_value=12343234,
+            trade_cost=12343234,
             action="BUY",
             fees=2343,
         )
@@ -131,6 +133,7 @@ class IntegrationTests(unittest.TestCase):
             quantity=12,
             avg_price=2345432,
             trade_value=12343234,
+            trade_cost=12343234,
             action="BUY",
             fees=2343,
         )
@@ -233,6 +236,7 @@ class IntegrationTests(unittest.TestCase):
                     "quantity": 12,
                     "avg_price": 2345432,
                     "trade_value": 12343234,
+                    "trade_cost": 12343234,
                     "action": "BUY",
                     "fees": 2343,
                 },
@@ -244,6 +248,7 @@ class IntegrationTests(unittest.TestCase):
                     "quantity": 12,
                     "avg_price": 2345432,
                     "trade_value": 12343234,
+                    "trade_cost": 12343234,
                     "action": "BUY",
                     "fees": 2343,
                 },
@@ -331,6 +336,7 @@ class IntegrationTests(unittest.TestCase):
                 "beginning_equity": 12343234323,
                 "ending_equity": 12343234,
                 "total_return": 234532345,
+                "annualized_return": 234532345,
                 "daily_standard_deviation_percentage": 23453234,
                 "annual_standard_deviation_percentage": 34543443,
                 "max_drawdown_percentage_daily": 23432345,
@@ -379,6 +385,7 @@ class IntegrationTests(unittest.TestCase):
                     "quantity": 12,
                     "avg_price": 2345432,
                     "trade_value": 12343234,
+                    "trade_cost": 12343234,
                     "action": "BUY",
                     "fees": 2343,
                 },
@@ -390,6 +397,7 @@ class IntegrationTests(unittest.TestCase):
                     "quantity": 12,
                     "avg_price": 2345432,
                     "trade_value": 12343234,
+                    "trade_cost": 12343234,
                     "action": "BUY",
                     "fees": 2343,
                 },
@@ -481,6 +489,7 @@ class IntegrationTests(unittest.TestCase):
         beginning_equity = 12343234323
         ending_equity = 12343234
         total_return = 234532345
+        annualized_return = 234532345
         daily_standard_deviation_percentage = 23453234
         annual_standard_deviation_percentage = 34543443
         max_drawdown_percentage_period = 234543234
@@ -507,6 +516,7 @@ class IntegrationTests(unittest.TestCase):
             beginning_equity,
             ending_equity,
             total_return,
+            annualized_return,
             daily_standard_deviation_percentage,
             annual_standard_deviation_percentage,
             max_drawdown_percentage_period,
@@ -534,6 +544,7 @@ class IntegrationTests(unittest.TestCase):
             "beginning_equity": 12343234323,
             "ending_equity": 12343234,
             "total_return": 234532345,
+            "annualized_return": 234532345,
             "daily_standard_deviation_percentage": 23453234,
             "annual_standard_deviation_percentage": 34543443,
             "max_drawdown_percentage_daily": 23432345,
@@ -577,6 +588,7 @@ class IntegrationTests(unittest.TestCase):
         quantity = 12
         avg_price = 2345432
         trade_value = 12343234
+        trade_cost = 12343234
         action = "BUY"
         fees = 2343
 
@@ -589,6 +601,7 @@ class IntegrationTests(unittest.TestCase):
             quantity,
             avg_price,
             trade_value,
+            trade_cost,
             action,
             fees,
         )
@@ -602,6 +615,7 @@ class IntegrationTests(unittest.TestCase):
             "quantity": 12,
             "avg_price": 2345432,
             "trade_value": 12343234,
+            "trade_cost": 12343234,
             "action": "BUY",
             "fees": 2343,
         }

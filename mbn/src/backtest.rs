@@ -28,8 +28,6 @@ pub struct Parameters {
     pub data_type: String,
     pub start: i64,
     pub end: i64,
-    // pub test_start: i64,
-    // pub test_end: i64,
     pub tickers: Vec<String>,
 }
 
@@ -54,6 +52,7 @@ pub struct StaticStats {
     pub beginning_equity: i64,                     // Scaled by 1e9
     pub ending_equity: i64,                        // Scaled by 1e9
     pub total_return: i64,                         // Scaled by 1e9
+    pub annualized_return: i64,                    // Scaled by 1e9
     pub daily_standard_deviation_percentage: i64,  // Scaled by 1e9
     pub annual_standard_deviation_percentage: i64, // Scaled by 1e9
     pub max_drawdown_percentage_period: i64,       // Scaled by 1e9
@@ -84,6 +83,7 @@ pub struct Trades {
     pub quantity: i64,    // Scaled by 1e9
     pub avg_price: i64,   // Scaled by 1e9
     pub trade_value: i64, // Scaled by 1e9
+    pub trade_cost: i64,  // Scaled by 1e9
     pub action: String,
     pub fees: i64, // Scaled by 1e9
 }
