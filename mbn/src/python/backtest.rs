@@ -147,6 +147,7 @@ impl StaticStats {
         beginning_equity: i64,
         ending_equity: i64,
         total_return: i64,
+        annualized_return: i64,
         daily_standard_deviation_percentage: i64,
         annual_standard_deviation_percentage: i64,
         max_drawdown_percentage_period: i64,
@@ -172,6 +173,7 @@ impl StaticStats {
             beginning_equity,
             ending_equity,
             total_return,
+            annualized_return,
             daily_standard_deviation_percentage,
             annual_standard_deviation_percentage,
             max_drawdown_percentage_period,
@@ -208,6 +210,8 @@ impl StaticStats {
             .unwrap();
         dict.set_item("ending_equity", &self.ending_equity).unwrap();
         dict.set_item("total_return", &self.total_return).unwrap();
+        dict.set_item("annualized_return", &self.annualized_return)
+            .unwrap();
         dict.set_item(
             "daily_standard_deviation_percentage",
             &self.daily_standard_deviation_percentage,
@@ -279,6 +283,7 @@ impl Trades {
         quantity: i64,
         avg_price: i64,
         trade_value: i64,
+        trade_cost: i64,
         action: String,
         fees: i64,
     ) -> Self {
@@ -290,6 +295,7 @@ impl Trades {
             quantity,
             avg_price,
             trade_value,
+            trade_cost,
             action,
             fees,
         }
@@ -303,6 +309,7 @@ impl Trades {
         dict.set_item("quantity", self.quantity).unwrap();
         dict.set_item("avg_price", self.avg_price).unwrap();
         dict.set_item("trade_value", self.trade_value).unwrap();
+        dict.set_item("trade_cost", self.trade_cost).unwrap();
         dict.set_item("action", &self.action).unwrap();
         dict.set_item("fees", self.fees).unwrap();
         dict.into()
