@@ -9,8 +9,8 @@ use std::io::{Cursor, Read};
 /// Helper function to decode a vector with length prepended
 fn decode_vector<T, R>(cursor: &mut std::io::Cursor<R>) -> Result<Vec<T>>
 where
-    R: AsRef<[u8]> + Read, // Ensure R can be referenced as &[u8]
-    T: Decode<R>,          // T must implement Decode<R>
+    R: AsRef<[u8]>, // Ensure R can be referenced as &[u8]
+    T: Decode<R>,   // T must implement Decode<R>
 {
     // Read the vector length (u32)
     let mut length_buf = [0u8; 4];
@@ -33,7 +33,7 @@ pub struct BacktestDecoder<R> {
     // backtest: BacktestData
 }
 
-impl<R: AsRef<[u8]> + Read> BacktestDecoder<R> {
+impl<R: AsRef<[u8]>> BacktestDecoder<R> {
     pub fn new(reader: R) -> Self {
         BacktestDecoder {
             cursor: Cursor::new(reader),
