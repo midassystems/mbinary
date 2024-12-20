@@ -4,17 +4,17 @@ use crate::backtest::Signals;
 use crate::backtest::TimeseriesStats;
 use crate::backtest::Trades;
 use crate::{Error, Result};
-use std::io::{Cursor, Read};
+use std::io::Read;
 
 /// Helper function to decode a vector with length prepended
-fn decode_vector<T, R>(cursor: &mut std::io::Cursor<R>) -> Result<Vec<T>>
+fn decode_vector<T, R>(reader: &mut R) -> Result<Vec<T>>
 where
-    R: AsRef<[u8]>, // Ensure R can be referenced as &[u8]
-    T: Decode<R>,   // T must implement Decode<R>
+    R: Read,      // Now works with anything implementing Read
+    T: Decode<R>, // T must implement Decode<R>
 {
     // Read the vector length (u32)
     let mut length_buf = [0u8; 4];
-    cursor
+    reader
         .read_exact(&mut length_buf)
         .map_err(|_| Error::CustomError("Failed to read vector length".to_string()))?;
     let length = u32::from_le_bytes(length_buf) as usize;
@@ -22,22 +22,19 @@ where
     // Decode each element in the vector
     let mut result = Vec::with_capacity(length);
     for _ in 0..length {
-        result.push(T::decode(cursor)?);
+        result.push(T::decode(reader)?);
     }
 
     Ok(result)
 }
 
-pub struct BacktestDecoder<R> {
-    cursor: Cursor<R>,
-    // backtest: BacktestData
+pub struct BacktestDecoder<R: Read> {
+    cursor: R,
 }
 
-impl<R: AsRef<[u8]>> BacktestDecoder<R> {
+impl<R: Read> BacktestDecoder<R> {
     pub fn new(reader: R) -> Self {
-        BacktestDecoder {
-            cursor: Cursor::new(reader),
-        }
+        BacktestDecoder { cursor: reader }
     }
 
     pub fn decode_metadata(&mut self) -> Result<BacktestMetaData> {

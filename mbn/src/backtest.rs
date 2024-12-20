@@ -2,10 +2,7 @@ use crate::{Error, Result};
 use bytemuck;
 use serde::{Deserialize, Serialize};
 use sqlx::FromRow;
-use std::{
-    io::{Cursor, Read},
-    u16,
-};
+use std::{io::Read, u16};
 
 #[cfg(feature = "python")]
 use pyo3::pyclass;
@@ -18,7 +15,7 @@ fn write_string(buffer: &mut Vec<u8>, string: &str) {
 }
 
 /// Helper to read a 2-byte length-prefixed UTF-8 string
-fn read_string<R: AsRef<[u8]>>(cursor: &mut Cursor<R>) -> Result<String> {
+fn read_string<R: Read>(cursor: &mut R) -> Result<String> {
     let mut len_buf = [0u8; 2]; // Buffer to store the 2-byte length
     cursor
         .read_exact(&mut len_buf)
@@ -34,7 +31,7 @@ fn read_string<R: AsRef<[u8]>>(cursor: &mut Cursor<R>) -> Result<String> {
 }
 
 /// Helper function to read fixed-size data (e.g., i32, i64) from the cursor.
-fn read_fixed<T: Sized + Copy, R: AsRef<[u8]>>(cursor: &mut std::io::Cursor<R>) -> Result<T>
+fn read_fixed<T: Sized + Copy, R: Read>(cursor: &mut R) -> Result<T>
 where
     T: bytemuck::Pod + bytemuck::Zeroable,
 {
@@ -62,8 +59,8 @@ pub trait Encode {
     fn encode(&self, buffer: &mut Vec<u8>);
 }
 
-pub trait Decode<R: AsRef<[u8]>>: Sized {
-    fn decode(cursor: &mut Cursor<R>) -> Result<Self>;
+pub trait Decode<R: Read>: Sized {
+    fn decode(cursor: &mut R) -> Result<Self>;
 }
 
 #[repr(C)]
@@ -115,8 +112,8 @@ impl Encode for BacktestMetaData {
     }
 }
 
-impl<R: AsRef<[u8]>> Decode<R> for BacktestMetaData {
-    fn decode(cursor: &mut Cursor<R>) -> Result<Self> {
+impl<R: Read> Decode<R> for BacktestMetaData {
+    fn decode(cursor: &mut R) -> Result<Self> {
         let backtest_id: u16 = read_fixed(cursor)?;
         let backtest_name: String = read_string(cursor)?;
         let parameters: Parameters = Parameters::decode(cursor)?;
@@ -163,8 +160,8 @@ impl Encode for Parameters {
     }
 }
 
-impl<R: AsRef<[u8]>> Decode<R> for Parameters {
-    fn decode(cursor: &mut Cursor<R>) -> Result<Self> {
+impl<R: Read> Decode<R> for Parameters {
+    fn decode(cursor: &mut R) -> Result<Self> {
         // fn decode(cursor: &mut Cursor<&[u8]>) -> Result<Self> {
         // let mut cursor = std::io::Cursor::new(buffer);
 
@@ -241,17 +238,8 @@ impl Encode for StaticStats {
     }
 }
 
-impl<R: AsRef<[u8]>> Decode<R> for StaticStats {
-    fn decode(cursor: &mut Cursor<R>) -> Result<Self> {
-        // fn decode(cursor: &mut std::io::Cursor<&[u8]>) -> Result<Self> {
-        // Ensure there's enough remaining data in the cursor
-        let remaining = cursor.get_ref().as_ref().len() - cursor.position() as usize;
-        if remaining < std::mem::size_of::<StaticStats>() {
-            return Err(Error::CustomError(
-                "Buffer is too small to contain StaticStats".to_string(),
-            ));
-        }
-
+impl<R: Read> Decode<R> for StaticStats {
+    fn decode(cursor: &mut R) -> Result<Self> {
         // Read the required bytes into a temporary buffer
         let mut buffer = vec![0u8; std::mem::size_of::<StaticStats>()];
         cursor.read_exact(&mut buffer)?;
@@ -287,16 +275,8 @@ impl Encode for TimeseriesStats {
     }
 }
 
-impl<R: AsRef<[u8]>> Decode<R> for TimeseriesStats {
-    fn decode(cursor: &mut Cursor<R>) -> Result<Self> {
-        // Ensure there's enough remaining data in the cursor
-        let remaining = cursor.get_ref().as_ref().len() - cursor.position() as usize;
-        if remaining < std::mem::size_of::<TimeseriesStats>() {
-            return Err(Error::CustomError(
-                "Buffer is too small to contain TimeseriesStats".to_string(),
-            ));
-        }
-
+impl<R: Read> Decode<R> for TimeseriesStats {
+    fn decode(cursor: &mut R) -> Result<Self> {
         // Read the required bytes into a temporary buffer
         let mut buffer = vec![0u8; std::mem::size_of::<TimeseriesStats>()];
         cursor.read_exact(&mut buffer)?;
@@ -340,8 +320,8 @@ impl Encode for Trades {
     }
 }
 
-impl<R: AsRef<[u8]>> Decode<R> for Trades {
-    fn decode(cursor: &mut Cursor<R>) -> Result<Self> {
+impl<R: Read> Decode<R> for Trades {
+    fn decode(cursor: &mut R) -> Result<Self> {
         let trade_id: i32 = read_fixed(cursor)?;
         let leg_id: i32 = read_fixed(cursor)?;
         let timestamp: i64 = read_fixed(cursor)?;
@@ -390,8 +370,8 @@ impl Encode for Signals {
     }
 }
 
-impl<R: AsRef<[u8]>> Decode<R> for Signals {
-    fn decode(cursor: &mut Cursor<R>) -> Result<Self> {
+impl<R: Read> Decode<R> for Signals {
+    fn decode(cursor: &mut R) -> Result<Self> {
         let timestamp: i64 = read_fixed(cursor)?;
 
         // Decode tickers length, 4 b/c stored as u32(4 bytes)
@@ -438,8 +418,8 @@ impl Encode for SignalInstructions {
         write_string(buffer, &self.aux_price);
     }
 }
-impl<R: AsRef<[u8]>> Decode<R> for SignalInstructions {
-    fn decode(cursor: &mut Cursor<R>) -> Result<Self> {
+impl<R: Read> Decode<R> for SignalInstructions {
+    fn decode(cursor: &mut R) -> Result<Self> {
         let ticker: String = read_string(cursor)?;
         let order_type: String = read_string(cursor)?;
         let action: String = read_string(cursor)?;
