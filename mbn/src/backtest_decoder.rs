@@ -7,7 +7,11 @@ use crate::{Error, Result};
 use std::io::{Cursor, Read};
 
 /// Helper function to decode a vector with length prepended
-fn decode_vector<T: Decode>(cursor: &mut std::io::Cursor<&[u8]>) -> Result<Vec<T>> {
+fn decode_vector<T, R>(cursor: &mut std::io::Cursor<R>) -> Result<Vec<T>>
+where
+    R: AsRef<[u8]> + Read, // Ensure R can be referenced as &[u8]
+    T: Decode<R>,          // T must implement Decode<R>
+{
     // Read the vector length (u32)
     let mut length_buf = [0u8; 4];
     cursor
@@ -24,15 +28,15 @@ fn decode_vector<T: Decode>(cursor: &mut std::io::Cursor<&[u8]>) -> Result<Vec<T
     Ok(result)
 }
 
-pub struct BacktestDecoder<'a> {
-    cursor: Cursor<&'a [u8]>,
+pub struct BacktestDecoder<R> {
+    cursor: Cursor<R>,
     // backtest: BacktestData
 }
 
-impl<'a> BacktestDecoder<'a> {
-    pub fn new(buffer: &'a [u8]) -> Self {
+impl<R: AsRef<[u8]> + Read> BacktestDecoder<R> {
+    pub fn new(reader: R) -> Self {
         BacktestDecoder {
-            cursor: Cursor::new(buffer),
+            cursor: Cursor::new(reader),
         }
     }
 
@@ -165,7 +169,7 @@ mod tests {
 
         // Decode
         let decode = bytes.as_slice();
-        let mut decoder = BacktestDecoder::new(&decode);
+        let mut decoder = BacktestDecoder::new(decode);
 
         let metadata = decoder.decode_metadata()?;
         let period_stats = decoder.decode_timeseries()?;
