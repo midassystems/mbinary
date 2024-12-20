@@ -1,6 +1,8 @@
 pub const METADATA_LENGTH: usize = 100;
 pub const PRICE_SCALE: i64 = 1_000_000_000;
 pub mod backtest;
+pub mod backtest_decoder;
+pub mod backtest_encode;
 pub mod decode;
 pub mod decode_iterator;
 pub mod encode;
