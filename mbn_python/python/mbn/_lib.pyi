@@ -402,13 +402,19 @@ class Parameters:
         tickers: List[str],
     ) -> None: ...
 
-class BacktestData:
+class BacktestMetaData:
     def __init__(
         self,
-        backtest_id: Optional[int],
+        backtest_id: int,
         backtest_name: str,
         parameters: Parameters,
         static_stats: StaticStats,
+    ) -> None: ...
+
+class BacktestData:
+    def __init__(
+        self,
+        metadata: BacktestMetaData,
         period_timeseries_stats: List[TimeseriesStats],
         daily_timeseries_stats: List[TimeseriesStats],
         trades: List[Trades],
@@ -416,6 +422,9 @@ class BacktestData:
     ) -> None: ...
 
 
+class PyBacktestEncoder:
+    def __init__() -> None: ...
+    def encode_backtest(self, backtest: BacktestData) -> List[int]: ...
 
 class AccountSummary:
     def __init__(self,        

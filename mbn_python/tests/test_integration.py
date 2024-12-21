@@ -14,6 +14,7 @@ from mbn import (
     TradeMsg,
     BboMsg,
     BacktestData,
+    BacktestMetaData,
     Trades,
     Signals,
     Parameters,
@@ -292,13 +293,16 @@ class IntegrationTests(unittest.TestCase):
 
     # -- Backtest --
     def test_backtest_data(self):
-
-        # Test
-        backtest = BacktestData(
-            None,
+        metadata = BacktestMetaData(
+            1234,
             "Name",
             self.parameters,
             self.static_stats,
+        )
+
+        # Test
+        backtest = BacktestData(
+            metadata,
             self.period_list,
             self.daily_list,
             self.trade_list,
@@ -307,42 +311,44 @@ class IntegrationTests(unittest.TestCase):
 
         # Validate
         expected = {
-            "backtest_id": None,
-            "backtest_name": "Name",
-            "parameters": {
-                "strategy_name": "Testing",
-                "capital": 10000,
-                "schema": "Ohlcv-1s",
-                "data_type": "BAR",
-                "start": 1730160814000000000,
-                "end": 1730160814000000000,
-                "tickers": ["test", "test2"],
-            },
-            "static_stats": {
-                "total_trades": 100,
-                "total_winning_trades": 50,
-                "total_losing_trades": 50,
-                "avg_profit": 1000000000000,
-                "avg_profit_percent": 10383783337737,
-                "avg_gain": 23323212233,
-                "avg_gain_percent": 24323234,
-                "avg_loss": 203982828,
-                "avg_loss_percent": 23432134323,
-                "profitability_ratio": 130213212323,
-                "profit_factor": 12342123431,
-                "profit_and_loss_ratio": 1234321343,
-                "total_fees": 123453234,
-                "net_profit": 1234323,
-                "beginning_equity": 12343234323,
-                "ending_equity": 12343234,
-                "total_return": 234532345,
-                "annualized_return": 234532345,
-                "daily_standard_deviation_percentage": 23453234,
-                "annual_standard_deviation_percentage": 34543443,
-                "max_drawdown_percentage_daily": 23432345,
-                "max_drawdown_percentage_period": 234543234,
-                "sharpe_ratio": 23432343,
-                "sortino_ratio": 123453234543,
+            "metadata": {
+                "backtest_id": 1234,
+                "backtest_name": "Name",
+                "parameters": {
+                    "strategy_name": "Testing",
+                    "capital": 10000,
+                    "schema": "Ohlcv-1s",
+                    "data_type": "BAR",
+                    "start": 1730160814000000000,
+                    "end": 1730160814000000000,
+                    "tickers": ["test", "test2"],
+                },
+                "static_stats": {
+                    "total_trades": 100,
+                    "total_winning_trades": 50,
+                    "total_losing_trades": 50,
+                    "avg_profit": 1000000000000,
+                    "avg_profit_percent": 10383783337737,
+                    "avg_gain": 23323212233,
+                    "avg_gain_percent": 24323234,
+                    "avg_loss": 203982828,
+                    "avg_loss_percent": 23432134323,
+                    "profitability_ratio": 130213212323,
+                    "profit_factor": 12342123431,
+                    "profit_and_loss_ratio": 1234321343,
+                    "total_fees": 123453234,
+                    "net_profit": 1234323,
+                    "beginning_equity": 12343234323,
+                    "ending_equity": 12343234,
+                    "total_return": 234532345,
+                    "annualized_return": 234532345,
+                    "daily_standard_deviation_percentage": 23453234,
+                    "annual_standard_deviation_percentage": 34543443,
+                    "max_drawdown_percentage_daily": 23432345,
+                    "max_drawdown_percentage_period": 234543234,
+                    "sharpe_ratio": 23432343,
+                    "sortino_ratio": 123453234543,
+                },
             },
             "period_timeseries_stats": [
                 {
