@@ -42,18 +42,6 @@ where
     Ok(bytemuck::cast_slice(&buffer)[0])
 }
 
-// /// Helper function to encode a vector with length prepended
-// pub fn encode_vector<T: Encode>(vec: &[T], buffer: &mut Vec<u8>) {
-//     // Prepend vector length as u32
-//     let length = vec.len() as u32;
-//     buffer.extend(&length.to_le_bytes());
-//
-//     // Encode each element in the vector
-//     for item in vec {
-//         item.encode(buffer);
-//     }
-// }
-
 /// Trait to define encoding for individual items
 pub trait Encode {
     fn encode(&self, buffer: &mut Vec<u8>);

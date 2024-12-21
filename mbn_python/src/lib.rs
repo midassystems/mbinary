@@ -1,10 +1,12 @@
 use mbn::{
     backtest::{
-        BacktestData, Parameters, SignalInstructions, Signals, StaticStats, TimeseriesStats, Trades,
+        BacktestData, BacktestMetaData, Parameters, SignalInstructions, Signals, StaticStats,
+        TimeseriesStats, Trades,
     },
     enums::{Action, RType, Schema, Side},
     live::{AccountSummary, LiveData},
     metadata::Metadata,
+    python::backest_encode::PyBacktestEncoder,
     python::buffer::BufferStore,
     python::encode::PyRecordEncoder,
     python::records::RecordMsg,
@@ -38,6 +40,7 @@ fn python_mbn(_py: Python<'_>, m: &Bound<PyModule>) -> PyResult<()> {
     checked_add_class::<BufferStore>(m)?;
     checked_add_class::<RecordMsg>(m)?;
     checked_add_class::<BacktestData>(m)?;
+    checked_add_class::<BacktestMetaData>(m)?;
     checked_add_class::<StaticStats>(m)?;
     checked_add_class::<Parameters>(m)?;
     checked_add_class::<TimeseriesStats>(m)?;
@@ -47,6 +50,7 @@ fn python_mbn(_py: Python<'_>, m: &Bound<PyModule>) -> PyResult<()> {
     checked_add_class::<LiveData>(m)?;
     checked_add_class::<AccountSummary>(m)?;
     checked_add_class::<PyRecordEncoder>(m)?;
+    checked_add_class::<PyBacktestEncoder>(m)?;
 
     Ok(())
 }

@@ -1,3 +1,4 @@
+pub mod backest_encode;
 pub mod backtest;
 pub mod buffer;
 pub mod encode;
