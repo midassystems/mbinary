@@ -8,7 +8,7 @@ edition = "2021"
 serde = { version = "1.0", features = ["derive"] }
 serde_json = "1.0"
 thiserror = "1.0.61"
-num_enum = "0.7.2"
+num_enum = "0.7.3"
 strum = { version = "0.26", features = ["derive"], optional = true }
 sqlx = { version = "0.6", features = ["postgres","runtime-tokio-rustls", "runtime-actix-rustls", "macros", "bigdecimal", "json"] }
 pyo3 = { workspace = true, optional = true }
