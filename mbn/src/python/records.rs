@@ -260,6 +260,42 @@ impl BboMsg {
         self.hd.instrument_id = instrument_id;
     }
 
+    #[setter]
+    fn set_ts_event(&mut self, ts_event: u64) {
+        self.hd.ts_event = ts_event;
+    }
+
+    // Need b/c of differnce in how rust and python handle fixed legnth arrays
+    #[setter]
+    fn set_bid_px(&mut self, bid_px: i64) {
+        self.levels[0].bid_px = bid_px;
+    }
+
+    #[setter]
+    fn set_ask_px(&mut self, ask_px: i64) {
+        self.levels[0].ask_px = ask_px;
+    }
+
+    #[setter]
+    fn set_bid_sz(&mut self, bid_sz: u32) {
+        self.levels[0].bid_sz = bid_sz;
+    }
+
+    #[setter]
+    fn set_ask_sz(&mut self, ask_sz: u32) {
+        self.levels[0].ask_sz = ask_sz;
+    }
+
+    #[setter]
+    fn set_bid_ct(&mut self, bid_ct: u32) {
+        self.levels[0].bid_ct = bid_ct;
+    }
+
+    #[setter]
+    fn set_ask_ct(&mut self, ask_ct: u32) {
+        self.levels[0].ask_ct = ask_ct;
+    }
+
     #[getter]
     fn instrument_id(&self) -> u32 {
         self.hd.instrument_id

@@ -952,6 +952,34 @@ class IntegrationTests(unittest.TestCase):
         self.assertEqual(msg.levels[0].bid_ct, pair.bid_ct)
         self.assertEqual(msg.levels[0].ask_ct, pair.ask_ct)
 
+    def test_bbomsg_updated(self):
+        pair = BidAskPair(1, 2, 3, 4, 5, 6)
+        msg = BboMsg(
+            1,
+            123456765432,
+            1,
+            2,
+            Side.ASK,
+            0,
+            3,
+            5,
+            [pair],
+        )
+        msg.bid_px = 1234
+        msg.ask_px = 1234
+        msg.bid_sz = 1234
+        msg.ask_sz = 1234
+        msg.bid_ct = 1234
+        msg.ask_ct = 1234
+
+        # Test
+        self.assertEqual(msg.levels[0].bid_px, 1234)
+        self.assertEqual(msg.levels[0].ask_px, 1234)
+        self.assertEqual(msg.levels[0].bid_sz, 1234)
+        self.assertEqual(msg.levels[0].ask_sz, 1234)
+        self.assertEqual(msg.levels[0].bid_ct, 1234)
+        self.assertEqual(msg.levels[0].ask_ct, 1234)
+
     def test_msg_polymorphism(self):
         msg = OhlcvMsg(1, 123456765432, 1, 2, 3, 4, 100000)
 
