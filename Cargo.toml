@@ -1,8 +1,8 @@
 [workspace]
 members = [
-  "mbn", 
+  "rust", 
+  "python",
   # "mbn_c",
-  "mbn_python",
 ]
 resolver = "2"
 
