@@ -1,0 +1,27 @@
+[build-system]
+requires = ["maturin>=1.7,<2.0"]
+build-backend = "maturin"
+
+[tool.maturin]
+features = ["pyo3/extension-module"]
+python-source = "python"
+module-name = "mbn._lib" # was python_mbn
+
+[project]
+name = "mbn" #was python_mbn
+description = "A binary encoding library designed for efficient data storage and transportation in trading platforms."  
+readme = "../README.md"  
+keywords = ["midas","binary-encoding", "protocol-buffers"]  
+license = { text = "Apache-2.0" }
+authors = [
+    { name = "Anthony Baxter", email = "anthonybaxter819@gmail.com" }
+]
+
+requires-python = ">=3.8"
+classifiers = [
+    "Programming Language :: Rust",
+    "Programming Language :: Python :: Implementation :: CPython",
+    "Programming Language :: Python :: Implementation :: PyPy",
+]
+dynamic = ["version"]
+

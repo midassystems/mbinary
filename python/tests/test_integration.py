@@ -1022,10 +1022,10 @@ class IntegrationTests(unittest.TestCase):
 
         # Write bin file
         buffer_obj = BufferStore(bytes(bin))
-        buffer_obj.write_to_file("test.bin")
+        buffer_obj.write_to_file("tests/test.bin")
 
         # Test
-        new_buffer = BufferStore.from_file("test.bin")
+        new_buffer = BufferStore.from_file("tests/test.bin")
         metadata = new_buffer.metadata
         msgs = new_buffer.decode_to_array()
 
