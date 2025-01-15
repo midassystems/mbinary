@@ -4,6 +4,88 @@ use serde::{Deserialize, Serialize};
 use std::fmt;
 use std::str::FromStr;
 
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub enum Dataset {
+    Futures = 1,
+    Equities = 2,
+    Option = 3,
+}
+
+impl Dataset {
+    pub const fn as_str(&self) -> &'static str {
+        match self {
+            Dataset::Futures => "futures",
+            Dataset::Equities => "equities",
+            Dataset::Option => "option",
+        }
+    }
+}
+
+impl FromStr for Dataset {
+    type Err = Error;
+
+    fn from_str(value: &str) -> Result<Self> {
+        match value {
+            "futures" => Ok(Dataset::Futures),
+            "equities" => Ok(Dataset::Equities),
+            "option" => Ok(Dataset::Option),
+            _ => Err(Error::CustomError(format!(
+                "Unknown Dataset value: '{}'",
+                value
+            ))),
+        }
+    }
+}
+
+impl fmt::Display for Dataset {
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        match self {
+            Dataset::Futures => write!(f, "futures"),
+            Dataset::Equities => write!(f, "equities"),
+            Dataset::Option => write!(f, "option"),
+        }
+    }
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub enum Stype {
+    Raw = 1,
+    Continuous = 2,
+}
+
+impl Stype {
+    pub const fn as_str(&self) -> &'static str {
+        match self {
+            Stype::Raw => "raw",
+            Stype::Continuous => "continuous",
+        }
+    }
+}
+
+impl FromStr for Stype {
+    type Err = Error;
+
+    fn from_str(value: &str) -> Result<Self> {
+        match value {
+            "raw" => Ok(Stype::Raw),
+            "continuous" => Ok(Stype::Continuous),
+            _ => Err(Error::CustomError(format!(
+                "Unknown Stype value: '{}'",
+                value
+            ))),
+        }
+    }
+}
+
+impl fmt::Display for Stype {
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        match self {
+            Stype::Raw => write!(f, "raw"),
+            Stype::Continuous => write!(f, "continuous"),
+        }
+    }
+}
+
 #[cfg(feature = "python")]
 use pyo3::pyclass;
 
