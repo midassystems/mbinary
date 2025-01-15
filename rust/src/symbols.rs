@@ -12,6 +12,15 @@ pub enum Vendors {
     Yfinance = 2,
 }
 
+impl Vendors {
+    pub const fn as_str(&self) -> &'static str {
+        match self {
+            Vendors::Databento => "databento",
+            Vendors::Yfinance => "yfinance",
+        }
+    }
+}
+
 impl TryFrom<&str> for Vendors {
     type Error = crate::Error;
 
