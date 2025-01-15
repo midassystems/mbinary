@@ -1,3 +1,4 @@
+use crate::enums::{Dataset, Stype};
 use crate::{Error, Result};
 use serde::{Deserialize, Serialize};
 use sqlx::FromRow;
@@ -5,10 +6,10 @@ use std::collections::HashMap;
 use std::io;
 use time::OffsetDateTime;
 
-#[derive(Debug, Clone, PartialEq, Eq)]
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
 pub enum Vendors {
-    Databento,
-    Yfinance,
+    Databento = 1,
+    Yfinance = 2,
 }
 
 impl TryFrom<&str> for Vendors {
@@ -38,7 +39,7 @@ impl Into<String> for Vendors {
 use pyo3::pyclass;
 
 /// Struct representing a financial instrument.
-#[derive(Debug, Clone, Serialize, Deserialize, FromRow)]
+#[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct Instrument {
     /// Midas unique instrument id number.
     pub instrument_id: Option<u32>,
@@ -47,11 +48,11 @@ pub struct Instrument {
     /// Instrument name e.g. Apple Inc.
     pub name: String,
     /// Vendor Name
-    pub vendor: String,
+    pub vendor: Vendors,
     // Vendor Specific
-    pub stype: Option<String>,
+    pub stype: Stype,
     // Vendor specific
-    pub dataset: Option<String>,
+    pub dataset: Dataset,
     /// Last date available in database
     pub last_available: u64,
     /// first date available in database
@@ -66,8 +67,8 @@ impl Instrument {
         ticker: &str,
         name: &str,
         vendor: Vendors,
-        stype: Option<String>,
-        dataset: Option<String>,
+        stype: Stype,
+        dataset: Dataset,
         last_available: u64,
         first_available: u64,
         active: bool,
@@ -76,7 +77,7 @@ impl Instrument {
             instrument_id,
             ticker: ticker.to_string(),
             name: name.to_string(),
-            vendor: vendor.into(),
+            vendor,
             stype,
             dataset,
             last_available,
@@ -215,8 +216,8 @@ mod tests {
             ticker,
             name,
             Vendors::Databento,
-            Some("continuous".to_string()),
-            Some("GLBX.MDP3".to_string()),
+            Stype::Raw,
+            Dataset::Equities,
             1730419200000000000,
             1730419200000000000,
             true,
@@ -240,8 +241,8 @@ mod tests {
             ticker,
             name,
             Vendors::Databento,
-            Some("continuous".to_string()),
-            Some("GLBX.MDP3".to_string()),
+            Stype::Raw,
+            Dataset::Equities,
             1730419200000000000,
             1730419200000000000,
             true,
@@ -266,8 +267,8 @@ mod tests {
             ticker,
             name,
             Vendors::Databento,
-            Some("continuous".to_string()),
-            Some("GLBX.MDP3".to_string()),
+            Stype::Raw,
+            Dataset::Equities,
             1,
             1,
             true,
