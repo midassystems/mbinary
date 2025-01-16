@@ -4,7 +4,15 @@ use serde::{Deserialize, Serialize};
 use std::fmt;
 use std::str::FromStr;
 
-#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
+#[cfg_attr(feature = "python", derive(strum::EnumIter, strum::AsRefStr))]
+#[cfg_attr(
+    feature = "python",
+    pyclass(module = "mbn", rename_all = "SCREAMING_SNAKE_CASE", eq, eq_int)
+)]
+#[repr(u8)]
+#[derive(
+    Debug, Deserialize, Serialize, Clone, Copy, PartialEq, Eq, TryFromPrimitive, IntoPrimitive,
+)]
 pub enum Vendors {
     Databento = 1,
     Yfinance = 2,
@@ -60,7 +68,15 @@ impl fmt::Display for Vendors {
     }
 }
 
-#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
+#[cfg_attr(feature = "python", derive(strum::EnumIter, strum::AsRefStr))]
+#[cfg_attr(
+    feature = "python",
+    pyclass(module = "mbn", rename_all = "SCREAMING_SNAKE_CASE", eq, eq_int)
+)]
+#[repr(u8)]
+#[derive(
+    Debug, Deserialize, Serialize, Clone, Copy, PartialEq, Eq, TryFromPrimitive, IntoPrimitive,
+)]
 pub enum Dataset {
     Futures = 1,
     Equities = 2,

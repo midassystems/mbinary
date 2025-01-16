@@ -1,4 +1,4 @@
-use crate::enums::Schema;
+use crate::enums::{Dataset, Schema};
 use crate::symbols::SymbolMap;
 use std::io;
 
@@ -9,15 +9,23 @@ use pyo3::pyclass;
 #[derive(Debug, PartialEq, Eq, Clone)]
 pub struct Metadata {
     pub schema: Schema,
+    pub dataset: Dataset,
     pub start: u64,
     pub end: u64,
     pub mappings: SymbolMap,
 }
 
 impl Metadata {
-    pub fn new(schema: Schema, start: u64, end: u64, mappings: SymbolMap) -> Self {
+    pub fn new(
+        schema: Schema,
+        dataset: Dataset,
+        start: u64,
+        end: u64,
+        mappings: SymbolMap,
+    ) -> Self {
         Metadata {
             schema,
+            dataset,
             start,
             end,
             mappings,
@@ -27,6 +35,7 @@ impl Metadata {
     pub fn serialize(&self) -> Vec<u8> {
         let mut bytes = Vec::new();
         bytes.push(self.schema as u8);
+        bytes.push(self.dataset as u8);
         bytes.extend_from_slice(&self.start.to_le_bytes());
         bytes.extend_from_slice(&self.end.to_le_bytes());
         bytes.extend_from_slice(&self.mappings.serialize());
@@ -43,6 +52,10 @@ impl Metadata {
 
         let mut offset = 0;
         let schema = Schema::try_from(bytes[offset])
+            .map_err(|_| io::Error::new(io::ErrorKind::InvalidData, "Invalid schema value"))?;
+        offset += 1;
+
+        let dataset = Dataset::try_from(bytes[offset])
             .map_err(|_| io::Error::new(io::ErrorKind::InvalidData, "Invalid schema value"))?;
         offset += 1;
 
@@ -67,6 +80,7 @@ impl Metadata {
 
         Ok(Metadata {
             schema,
+            dataset,
             start,
             end,
             mappings,
@@ -84,7 +98,13 @@ mod tests {
         symbol_map.add_instrument("AAPL", 1);
         symbol_map.add_instrument("TSLA", 2);
 
-        let metadata = Metadata::new(Schema::Ohlcv1S, 1234567898765, 123456765432, symbol_map);
+        let metadata = Metadata::new(
+            Schema::Ohlcv1S,
+            Dataset::Equities,
+            1234567898765,
+            123456765432,
+            symbol_map,
+        );
 
         // Test
         let bytes = metadata.serialize();
