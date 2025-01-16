@@ -80,6 +80,7 @@ mod tests {
     use super::*;
     use crate::decode::*;
     use crate::encode::{CombinedEncoder, RecordEncoder};
+    use crate::enums::Dataset;
     use crate::enums::Schema;
     use crate::metadata::Metadata;
     use crate::record_enum::RecordEnum;
@@ -100,7 +101,13 @@ mod tests {
         symbol_map.add_instrument("AAPL", 1);
         symbol_map.add_instrument("TSLA", 2);
 
-        let metadata = Metadata::new(Schema::Mbp1, 1234567898765, 123456765432, symbol_map);
+        let metadata = Metadata::new(
+            Schema::Mbp1,
+            Dataset::Option,
+            1234567898765,
+            123456765432,
+            symbol_map,
+        );
 
         // Record
         let msg1 = Mbp1Msg {

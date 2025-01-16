@@ -1,6 +1,6 @@
 use mbn::decode::Decoder;
 use mbn::encode::CombinedEncoder;
-use mbn::enums::Schema;
+use mbn::enums::{Dataset, Schema};
 use mbn::metadata::Metadata;
 use mbn::record_enum::RecordEnum;
 use mbn::record_ref::RecordRef;
@@ -15,7 +15,13 @@ fn test_integration_test() -> anyhow::Result<()> {
     symbol_map.add_instrument("AAPL", 1);
     symbol_map.add_instrument("TSLA", 2);
 
-    let metadata = Metadata::new(Schema::Mbp1, 1234567898765, 123456765432, symbol_map);
+    let metadata = Metadata::new(
+        Schema::Mbp1,
+        Dataset::Equities,
+        1234567898765,
+        123456765432,
+        symbol_map,
+    );
 
     // Records
     let record1 = Mbp1Msg {
