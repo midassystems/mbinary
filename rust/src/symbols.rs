@@ -1,73 +1,9 @@
-use crate::enums::{Dataset, Stype};
+use crate::enums::{Dataset, Stype, Vendors};
 use crate::{Error, Result};
 use serde::{Deserialize, Serialize};
-use sqlx::FromRow;
 use std::collections::HashMap;
-use std::fmt;
 use std::io;
-use std::str::FromStr;
 use time::OffsetDateTime;
-
-#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
-pub enum Vendors {
-    Databento = 1,
-    Yfinance = 2,
-}
-
-impl Vendors {
-    pub const fn as_str(&self) -> &'static str {
-        match self {
-            Vendors::Databento => "databento",
-            Vendors::Yfinance => "yfinance",
-        }
-    }
-}
-
-impl FromStr for Vendors {
-    type Err = Error;
-
-    fn from_str(value: &str) -> Result<Self> {
-        match value {
-            "databento" => Ok(Vendors::Databento),
-            "yfinance" => Ok(Vendors::Yfinance),
-            _ => Err(Error::CustomError(format!(
-                "Unknown Vendors value: '{}'",
-                value
-            ))),
-        }
-    }
-}
-impl fmt::Display for Vendors {
-    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-        match self {
-            Vendors::Databento => write!(f, "databento"),
-            Vendors::Yfinance => write!(f, "yfinance"),
-        }
-    }
-}
-
-// impl TryFrom<&str> for Vendors {
-//     type Error = crate::Error;
-//
-//     fn try_from(s: &str) -> crate::Result<Vendors> {
-//         match s.to_lowercase().as_str() {
-//             "databento" => Ok(Vendors::Databento),
-//             "yfinance" => Ok(Vendors::Yfinance),
-//             _ => Err(crate::Error::CustomError(
-//                 "Invalid vendor name.".to_string(),
-//             )),
-//         }
-//     }
-// }
-
-// impl Into<String> for Vendors {
-//     fn into(self) -> String {
-//         match self {
-//             Vendors::Databento => return "databento".to_string(),
-//             Vendors::Yfinance => return "yfinance".to_string(),
-//         }
-//     }
-// }
 
 #[cfg(feature = "python")]
 use pyo3::pyclass;
@@ -217,9 +153,9 @@ impl SymbolMap {
 
 #[cfg(test)]
 mod tests {
-    use time::macros::datetime;
-
     use super::*;
+    use std::str::FromStr;
+    use time::macros::datetime;
 
     #[test]
     fn test_vendors_into_str() {
