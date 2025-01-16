@@ -3,7 +3,9 @@ use crate::{Error, Result};
 use serde::{Deserialize, Serialize};
 use sqlx::FromRow;
 use std::collections::HashMap;
+use std::fmt;
 use std::io;
+use std::str::FromStr;
 use time::OffsetDateTime;
 
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
@@ -21,28 +23,51 @@ impl Vendors {
     }
 }
 
-impl TryFrom<&str> for Vendors {
-    type Error = crate::Error;
+impl FromStr for Vendors {
+    type Err = Error;
 
-    fn try_from(s: &str) -> crate::Result<Vendors> {
-        match s.to_lowercase().as_str() {
+    fn from_str(value: &str) -> Result<Self> {
+        match value {
             "databento" => Ok(Vendors::Databento),
             "yfinance" => Ok(Vendors::Yfinance),
-            _ => Err(crate::Error::CustomError(
-                "Invalid vendor name.".to_string(),
-            )),
+            _ => Err(Error::CustomError(format!(
+                "Unknown Vendors value: '{}'",
+                value
+            ))),
+        }
+    }
+}
+impl fmt::Display for Vendors {
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        match self {
+            Vendors::Databento => write!(f, "databento"),
+            Vendors::Yfinance => write!(f, "yfinance"),
         }
     }
 }
 
-impl Into<String> for Vendors {
-    fn into(self) -> String {
-        match self {
-            Vendors::Databento => return "databento".to_string(),
-            Vendors::Yfinance => return "yfinance".to_string(),
-        }
-    }
-}
+// impl TryFrom<&str> for Vendors {
+//     type Error = crate::Error;
+//
+//     fn try_from(s: &str) -> crate::Result<Vendors> {
+//         match s.to_lowercase().as_str() {
+//             "databento" => Ok(Vendors::Databento),
+//             "yfinance" => Ok(Vendors::Yfinance),
+//             _ => Err(crate::Error::CustomError(
+//                 "Invalid vendor name.".to_string(),
+//             )),
+//         }
+//     }
+// }
+
+// impl Into<String> for Vendors {
+//     fn into(self) -> String {
+//         match self {
+//             Vendors::Databento => return "databento".to_string(),
+//             Vendors::Yfinance => return "yfinance".to_string(),
+//         }
+//     }
+// }
 
 #[cfg(feature = "python")]
 use pyo3::pyclass;
@@ -59,7 +84,7 @@ pub struct Instrument {
     /// Vendor Name
     pub vendor: Vendors,
     // Vendor Specific
-    pub stype: Stype,
+    // pub stype: Stype,
     // Vendor specific
     pub dataset: Dataset,
     /// Last date available in database
@@ -76,7 +101,7 @@ impl Instrument {
         ticker: &str,
         name: &str,
         vendor: Vendors,
-        stype: Stype,
+        // stype: Stype,
         dataset: Dataset,
         last_available: u64,
         first_available: u64,
@@ -87,7 +112,7 @@ impl Instrument {
             ticker: ticker.to_string(),
             name: name.to_string(),
             vendor,
-            stype,
+            // stype,
             dataset,
             last_available,
             first_available,
@@ -200,7 +225,7 @@ mod tests {
     fn test_vendors_into_str() {
         // Test
         let vendor = Vendors::Databento;
-        let vendor_str: String = vendor.into();
+        let vendor_str = vendor.as_str();
 
         // Validate
         assert_eq!("databento", vendor_str);
@@ -210,7 +235,7 @@ mod tests {
     fn test_vendors_from_str() {
         // Test
         let vendor_str = "databento";
-        let vendor = Vendors::try_from(vendor_str).expect("Error convert to Vendors.");
+        let vendor = Vendors::from_str(vendor_str).expect("Error convert to Vendors.");
 
         // Validate
         assert_eq!(vendor, Vendors::Databento);
@@ -225,7 +250,7 @@ mod tests {
             ticker,
             name,
             Vendors::Databento,
-            Stype::Raw,
+            // Stype::Raw,
             Dataset::Equities,
             1730419200000000000,
             1730419200000000000,
@@ -250,7 +275,7 @@ mod tests {
             ticker,
             name,
             Vendors::Databento,
-            Stype::Raw,
+            // Stype::Raw,
             Dataset::Equities,
             1730419200000000000,
             1730419200000000000,
@@ -276,7 +301,7 @@ mod tests {
             ticker,
             name,
             Vendors::Databento,
-            Stype::Raw,
+            // Stype::Raw,
             Dataset::Equities,
             1,
             1,
