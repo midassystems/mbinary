@@ -27,6 +27,19 @@ class Action(Enum):
     @classmethod
     def from_int(cls, value: int) -> "Action": ...
 
+class Vendors(Enum):
+    DATABENTO: str
+    YFINANCE: str
+    @classmethod
+    def from_str(cls, value: str) -> "Vendors": ...
+
+class Dataset(Enum):
+    FUTURES: str
+    EQUITIES: str
+    OPTION: str
+    @classmethod
+    def from_str(cls, value: str) -> "Dataset": ...
+
 class Schema(Enum):
     MBP1: str
     OHLCV1_S: str
@@ -81,6 +94,27 @@ class Metadata(SupportsBytes):
     def end(self) -> int: ...
     @property
     def mappings(self) -> SymbolMap: ...
+
+
+class RetrieveParams(SupportsBytes):
+    def __init__(
+        self,
+        symbols: List[str],
+        start: int,
+        end: int,
+        schema: Schema,
+        dataset: Dataset,
+    ) -> None: ...
+    @property
+    def symbols(self) -> List[str]: ...
+    @property
+    def start(self) -> int: ...
+    @property
+    def end(self) -> int: ...
+    @property
+    def schema(self) -> Schema: ...
+    @property
+    def dataset(self) -> Dataset: ...
 
 
 class RecordHeader:
