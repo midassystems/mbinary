@@ -191,6 +191,7 @@ mod tests {
 
     use super::*;
     use crate::decode::AsyncDecoder;
+    use crate::enums::Dataset;
     use crate::enums::Schema;
     use crate::record_enum::RecordEnum;
     use crate::records::BidAskPair;
@@ -351,7 +352,13 @@ mod tests {
         symbol_map.add_instrument("AAPL", 1);
         symbol_map.add_instrument("TSLA", 2);
 
-        let metadata = Metadata::new(Schema::Ohlcv1S, 1234567898765, 123456765432, symbol_map);
+        let metadata = Metadata::new(
+            Schema::Ohlcv1S,
+            Dataset::Equities,
+            1234567898765,
+            123456765432,
+            symbol_map,
+        );
 
         // Test
         let mut buffer = Vec::new();
@@ -379,7 +386,13 @@ mod tests {
         symbol_map.add_instrument("AAPL", 1);
         symbol_map.add_instrument("TSLA", 2);
 
-        let metadata = Metadata::new(Schema::Ohlcv1S, 1234567898765, 123456765432, symbol_map);
+        let metadata = Metadata::new(
+            Schema::Ohlcv1S,
+            Dataset::Equities,
+            1234567898765,
+            123456765432,
+            symbol_map,
+        );
 
         // Record
         let ohlcv_msg1 = OhlcvMsg {
@@ -423,7 +436,13 @@ mod tests {
         symbol_map.add_instrument("AAPL", 1);
         symbol_map.add_instrument("TSLA", 2);
 
-        let metadata = Metadata::new(Schema::Mbp1, 1234567898765, 123456765432, symbol_map);
+        let metadata = Metadata::new(
+            Schema::Mbp1,
+            Dataset::Futures,
+            1234567898765,
+            123456765432,
+            symbol_map,
+        );
 
         // Record
         let msg1 = Mbp1Msg {

@@ -4,6 +4,180 @@ use serde::{Deserialize, Serialize};
 use std::fmt;
 use std::str::FromStr;
 
+#[cfg_attr(feature = "python", derive(strum::EnumIter, strum::AsRefStr))]
+#[cfg_attr(
+    feature = "python",
+    pyclass(module = "mbn", rename_all = "SCREAMING_SNAKE_CASE", eq, eq_int)
+)]
+#[repr(u8)]
+#[derive(
+    Debug, Deserialize, Serialize, Clone, Copy, PartialEq, Eq, TryFromPrimitive, IntoPrimitive,
+)]
+pub enum Vendors {
+    Databento = 1,
+    Yfinance = 2,
+}
+impl From<Vendors> for i8 {
+    fn from(vendor: Vendors) -> i8 {
+        vendor as i8
+    }
+}
+
+// Implement TryFrom<u8> for Dataset
+impl TryFrom<i8> for Vendors {
+    type Error = Error;
+
+    fn try_from(value: i8) -> Result<Self> {
+        match value {
+            1 => Ok(Vendors::Databento),
+            2 => Ok(Vendors::Yfinance),
+            _ => Err(Error::CustomError("Invalid value for Vendor".into())),
+        }
+    }
+}
+
+impl Vendors {
+    pub const fn as_str(&self) -> &'static str {
+        match self {
+            Vendors::Databento => "databento",
+            Vendors::Yfinance => "yfinance",
+        }
+    }
+}
+
+impl FromStr for Vendors {
+    type Err = Error;
+
+    fn from_str(value: &str) -> Result<Self> {
+        match value {
+            "databento" => Ok(Vendors::Databento),
+            "yfinance" => Ok(Vendors::Yfinance),
+            _ => Err(Error::CustomError(format!(
+                "Unknown Vendors value: '{}'",
+                value
+            ))),
+        }
+    }
+}
+impl fmt::Display for Vendors {
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        match self {
+            Vendors::Databento => write!(f, "databento"),
+            Vendors::Yfinance => write!(f, "yfinance"),
+        }
+    }
+}
+
+#[cfg_attr(feature = "python", derive(strum::EnumIter, strum::AsRefStr))]
+#[cfg_attr(
+    feature = "python",
+    pyclass(module = "mbn", rename_all = "SCREAMING_SNAKE_CASE", eq, eq_int)
+)]
+#[repr(u8)]
+#[derive(
+    Debug, Deserialize, Serialize, Clone, Copy, PartialEq, Eq, TryFromPrimitive, IntoPrimitive,
+)]
+pub enum Dataset {
+    Futures = 1,
+    Equities = 2,
+    Option = 3,
+}
+
+impl From<Dataset> for i8 {
+    fn from(dataset: Dataset) -> i8 {
+        dataset as i8
+    }
+}
+
+// Implement TryFrom<u8> for Dataset
+impl TryFrom<i8> for Dataset {
+    type Error = Error;
+
+    fn try_from(value: i8) -> Result<Self> {
+        match value {
+            1 => Ok(Dataset::Futures),
+            2 => Ok(Dataset::Equities),
+            3 => Ok(Dataset::Option),
+            _ => Err(Error::CustomError("Invalid value for Dataset".into())),
+        }
+    }
+}
+
+impl Dataset {
+    pub const fn as_str(&self) -> &'static str {
+        match self {
+            Dataset::Futures => "futures",
+            Dataset::Equities => "equities",
+            Dataset::Option => "option",
+        }
+    }
+}
+
+impl FromStr for Dataset {
+    type Err = Error;
+
+    fn from_str(value: &str) -> Result<Self> {
+        match value {
+            "futures" => Ok(Dataset::Futures),
+            "equities" => Ok(Dataset::Equities),
+            "option" => Ok(Dataset::Option),
+            _ => Err(Error::CustomError(format!(
+                "Unknown Dataset value: '{}'",
+                value
+            ))),
+        }
+    }
+}
+
+impl fmt::Display for Dataset {
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        match self {
+            Dataset::Futures => write!(f, "futures"),
+            Dataset::Equities => write!(f, "equities"),
+            Dataset::Option => write!(f, "option"),
+        }
+    }
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub enum Stype {
+    Raw = 1,
+    Continuous = 2,
+}
+
+impl Stype {
+    pub const fn as_str(&self) -> &'static str {
+        match self {
+            Stype::Raw => "raw",
+            Stype::Continuous => "continuous",
+        }
+    }
+}
+
+impl FromStr for Stype {
+    type Err = Error;
+
+    fn from_str(value: &str) -> Result<Self> {
+        match value {
+            "raw" => Ok(Stype::Raw),
+            "continuous" => Ok(Stype::Continuous),
+            _ => Err(Error::CustomError(format!(
+                "Unknown Stype value: '{}'",
+                value
+            ))),
+        }
+    }
+}
+
+impl fmt::Display for Stype {
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        match self {
+            Stype::Raw => write!(f, "raw"),
+            Stype::Continuous => write!(f, "continuous"),
+        }
+    }
+}
+
 #[cfg(feature = "python")]
 use pyo3::pyclass;
 
@@ -322,5 +496,35 @@ mod tests {
 
         // From str
         let _: RType = RType::from_str("ohlcv").unwrap();
+    }
+
+    #[test]
+    fn test_dataset_conv() -> anyhow::Result<()> {
+        let dataset = Dataset::Futures;
+
+        // From dataset
+        let dataset_int: i8 = dataset.clone().into();
+        assert_eq!(dataset_int, 1);
+
+        // From i8
+        let dataset2 = Dataset::try_from(dataset_int)?;
+        assert_eq!(dataset, dataset2);
+
+        Ok(())
+    }
+
+    #[test]
+    fn test_vendors_conv() -> anyhow::Result<()> {
+        let vendor = Vendors::Databento;
+
+        // From dataset
+        let vendor_int: i8 = vendor.clone().into();
+        assert_eq!(vendor_int, 1);
+
+        // From i8
+        let vendor2 = Vendors::try_from(vendor_int)?;
+        assert_eq!(vendor, vendor2);
+
+        Ok(())
     }
 }

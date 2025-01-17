@@ -1,6 +1,6 @@
 use crate::decode::MetadataDecoder;
 use crate::encode::MetadataEncoder;
-use crate::enums::Schema;
+use crate::enums::{Dataset, Schema};
 use crate::metadata::Metadata;
 use crate::symbols::SymbolMap;
 use pyo3::prelude::*;
@@ -9,9 +9,10 @@ use pyo3::types::{PyBytes, PyType};
 #[pymethods]
 impl Metadata {
     #[new]
-    fn py_new(schema: Schema, start: u64, end: u64, mappings: SymbolMap) -> Self {
+    fn py_new(schema: Schema, dataset: Dataset, start: u64, end: u64, mappings: SymbolMap) -> Self {
         Metadata {
             schema,
+            dataset,
             start,
             end,
             mappings,

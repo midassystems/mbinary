@@ -1,44 +1,15 @@
+use crate::enums::{Dataset, Vendors};
 use crate::{Error, Result};
 use serde::{Deserialize, Serialize};
-use sqlx::FromRow;
 use std::collections::HashMap;
 use std::io;
 use time::OffsetDateTime;
-
-#[derive(Debug, Clone, PartialEq, Eq)]
-pub enum Vendors {
-    Databento,
-    Yfinance,
-}
-
-impl TryFrom<&str> for Vendors {
-    type Error = crate::Error;
-
-    fn try_from(s: &str) -> crate::Result<Vendors> {
-        match s.to_lowercase().as_str() {
-            "databento" => Ok(Vendors::Databento),
-            "yfinance" => Ok(Vendors::Yfinance),
-            _ => Err(crate::Error::CustomError(
-                "Invalid vendor name.".to_string(),
-            )),
-        }
-    }
-}
-
-impl Into<String> for Vendors {
-    fn into(self) -> String {
-        match self {
-            Vendors::Databento => return "databento".to_string(),
-            Vendors::Yfinance => return "yfinance".to_string(),
-        }
-    }
-}
 
 #[cfg(feature = "python")]
 use pyo3::pyclass;
 
 /// Struct representing a financial instrument.
-#[derive(Debug, Clone, Serialize, Deserialize, FromRow)]
+#[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct Instrument {
     /// Midas unique instrument id number.
     pub instrument_id: Option<u32>,
@@ -47,11 +18,11 @@ pub struct Instrument {
     /// Instrument name e.g. Apple Inc.
     pub name: String,
     /// Vendor Name
-    pub vendor: String,
+    pub vendor: Vendors,
     // Vendor Specific
-    pub stype: Option<String>,
+    // pub stype: Stype,
     // Vendor specific
-    pub dataset: Option<String>,
+    pub dataset: Dataset,
     /// Last date available in database
     pub last_available: u64,
     /// first date available in database
@@ -66,8 +37,8 @@ impl Instrument {
         ticker: &str,
         name: &str,
         vendor: Vendors,
-        stype: Option<String>,
-        dataset: Option<String>,
+        // stype: Stype,
+        dataset: Dataset,
         last_available: u64,
         first_available: u64,
         active: bool,
@@ -76,8 +47,8 @@ impl Instrument {
             instrument_id,
             ticker: ticker.to_string(),
             name: name.to_string(),
-            vendor: vendor.into(),
-            stype,
+            vendor,
+            // stype,
             dataset,
             last_available,
             first_available,
@@ -182,15 +153,15 @@ impl SymbolMap {
 
 #[cfg(test)]
 mod tests {
-    use time::macros::datetime;
-
     use super::*;
+    use std::str::FromStr;
+    use time::macros::datetime;
 
     #[test]
     fn test_vendors_into_str() {
         // Test
         let vendor = Vendors::Databento;
-        let vendor_str: String = vendor.into();
+        let vendor_str = vendor.as_str();
 
         // Validate
         assert_eq!("databento", vendor_str);
@@ -200,7 +171,7 @@ mod tests {
     fn test_vendors_from_str() {
         // Test
         let vendor_str = "databento";
-        let vendor = Vendors::try_from(vendor_str).expect("Error convert to Vendors.");
+        let vendor = Vendors::from_str(vendor_str).expect("Error convert to Vendors.");
 
         // Validate
         assert_eq!(vendor, Vendors::Databento);
@@ -215,8 +186,8 @@ mod tests {
             ticker,
             name,
             Vendors::Databento,
-            Some("continuous".to_string()),
-            Some("GLBX.MDP3".to_string()),
+            // Stype::Raw,
+            Dataset::Equities,
             1730419200000000000,
             1730419200000000000,
             true,
@@ -240,8 +211,8 @@ mod tests {
             ticker,
             name,
             Vendors::Databento,
-            Some("continuous".to_string()),
-            Some("GLBX.MDP3".to_string()),
+            // Stype::Raw,
+            Dataset::Equities,
             1730419200000000000,
             1730419200000000000,
             true,
@@ -266,8 +237,8 @@ mod tests {
             ticker,
             name,
             Vendors::Databento,
-            Some("continuous".to_string()),
-            Some("GLBX.MDP3".to_string()),
+            // Stype::Raw,
+            Dataset::Equities,
             1,
             1,
             true,

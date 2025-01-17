@@ -5,5 +5,6 @@ pub mod encode;
 pub mod enums;
 pub mod live;
 pub mod metadata;
+pub mod params;
 pub mod records;
 pub mod symbols;
