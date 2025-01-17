@@ -3,9 +3,10 @@ use mbn::{
         BacktestData, BacktestMetaData, Parameters, SignalInstructions, Signals, StaticStats,
         TimeseriesStats, Trades,
     },
-    enums::{Action, RType, Schema, Side},
+    enums::{Action, Dataset, RType, Schema, Side, Vendors},
     live::{AccountSummary, LiveData},
     metadata::Metadata,
+    params::RetrieveParams,
     python::backest_encode::PyBacktestEncoder,
     python::buffer::BufferStore,
     python::encode::PyRecordEncoder,
@@ -25,6 +26,8 @@ fn checked_add_class<T: PyClass>(m: &Bound<PyModule>) -> PyResult<()> {
 #[pyo3(name = "_lib")]
 fn python_mbn(_py: Python<'_>, m: &Bound<PyModule>) -> PyResult<()> {
     checked_add_class::<Side>(m)?;
+    checked_add_class::<Vendors>(m)?;
+    checked_add_class::<Dataset>(m)?;
     checked_add_class::<Action>(m)?;
     checked_add_class::<Schema>(m)?;
     checked_add_class::<RType>(m)?;
@@ -37,6 +40,7 @@ fn python_mbn(_py: Python<'_>, m: &Bound<PyModule>) -> PyResult<()> {
     checked_add_class::<TbboMsg>(m)?;
     checked_add_class::<BboMsg>(m)?;
     checked_add_class::<BidAskPair>(m)?;
+    checked_add_class::<RetrieveParams>(m)?;
     checked_add_class::<BufferStore>(m)?;
     checked_add_class::<RecordMsg>(m)?;
     checked_add_class::<BacktestData>(m)?;
