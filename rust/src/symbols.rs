@@ -1,4 +1,4 @@
-use crate::enums::{Dataset, Stype, Vendors};
+use crate::enums::{Dataset, Vendors};
 use crate::{Error, Result};
 use serde::{Deserialize, Serialize};
 use std::collections::HashMap;

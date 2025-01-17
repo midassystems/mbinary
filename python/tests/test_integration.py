@@ -24,6 +24,9 @@ from mbn import (
     AccountSummary,
     LiveData,
     PyRecordEncoder,
+    Vendors,
+    Dataset,
+    # RetrieveParams,
 )
 from pandas import pandas
 
@@ -786,12 +789,47 @@ class IntegrationTests(unittest.TestCase):
         with self.assertRaises(ValueError):
             RType.from_str("olghd")
 
+    def test_vendors(self):
+        # instantiation
+        db = Vendors.DATABENTO
+        self.assertEqual(db, Vendors.DATABENTO)
+
+        # from str
+        db = Vendors.from_str("databento")
+        self.assertEqual(db, Vendors.DATABENTO)
+
+        # __str__
+        v = Vendors.YFINANCE.__str__()
+        self.assertEqual(v, "yfinance")
+
+        # Error
+        with self.assertRaises(ValueError):
+            Vendors.from_str("ohlcv-12345s")
+
+    def test_dataset(self):
+        # instantiation
+        d = Dataset.EQUITIES
+        self.assertEqual(d, Dataset.EQUITIES)
+
+        # from str
+        d = Dataset.from_str("futures")
+        self.assertEqual(d, Dataset.FUTURES)
+
+        # __str__
+        d = Dataset.OPTION.__str__()
+        self.assertEqual(d, "option")
+
+        # Error
+        with self.assertRaises(ValueError):
+            Dataset.from_str("ohlcv-12345s")
+
     def test_metadata(self):
         symbol_map = SymbolMap({1: "AAPL", 2: "TSLA"})
 
         # Test
         metadata = Metadata(
-            Schema.from_str("ohlcv-1s"),
+            Schema.OHLCV1_S,
+            Dataset.EQUITIES,
             1234567654321,
             987654345676543456,
             symbol_map,
@@ -802,6 +840,7 @@ class IntegrationTests(unittest.TestCase):
         # Validate
         self.assertEqual(decoded_metadata.start, metadata.start)
         self.assertEqual(decoded_metadata.schema, metadata.schema)
+        self.assertEqual(decoded_metadata.dataset, metadata.dataset)
         self.assertEqual(decoded_metadata.mappings, metadata.mappings)
         self.assertEqual(decoded_metadata.end, metadata.end)
 

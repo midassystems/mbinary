@@ -10,6 +10,7 @@ pub mod enums;
 pub mod error;
 pub mod live;
 pub mod metadata;
+pub mod params;
 pub mod record_enum;
 pub mod record_ref;
 pub mod records;
