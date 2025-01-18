@@ -16,6 +16,7 @@ pub mod record_ref;
 pub mod records;
 pub mod symbols;
 pub mod utils;
+pub mod vendors;
 
 pub use error::{Error, Result};
 

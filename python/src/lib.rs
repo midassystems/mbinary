@@ -3,7 +3,7 @@ use mbn::{
         BacktestData, BacktestMetaData, Parameters, SignalInstructions, Signals, StaticStats,
         TimeseriesStats, Trades,
     },
-    enums::{Action, Dataset, RType, Schema, Side, Vendors},
+    enums::{Action, Dataset, RType, Schema, Side},
     live::{AccountSummary, LiveData},
     metadata::Metadata,
     params::RetrieveParams,
@@ -13,6 +13,7 @@ use mbn::{
     python::records::RecordMsg,
     records::{BboMsg, BidAskPair, Mbp1Msg, OhlcvMsg, RecordHeader, TbboMsg, TradeMsg},
     symbols::SymbolMap,
+    vendors::Vendors,
 };
 use pyo3::{prelude::*, PyClass};
 
