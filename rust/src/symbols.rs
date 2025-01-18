@@ -1,4 +1,5 @@
-use crate::enums::{Dataset, Vendors};
+use crate::enums::Dataset;
+use crate::vendors::{VendorData, Vendors};
 use crate::{Error, Result};
 use serde::{Deserialize, Serialize};
 use std::collections::HashMap;
@@ -17,12 +18,12 @@ pub struct Instrument {
     pub ticker: String,
     /// Instrument name e.g. Apple Inc.
     pub name: String,
+    // Vendor specific
+    pub dataset: Dataset,
     /// Vendor Name
     pub vendor: Vendors,
     // Vendor Specific
-    // pub stype: Stype,
-    // Vendor specific
-    pub dataset: Dataset,
+    pub vendor_data: u64,
     /// Last date available in database
     pub last_available: u64,
     /// first date available in database
@@ -36,9 +37,9 @@ impl Instrument {
         instrument_id: Option<u32>,
         ticker: &str,
         name: &str,
-        vendor: Vendors,
-        // stype: Stype,
         dataset: Dataset,
+        vendor: Vendors,
+        vendor_data: u64,
         last_available: u64,
         first_available: u64,
         active: bool,
@@ -47,13 +48,17 @@ impl Instrument {
             instrument_id,
             ticker: ticker.to_string(),
             name: name.to_string(),
-            vendor,
-            // stype,
             dataset,
+            vendor,
+            vendor_data,
             last_available,
             first_available,
             active,
         }
+    }
+
+    pub fn get_vendor_data(&self) -> VendorData {
+        VendorData::decode(self.vendor_data, &self.vendor)
     }
 
     /// Generic function to convert UNIX nanoseconds to OffsetDateTime
@@ -153,6 +158,8 @@ impl SymbolMap {
 
 #[cfg(test)]
 mod tests {
+    use crate::vendors::DatabentoData;
+
     use super::*;
     use std::str::FromStr;
     use time::macros::datetime;
@@ -185,9 +192,9 @@ mod tests {
             None,
             ticker,
             name,
-            Vendors::Databento,
-            // Stype::Raw,
             Dataset::Equities,
+            Vendors::Databento,
+            123456765432,
             1730419200000000000,
             1730419200000000000,
             true,
@@ -210,9 +217,9 @@ mod tests {
             None,
             ticker,
             name,
-            Vendors::Databento,
-            // Stype::Raw,
             Dataset::Equities,
+            Vendors::Databento,
+            12345432,
             1730419200000000000,
             1730419200000000000,
             true,
@@ -236,9 +243,9 @@ mod tests {
             None,
             ticker,
             name,
-            Vendors::Databento,
-            // Stype::Raw,
             Dataset::Equities,
+            Vendors::Databento,
+            23456543,
             1,
             1,
             true,
@@ -248,6 +255,38 @@ mod tests {
         assert_eq!(instrument.ticker, ticker);
         assert_eq!(instrument.name, name);
         assert_eq!(instrument.instrument_id, None);
+    }
+
+    #[test]
+    fn test_get_vendor_data() -> anyhow::Result<()> {
+        let schema = dbn::Schema::from_str("mbp-1")?;
+        let dataset = dbn::Dataset::from_str("GLBX.MDP3")?;
+        let stype = dbn::SType::from_str("raw_symbol")?;
+        let vendor_data = VendorData::Databento(DatabentoData {
+            schema,
+            dataset,
+            stype,
+        });
+
+        // Test
+        let ticker = "HEJ4";
+        let name = "Lean Hogs";
+        let instrument = Instrument::new(
+            None,
+            ticker,
+            name,
+            Dataset::Futures,
+            Vendors::Databento,
+            vendor_data.encode(),
+            1,
+            1,
+            true,
+        );
+
+        // Validate
+        assert_eq!(vendor_data, instrument.get_vendor_data());
+
+        Ok(())
     }
 
     #[test]
