@@ -87,6 +87,26 @@ impl<W: Write> MetadataEncoder<W> {
         // self.writer.flush()?;
         // Ok(())
     }
+
+    pub fn write_to_file(&self, file_path: &Path, append: bool) -> io::Result<()>
+    where
+        W: AsRef<[u8]>,
+    {
+        let mut options = OpenOptions::new();
+        options.create(true);
+
+        if append {
+            options.append(true);
+        } else {
+            options.write(true).truncate(true);
+        }
+
+        let mut file = options.open(file_path)?;
+
+        file.write_all(self.writer.as_ref())?;
+        file.flush()?;
+        Ok(())
+    }
 }
 
 pub struct RecordEncoder<W> {
@@ -426,6 +446,76 @@ mod tests {
 
         // Validate
         assert!(buffer.len() > 0);
+    }
+
+    #[tokio::test]
+    #[serial]
+    async fn test_encode_metadata_and_records_seperate_to_same_file() -> anyhow::Result<()> {
+        // Metadata
+        let mut symbol_map = SymbolMap::new();
+        symbol_map.add_instrument("AAPL", 1);
+        symbol_map.add_instrument("TSLA", 2);
+
+        let metadata = Metadata::new(
+            Schema::Ohlcv1S,
+            Dataset::Equities,
+            1234567898765,
+            123456765432,
+            symbol_map,
+        );
+
+        // Record
+        let ohlcv_msg1 = OhlcvMsg {
+            hd: RecordHeader::new::<OhlcvMsg>(1, 1724287878000000000),
+            open: 100000000000,
+            high: 200000000000,
+            low: 50000000000,
+            close: 150000000000,
+            volume: 1000000000000,
+        };
+
+        let ohlcv_msg2 = OhlcvMsg {
+            hd: RecordHeader::new::<OhlcvMsg>(2, 1724289878000000000),
+            open: 110000000000,
+            high: 210000000000,
+            low: 55000000000,
+            close: 155000000000,
+            volume: 1100000000000,
+        };
+
+        let record_ref1: RecordRef = (&ohlcv_msg1).into();
+        let record_ref2: RecordRef = (&ohlcv_msg2).into();
+        let records = &[record_ref1, record_ref2];
+
+        // Test
+        let file = PathBuf::from("tests/mbp_encoded_seperatly.bin");
+        let mut buffer = Vec::new();
+        let mut m_encoder = MetadataEncoder::new(&mut buffer);
+        m_encoder.encode_metadata(&metadata)?;
+        let _ = m_encoder.write_to_file(&file, true);
+
+        let mut buffer = Vec::new();
+        let mut r_encoder = RecordEncoder::new(&mut buffer);
+        r_encoder.encode_records(records)?;
+        let _ = r_encoder.write_to_file(&file, true);
+
+        // Validate
+        let mut decoder =
+            <AsyncDecoder<tokio::io::BufReader<tokio::fs::File>>>::from_file(file.clone()).await?;
+        let metadata_decoded = decoder.metadata().unwrap();
+        let records = decoder.decode().await?;
+        let expected = vec![
+            RecordEnum::from_ref(record_ref1)?,
+            RecordEnum::from_ref(record_ref2)?,
+        ];
+        assert!(metadata == metadata_decoded);
+        assert!(expected == records);
+
+        // Cleanup
+        if file.exists() {
+            std::fs::remove_file(&file).expect("Failed to delete the test file.");
+        }
+        Ok(())
     }
 
     #[tokio::test]
