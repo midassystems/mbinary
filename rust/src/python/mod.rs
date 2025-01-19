@@ -8,3 +8,4 @@ pub mod metadata;
 pub mod params;
 pub mod records;
 pub mod symbols;
+pub mod vendors;

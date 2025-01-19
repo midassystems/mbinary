@@ -4,69 +4,8 @@ use serde::{Deserialize, Serialize};
 use std::fmt;
 use std::str::FromStr;
 
-#[cfg_attr(feature = "python", derive(strum::EnumIter, strum::AsRefStr))]
-#[cfg_attr(
-    feature = "python",
-    pyclass(module = "mbn", rename_all = "SCREAMING_SNAKE_CASE", eq, eq_int)
-)]
-#[repr(u8)]
-#[derive(
-    Debug, Deserialize, Serialize, Clone, Copy, PartialEq, Eq, TryFromPrimitive, IntoPrimitive,
-)]
-pub enum Vendors {
-    Databento = 1,
-    Yfinance = 2,
-}
-impl From<Vendors> for i8 {
-    fn from(vendor: Vendors) -> i8 {
-        vendor as i8
-    }
-}
-
-// Implement TryFrom<u8> for Dataset
-impl TryFrom<i8> for Vendors {
-    type Error = Error;
-
-    fn try_from(value: i8) -> Result<Self> {
-        match value {
-            1 => Ok(Vendors::Databento),
-            2 => Ok(Vendors::Yfinance),
-            _ => Err(Error::CustomError("Invalid value for Vendor".into())),
-        }
-    }
-}
-
-impl Vendors {
-    pub const fn as_str(&self) -> &'static str {
-        match self {
-            Vendors::Databento => "databento",
-            Vendors::Yfinance => "yfinance",
-        }
-    }
-}
-
-impl FromStr for Vendors {
-    type Err = Error;
-
-    fn from_str(value: &str) -> Result<Self> {
-        match value {
-            "databento" => Ok(Vendors::Databento),
-            "yfinance" => Ok(Vendors::Yfinance),
-            _ => Err(Error::CustomError(format!(
-                "Unknown Vendors value: '{}'",
-                value
-            ))),
-        }
-    }
-}
-impl fmt::Display for Vendors {
-    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-        match self {
-            Vendors::Databento => write!(f, "databento"),
-            Vendors::Yfinance => write!(f, "yfinance"),
-        }
-    }
-}
+#[cfg(feature = "python")]
+use pyo3::pyclass;
 
 #[cfg_attr(feature = "python", derive(strum::EnumIter, strum::AsRefStr))]
 #[cfg_attr(
@@ -177,9 +116,6 @@ impl fmt::Display for Stype {
         }
     }
 }
-
-#[cfg(feature = "python")]
-use pyo3::pyclass;
 
 #[cfg_attr(feature = "python", derive(strum::EnumIter, strum::AsRefStr))]
 #[cfg_attr(
@@ -509,21 +445,6 @@ mod tests {
         // From i8
         let dataset2 = Dataset::try_from(dataset_int)?;
         assert_eq!(dataset, dataset2);
-
-        Ok(())
-    }
-
-    #[test]
-    fn test_vendors_conv() -> anyhow::Result<()> {
-        let vendor = Vendors::Databento;
-
-        // From dataset
-        let vendor_int: i8 = vendor.clone().into();
-        assert_eq!(vendor_int, 1);
-
-        // From i8
-        let vendor2 = Vendors::try_from(vendor_int)?;
-        assert_eq!(vendor, vendor2);
 
         Ok(())
     }
