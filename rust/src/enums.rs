@@ -78,7 +78,15 @@ impl fmt::Display for Dataset {
     }
 }
 
-#[derive(Debug, Clone, Serialize, Deserialize)]
+#[cfg_attr(feature = "python", derive(strum::EnumIter, strum::AsRefStr))]
+#[cfg_attr(
+    feature = "python",
+    pyclass(module = "mbn", rename_all = "SCREAMING_SNAKE_CASE", eq, eq_int)
+)]
+#[repr(u8)]
+#[derive(
+    Debug, Deserialize, Serialize, Clone, Copy, PartialEq, Eq, TryFromPrimitive, IntoPrimitive,
+)]
 pub enum Stype {
     Raw = 1,
     Continuous = 2,
