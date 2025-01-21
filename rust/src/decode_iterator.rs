@@ -111,7 +111,7 @@ mod tests {
 
         // Record
         let msg1 = Mbp1Msg {
-            hd: RecordHeader::new::<Mbp1Msg>(1, 1622471124),
+            hd: RecordHeader::new::<Mbp1Msg>(1, 1622471124, 0),
             price: 12345676543,
             size: 1234543,
             action: 0,
@@ -132,7 +132,7 @@ mod tests {
             }],
         };
         let msg2 = Mbp1Msg {
-            hd: RecordHeader::new::<Mbp1Msg>(1, 1622471124),
+            hd: RecordHeader::new::<Mbp1Msg>(1, 1622471124, 0),
             price: 12345676543,
             size: 1234543,
             action: 0,
@@ -223,7 +223,7 @@ mod tests {
     fn test_iter_decode() {
         // Setup
         let ohlcv_msg1 = OhlcvMsg {
-            hd: RecordHeader::new::<OhlcvMsg>(1, 1622471124),
+            hd: RecordHeader::new::<OhlcvMsg>(1, 1622471124, 0),
             open: 100,
             high: 200,
             low: 50,
@@ -232,7 +232,7 @@ mod tests {
         };
 
         let ohlcv_msg2 = OhlcvMsg {
-            hd: RecordHeader::new::<OhlcvMsg>(2, 1622471125),
+            hd: RecordHeader::new::<OhlcvMsg>(2, 1622471125, 0),
             open: 110,
             high: 210,
             low: 55,
@@ -321,7 +321,7 @@ mod tests {
     async fn test_iter_decode_async() -> anyhow::Result<()> {
         // Setup
         let ohlcv_msg1 = OhlcvMsg {
-            hd: RecordHeader::new::<OhlcvMsg>(1, 1622471124),
+            hd: RecordHeader::new::<OhlcvMsg>(1, 1622471124, 0),
             open: 100,
             high: 200,
             low: 50,
@@ -330,7 +330,7 @@ mod tests {
         };
 
         let ohlcv_msg2 = OhlcvMsg {
-            hd: RecordHeader::new::<OhlcvMsg>(2, 1622471125),
+            hd: RecordHeader::new::<OhlcvMsg>(2, 1622471125, 0),
             open: 110,
             high: 210,
             low: 55,

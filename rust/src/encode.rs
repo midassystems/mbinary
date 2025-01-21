@@ -225,7 +225,7 @@ mod tests {
     #[tokio::test]
     async fn test_async_encode_record() -> anyhow::Result<()> {
         let ohlcv_msg = OhlcvMsg {
-            hd: RecordHeader::new::<OhlcvMsg>(1, 1622471124),
+            hd: RecordHeader::new::<OhlcvMsg>(1, 1622471124, 0),
             open: 100,
             high: 200,
             low: 50,
@@ -255,7 +255,7 @@ mod tests {
     #[tokio::test]
     async fn test_async_encode_records() -> anyhow::Result<()> {
         let ohlcv_msg1 = OhlcvMsg {
-            hd: RecordHeader::new::<OhlcvMsg>(1, 1622471124),
+            hd: RecordHeader::new::<OhlcvMsg>(1, 1622471124, 0),
             open: 100000000000,
             high: 200000000000,
             low: 50000000000,
@@ -264,7 +264,7 @@ mod tests {
         };
 
         let ohlcv_msg2 = OhlcvMsg {
-            hd: RecordHeader::new::<OhlcvMsg>(2, 1622471125),
+            hd: RecordHeader::new::<OhlcvMsg>(2, 1622471125, 0),
             open: 110000000000,
             high: 210000000000,
             low: 55000000000,
@@ -299,7 +299,7 @@ mod tests {
     #[tokio::test]
     async fn test_encode_record() -> anyhow::Result<()> {
         let ohlcv_msg = OhlcvMsg {
-            hd: RecordHeader::new::<OhlcvMsg>(1, 1622471124),
+            hd: RecordHeader::new::<OhlcvMsg>(1, 1622471124, 0),
             open: 100,
             high: 200,
             low: 50,
@@ -326,7 +326,7 @@ mod tests {
     #[tokio::test]
     async fn test_encode_decode_records() -> anyhow::Result<()> {
         let ohlcv_msg1 = OhlcvMsg {
-            hd: RecordHeader::new::<OhlcvMsg>(1, 1622471124),
+            hd: RecordHeader::new::<OhlcvMsg>(1, 1622471124, 0),
             open: 100000000000,
             high: 200000000000,
             low: 50000000000,
@@ -335,7 +335,7 @@ mod tests {
         };
 
         let ohlcv_msg2 = OhlcvMsg {
-            hd: RecordHeader::new::<OhlcvMsg>(2, 1622471125),
+            hd: RecordHeader::new::<OhlcvMsg>(2, 1622471125, 0),
             open: 110000000000,
             high: 210000000000,
             low: 55000000000,
@@ -416,7 +416,7 @@ mod tests {
 
         // Record
         let ohlcv_msg1 = OhlcvMsg {
-            hd: RecordHeader::new::<OhlcvMsg>(1, 1724287878000000000),
+            hd: RecordHeader::new::<OhlcvMsg>(1, 1724287878000000000, 0),
             open: 100000000000,
             high: 200000000000,
             low: 50000000000,
@@ -425,7 +425,7 @@ mod tests {
         };
 
         let ohlcv_msg2 = OhlcvMsg {
-            hd: RecordHeader::new::<OhlcvMsg>(2, 1724289878000000000),
+            hd: RecordHeader::new::<OhlcvMsg>(2, 1724289878000000000, 0),
             open: 110000000000,
             high: 210000000000,
             low: 55000000000,
@@ -466,7 +466,7 @@ mod tests {
 
         // Record
         let ohlcv_msg1 = OhlcvMsg {
-            hd: RecordHeader::new::<OhlcvMsg>(1, 1724287878000000000),
+            hd: RecordHeader::new::<OhlcvMsg>(1, 1724287878000000000, 0),
             open: 100000000000,
             high: 200000000000,
             low: 50000000000,
@@ -475,7 +475,7 @@ mod tests {
         };
 
         let ohlcv_msg2 = OhlcvMsg {
-            hd: RecordHeader::new::<OhlcvMsg>(2, 1724289878000000000),
+            hd: RecordHeader::new::<OhlcvMsg>(2, 1724289878000000000, 0),
             open: 110000000000,
             high: 210000000000,
             low: 55000000000,
@@ -536,7 +536,7 @@ mod tests {
 
         // Record
         let msg1 = Mbp1Msg {
-            hd: RecordHeader::new::<Mbp1Msg>(1, 1622471124),
+            hd: RecordHeader::new::<Mbp1Msg>(1, 1622471124, 0),
             price: 12345676543,
             size: 1234543,
             action: 0,
@@ -557,7 +557,7 @@ mod tests {
             }],
         };
         let msg2 = Mbp1Msg {
-            hd: RecordHeader::new::<Mbp1Msg>(1, 1622471124),
+            hd: RecordHeader::new::<Mbp1Msg>(1, 1622471124, 0),
             price: 12345676543,
             size: 1234543,
             action: 0,
@@ -616,7 +616,7 @@ mod tests {
     async fn test_encode_to_file_wout_metadata() -> anyhow::Result<()> {
         // Record
         let msg1 = Mbp1Msg {
-            hd: RecordHeader::new::<Mbp1Msg>(1, 1622471124),
+            hd: RecordHeader::new::<Mbp1Msg>(1, 1622471124, 0),
             price: 12345676543,
             size: 1234543,
             action: 0,
@@ -637,7 +637,7 @@ mod tests {
             }],
         };
         let msg2 = Mbp1Msg {
-            hd: RecordHeader::new::<Mbp1Msg>(1, 1622471124),
+            hd: RecordHeader::new::<Mbp1Msg>(1, 1622471124, 0),
             price: 12345676543,
             size: 1234543,
             action: 0,

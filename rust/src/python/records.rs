@@ -45,6 +45,7 @@ impl Mbp1Msg {
     fn py_new(
         instrument_id: u32,
         ts_event: u64,
+        rollover_flag: u8,
         price: i64,
         size: u32,
         action: Action,
@@ -58,7 +59,7 @@ impl Mbp1Msg {
         levels: [BidAskPair; 1],
     ) -> Self {
         Mbp1Msg {
-            hd: RecordHeader::new::<Self>(instrument_id, ts_event),
+            hd: RecordHeader::new::<Self>(instrument_id, ts_event, rollover_flag),
             price,
             size,
             action: action.into(),
@@ -89,6 +90,11 @@ impl Mbp1Msg {
     }
 
     #[getter]
+    fn rollover_flag(&self) -> u8 {
+        self.hd.rollover_flag
+    }
+
+    #[getter]
     fn rtype(&self) -> RType {
         self.hd.rtype()
     }
@@ -119,6 +125,8 @@ impl Mbp1Msg {
         dict.set_item("instrument_id", self.hd.instrument_id)
             .unwrap();
         dict.set_item("ts_event", self.hd.ts_event).unwrap();
+        dict.set_item("rollover_flag", self.hd.rollover_flag)
+            .unwrap();
         dict.set_item("price", self.price).unwrap();
         dict.set_item("size", self.size).unwrap();
         dict.set_item("action", self.action).unwrap();
@@ -145,6 +153,7 @@ impl TradeMsg {
     fn py_new(
         instrument_id: u32,
         ts_event: u64,
+        rollover_flag: u8,
         price: i64,
         size: u32,
         action: Action,
@@ -156,7 +165,7 @@ impl TradeMsg {
         sequence: u32,
     ) -> Self {
         TradeMsg {
-            hd: RecordHeader::new::<Self>(instrument_id, ts_event),
+            hd: RecordHeader::new::<Self>(instrument_id, ts_event, rollover_flag),
             price,
             size,
             action: action.into(),
@@ -186,6 +195,11 @@ impl TradeMsg {
     }
 
     #[getter]
+    fn rollover_flag(&self) -> u8 {
+        self.hd.rollover_flag
+    }
+
+    #[getter]
     fn rtype(&self) -> RType {
         self.hd.rtype()
     }
@@ -216,6 +230,8 @@ impl TradeMsg {
         dict.set_item("instrument_id", self.hd.instrument_id)
             .unwrap();
         dict.set_item("ts_event", self.hd.ts_event).unwrap();
+        dict.set_item("rollover_flag", self.hd.rollover_flag)
+            .unwrap();
         dict.set_item("price", self.price).unwrap();
         dict.set_item("size", self.size).unwrap();
         dict.set_item("action", self.action).unwrap();
@@ -235,6 +251,7 @@ impl BboMsg {
     fn py_new(
         instrument_id: u32,
         ts_event: u64,
+        rollover_flag: u8,
         price: i64,
         size: u32,
         side: Side,
@@ -244,7 +261,7 @@ impl BboMsg {
         levels: [BidAskPair; 1],
     ) -> Self {
         BboMsg {
-            hd: RecordHeader::new::<Self>(instrument_id, ts_event),
+            hd: RecordHeader::new::<Self>(instrument_id, ts_event, rollover_flag),
             price,
             size,
             side: side.into(),
@@ -263,6 +280,11 @@ impl BboMsg {
     #[setter]
     fn set_ts_event(&mut self, ts_event: u64) {
         self.hd.ts_event = ts_event;
+    }
+
+    #[getter]
+    fn rollover_flag(&self) -> u8 {
+        self.hd.rollover_flag
     }
 
     // Need b/c of differnce in how rust and python handle fixed legnth arrays
@@ -332,6 +354,8 @@ impl BboMsg {
         dict.set_item("instrument_id", self.hd.instrument_id)
             .unwrap();
         dict.set_item("ts_event", self.hd.ts_event).unwrap();
+        dict.set_item("rollover_flag", self.hd.rollover_flag)
+            .unwrap();
         dict.set_item("price", self.price).unwrap();
         dict.set_item("size", self.size).unwrap();
         dict.set_item("side", self.side).unwrap();
@@ -354,6 +378,7 @@ impl OhlcvMsg {
     fn py_new(
         instrument_id: u32,
         ts_event: u64,
+        rollover_flag: u8,
         open: i64,
         high: i64,
         low: i64,
@@ -361,7 +386,7 @@ impl OhlcvMsg {
         volume: u64,
     ) -> Self {
         OhlcvMsg {
-            hd: RecordHeader::new::<Self>(instrument_id, ts_event),
+            hd: RecordHeader::new::<Self>(instrument_id, ts_event, rollover_flag),
             open,
             high,
             low,
@@ -383,6 +408,11 @@ impl OhlcvMsg {
     #[getter]
     fn ts_event(&self) -> u64 {
         self.hd.ts_event
+    }
+
+    #[getter]
+    fn rollover_flag(&self) -> u8 {
+        self.hd.rollover_flag
     }
 
     #[getter]
@@ -425,6 +455,8 @@ impl OhlcvMsg {
         dict.set_item("instrument_id", self.hd.instrument_id)
             .unwrap();
         dict.set_item("ts_event", self.hd.ts_event).unwrap();
+        dict.set_item("rollover_flag", self.hd.rollover_flag)
+            .unwrap();
         dict.set_item("open", self.open).unwrap();
         dict.set_item("high", self.high).unwrap();
         dict.set_item("low", self.low).unwrap();
