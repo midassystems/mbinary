@@ -28,6 +28,8 @@ pub struct Instrument {
     pub last_available: u64,
     /// first date available in database
     pub first_available: u64,
+    /// first date available in database
+    pub expiration_date: u64,
     /// Active status
     pub active: bool,
 }
@@ -42,6 +44,7 @@ impl Instrument {
         vendor_data: u64,
         last_available: u64,
         first_available: u64,
+        expiration_date: u64,
         active: bool,
     ) -> Self {
         Self {
@@ -53,6 +56,7 @@ impl Instrument {
             vendor_data,
             last_available,
             first_available,
+            expiration_date,
             active,
         }
     }
@@ -197,6 +201,7 @@ mod tests {
             123456765432,
             1730419200000000000,
             1730419200000000000,
+            1730419200000000000,
             true,
         );
         // Test
@@ -220,6 +225,7 @@ mod tests {
             Dataset::Equities,
             Vendors::Databento,
             12345432,
+            1730419200000000000,
             1730419200000000000,
             1730419200000000000,
             true,
@@ -248,6 +254,7 @@ mod tests {
             23456543,
             1,
             1,
+            1730419200000000000,
             true,
         );
 
@@ -280,6 +287,7 @@ mod tests {
             vendor_data.encode(),
             1,
             1,
+            1730419200000000000,
             true,
         );
 
