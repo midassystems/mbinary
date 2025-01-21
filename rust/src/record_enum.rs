@@ -177,7 +177,7 @@ mod tests {
     #[test]
     fn test_encode_decode_record_enum() {
         let record_enum = RecordEnum::Mbp1(Mbp1Msg {
-            hd: RecordHeader::new::<Mbp1Msg>(1, 1622471124),
+            hd: RecordHeader::new::<Mbp1Msg>(1, 1622471124, 0),
             price: 1000,
             size: 10,
             action: 1,
@@ -239,7 +239,7 @@ mod tests {
 
         //MBN
         let mbn_enum = RecordEnum::Mbp1(Mbp1Msg {
-            hd: RecordHeader::new::<Mbp1Msg>(1, 1622471124),
+            hd: RecordHeader::new::<Mbp1Msg>(1, 1622471124, 0),
             price: 12345676543,
             size: 1234543,
             action: 0,
@@ -295,7 +295,7 @@ mod tests {
 
         //MBN
         let mbn_enum = RecordEnum::Mbp1(Mbp1Msg {
-            hd: RecordHeader::new::<Mbp1Msg>(1, 1622471124),
+            hd: RecordHeader::new::<Mbp1Msg>(1, 1622471124, 0),
             price: 12345676543,
             size: 1234543,
             action: 0,
