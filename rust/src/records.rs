@@ -228,11 +228,11 @@ impl Record for TradeMsg {
 
 impl HasRType for TradeMsg {
     fn has_rtype(rtype: u8) -> bool {
-        rtype == RType::Trade as u8
+        rtype == RType::Trades as u8
     }
 
     fn rtype_byte() -> u8 {
-        RType::Trade as u8
+        RType::Trades as u8
     }
 }
 

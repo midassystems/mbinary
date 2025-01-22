@@ -28,7 +28,7 @@ impl RecordEnum {
                 .get::<OhlcvMsg>()
                 .map(|msg| RecordEnum::Ohlcv(msg.clone()))
                 .ok_or(Error::InvalidRecordType("Ohlcv")),
-            RType::Trade => rec_ref
+            RType::Trades => rec_ref
                 .get::<TradeMsg>()
                 .map(|msg| RecordEnum::Trade(msg.clone()))
                 .ok_or(Error::InvalidRecordType("Trade")),
@@ -139,7 +139,7 @@ impl<'a> RecordEnumRef<'a> {
         match rec_ref.header().rtype() {
             RType::Mbp1 => rec_ref.get::<Mbp1Msg>().map(RecordEnumRef::Mbp1),
             RType::Ohlcv => rec_ref.get::<OhlcvMsg>().map(RecordEnumRef::Ohlcv),
-            RType::Trade => rec_ref.get::<TradeMsg>().map(RecordEnumRef::Trade),
+            RType::Trades => rec_ref.get::<TradeMsg>().map(RecordEnumRef::Trade),
             RType::Tbbo => rec_ref.get::<TbboMsg>().map(RecordEnumRef::Tbbo),
             RType::Bbo => rec_ref.get::<BboMsg>().map(RecordEnumRef::Bbo),
         }
