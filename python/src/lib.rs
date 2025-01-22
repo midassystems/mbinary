@@ -3,7 +3,7 @@ use mbn::{
         BacktestData, BacktestMetaData, Parameters, SignalInstructions, Signals, StaticStats,
         TimeseriesStats, Trades,
     },
-    enums::{Action, Dataset, RType, Schema, Side},
+    enums::{Action, Dataset, RType, Schema, Side, Stype},
     live::{AccountSummary, LiveData},
     metadata::Metadata,
     params::RetrieveParams,
@@ -28,6 +28,7 @@ fn checked_add_class<T: PyClass>(m: &Bound<PyModule>) -> PyResult<()> {
 fn python_mbn(_py: Python<'_>, m: &Bound<PyModule>) -> PyResult<()> {
     checked_add_class::<Side>(m)?;
     checked_add_class::<Vendors>(m)?;
+    checked_add_class::<Stype>(m)?;
     checked_add_class::<Dataset>(m)?;
     checked_add_class::<Action>(m)?;
     checked_add_class::<Schema>(m)?;

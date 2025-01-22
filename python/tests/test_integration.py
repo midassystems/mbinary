@@ -26,6 +26,7 @@ from mbn import (
     PyRecordEncoder,
     Vendors,
     Dataset,
+    Stype,
     # RetrieveParams,
 )
 from pandas import pandas
@@ -823,6 +824,23 @@ class IntegrationTests(unittest.TestCase):
         with self.assertRaises(ValueError):
             Dataset.from_str("ohlcv-12345s")
 
+    def test_stype(self):
+        # instantiation
+        s = Stype.CONTINUOUS
+        self.assertEqual(s, Stype.CONTINUOUS)
+
+        # from str
+        s = Stype.from_str("raw")
+        self.assertEqual(s, Stype.RAW)
+
+        # __str__
+        s = Stype.CONTINUOUS.__str__()
+        self.assertEqual(s, "continuous")
+
+        # Error
+        with self.assertRaises(ValueError):
+            Stype.from_str("ohlcv-12345s")
+
     def test_metadata(self):
         symbol_map = SymbolMap({1: "AAPL", 2: "TSLA"})
 
@@ -872,12 +890,13 @@ class IntegrationTests(unittest.TestCase):
         self.assertEqual(pair.pretty_ask_px, 2 / 1e9)
 
     def test_ohlcvmsg_properties(self):
-        msg = OhlcvMsg(1, 123456765432, 1, 2, 3, 4, 100000)
+        msg = OhlcvMsg(1, 123456765432, 0, 1, 2, 3, 4, 100000)
 
         # Test
         self.assertEqual(msg.rtype, RType.OHLCV)
         self.assertEqual(msg.instrument_id, 1)
         self.assertEqual(msg.ts_event, 123456765432)
+        self.assertEqual(msg.rollover_flag, 0)
         self.assertEqual(msg.open, 1)
         self.assertEqual(msg.pretty_open, 1 / 1e9)
         self.assertEqual(msg.high, 2)
@@ -895,6 +914,7 @@ class IntegrationTests(unittest.TestCase):
         msg = Mbp1Msg(
             1,
             123456765432,
+            0,
             1,
             2,
             Action.ADD,
@@ -912,6 +932,7 @@ class IntegrationTests(unittest.TestCase):
         self.assertEqual(msg.rtype, RType.MBP1)
         self.assertEqual(msg.instrument_id, 1)
         self.assertEqual(msg.ts_event, 123456765432)
+        self.assertEqual(msg.rollover_flag, 0)
         self.assertEqual(msg.price, 1)
         self.assertEqual(msg.pretty_price, 1 / 1e9)
         self.assertEqual(msg.action, 65)
@@ -934,6 +955,7 @@ class IntegrationTests(unittest.TestCase):
         msg = TradeMsg(
             1,
             123456765432,
+            0,
             1,
             2,
             Action.TRADE,
@@ -946,9 +968,10 @@ class IntegrationTests(unittest.TestCase):
         )
 
         # Test
-        self.assertEqual(msg.rtype, RType.TRADE)
+        self.assertEqual(msg.rtype, RType.TRADES)
         self.assertEqual(msg.instrument_id, 1)
         self.assertEqual(msg.ts_event, 123456765432)
+        self.assertEqual(msg.rollover_flag, 0)
         self.assertEqual(msg.price, 1)
         self.assertEqual(msg.pretty_price, 1 / 1e9)
         self.assertEqual(msg.action, 84)
@@ -965,6 +988,7 @@ class IntegrationTests(unittest.TestCase):
         msg = BboMsg(
             1,
             123456765432,
+            0,
             1,
             2,
             Side.ASK,
@@ -978,6 +1002,7 @@ class IntegrationTests(unittest.TestCase):
         self.assertEqual(msg.rtype, RType.BBO)
         self.assertEqual(msg.instrument_id, 1)
         self.assertEqual(msg.ts_event, 123456765432)
+        self.assertEqual(msg.rollover_flag, 0)
         self.assertEqual(msg.price, 1)
         self.assertEqual(msg.pretty_price, 1 / 1e9)
         self.assertEqual(msg.pretty_side, Side.ASK)
@@ -996,6 +1021,7 @@ class IntegrationTests(unittest.TestCase):
         msg = BboMsg(
             1,
             123456765432,
+            0,
             1,
             2,
             Side.ASK,
@@ -1020,7 +1046,7 @@ class IntegrationTests(unittest.TestCase):
         self.assertEqual(msg.levels[0].ask_ct, 1234)
 
     def test_msg_polymorphism(self):
-        msg = OhlcvMsg(1, 123456765432, 1, 2, 3, 4, 100000)
+        msg = OhlcvMsg(1, 123456765432, 1, 1, 2, 3, 4, 100000)
 
         # Test
         ts_event = handle_msg(msg)
@@ -1031,6 +1057,7 @@ class IntegrationTests(unittest.TestCase):
         msg = Mbp1Msg(
             1,
             123456765432,
+            1,
             1,
             2,
             Action.ADD,

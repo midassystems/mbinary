@@ -30,6 +30,7 @@ class Action(Enum):
 class Vendors(Enum):
     DATABENTO: str
     YFINANCE: str
+
     @classmethod
     def from_str(cls, value: str) -> "Vendors": ...
 
@@ -37,8 +38,16 @@ class Dataset(Enum):
     FUTURES: str
     EQUITIES: str
     OPTION: str
+
     @classmethod
     def from_str(cls, value: str) -> "Dataset": ...
+
+class Stype(Enum):
+    RAW: str
+    CONTINUOUS: str 
+
+    @classmethod
+    def from_str(cls, value: str) -> "Stype": ...
 
 class Schema(Enum):
     MBP1: str
@@ -46,7 +55,7 @@ class Schema(Enum):
     OHLCV1_M: str
     OHLCV1_H: str
     OHLCV1_D: str
-    TRADE: str
+    TRADES: str
     TBBO: str
     BBO1_S: str
     BBO1_M: str
@@ -56,7 +65,7 @@ class Schema(Enum):
 class RType(Enum):
     MBP1: str
     OHLCV: str
-    TRADE: str
+    TRADES: str
     TBBO: str
     BBO: str
 
@@ -104,6 +113,7 @@ class RetrieveParams(SupportsBytes):
         end: int,
         schema: Schema,
         dataset: Dataset,
+        stype: Stype,
     ) -> None: ...
     @property
     def symbols(self) -> List[str]: ...
@@ -115,11 +125,12 @@ class RetrieveParams(SupportsBytes):
     def schema(self) -> Schema: ...
     @property
     def dataset(self) -> Dataset: ...
-
+    @property
+    def stype(self) -> Stype: ...
 
 class RecordHeader:
     """docs testing"""
-    def __init__(self, instrument_id: int, ts_event: int) -> None: ...
+    def __init__(self, instrument_id: int, ts_event: int, rollover_flag: int) -> None: ...
     @property
     def ts_event(self) -> int: ...
     """
@@ -178,6 +189,7 @@ class OhlcvMsg(RecordMsg):
         self,
         instrument_id: int,
         ts_event: int,
+        rollover_flag: int,
         open: int,
         high: int,
         low: int,
@@ -190,6 +202,8 @@ class OhlcvMsg(RecordMsg):
     def instrument_id(self) -> int: ...
     @property
     def ts_event(self) -> int: ...
+    @property
+    def rollover_flag(self) -> int: ...
     @property
     def rtype(self) -> RType: ...
     @property
@@ -224,6 +238,7 @@ class TradeMsg(RecordMsg):
         self,
         instrument_id: int,
         ts_event: int,
+        rollover_flag: int,
         price: int,
         size: int,
         action: str,
@@ -234,6 +249,14 @@ class TradeMsg(RecordMsg):
         ts_in_delta: int,
         sequence: int,
     ) -> None: ...
+    @property
+    def hd(self) -> RecordHeader: ...
+    @property
+    def instrument_id(self) -> int: ...
+    @property
+    def ts_event(self) -> int: ...
+    @property
+    def rollover_flag(self) -> int: ...
     @property
     def price(self) -> int: ...
     @property
@@ -265,6 +288,7 @@ class BboMsg(RecordMsg):
         self,
         instrument_id: int,
         ts_event: int,
+        rollover_flag: int,
         price: int,
         size: int,
         side: str,
@@ -273,6 +297,14 @@ class BboMsg(RecordMsg):
         sequence: int,
         levels: List[BidAskPair],
     ) -> None: ...
+    @property
+    def hd(self) -> RecordHeader: ...
+    @property
+    def instrument_id(self) -> int: ...
+    @property
+    def ts_event(self) -> int: ...
+    @property
+    def rollover_flag(self) -> int: ...
     @property
     def price(self) -> int: ...
     @property
@@ -297,6 +329,7 @@ class Mbp1Msg(RecordMsg):
         self,
         instrument_id: int,
         ts_event: int,
+        rollover_flag: int,
         price: int,
         size: int,
         action: str,
@@ -309,6 +342,14 @@ class Mbp1Msg(RecordMsg):
         discrimincator: int,
         levels: List[BidAskPair],
     ) -> None: ...
+    @property
+    def hd(self) -> RecordHeader: ...
+    @property
+    def instrument_id(self) -> int: ...
+    @property
+    def ts_event(self) -> int: ...
+    @property
+    def rollover_flag(self) -> int: ...
     @property
     def price(self) -> int: ...
     @property
