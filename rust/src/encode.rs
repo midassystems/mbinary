@@ -118,6 +118,11 @@ impl<W: Write> RecordEncoder<W> {
         RecordEncoder { writer }
     }
 
+    pub async fn flush(&mut self) -> tokio::io::Result<()> {
+        self.writer.flush()?;
+        Ok(())
+    }
+
     pub fn encode_record(&mut self, record: &RecordRef) -> io::Result<()> {
         let bytes = record.as_ref();
         self.writer.write_all(bytes)?;
@@ -165,6 +170,11 @@ where
 {
     pub fn new(writer: W) -> Self {
         AsyncRecordEncoder { writer }
+    }
+
+    pub async fn flush(&mut self) -> tokio::io::Result<()> {
+        self.writer.flush().await?;
+        Ok(())
     }
 
     pub async fn encode_record<'a>(&mut self, record: &'a RecordRef<'a>) -> tokio::io::Result<()> {
