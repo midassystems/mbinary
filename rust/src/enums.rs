@@ -222,7 +222,7 @@ pub enum Schema {
     Ohlcv1M = 3,
     Ohlcv1H = 4,
     Ohlcv1D = 5,
-    Trade = 6,
+    Trades = 6,
     Tbbo = 7,
     Bbo1S = 8,
     Bbo1M = 9,
@@ -236,7 +236,7 @@ impl Schema {
             Schema::Ohlcv1M => "ohlcv-1m",
             Schema::Ohlcv1H => "ohlcv-1h",
             Schema::Ohlcv1D => "ohlcv-1d",
-            Schema::Trade => "trade",
+            Schema::Trades => "trades",
             Schema::Tbbo => "tbbo",
             Schema::Bbo1S => "bbo-1s",
             Schema::Bbo1M => "bbo-1m",
@@ -254,7 +254,7 @@ impl FromStr for Schema {
             "ohlcv-1m" => Ok(Schema::Ohlcv1M),
             "ohlcv-1h" => Ok(Schema::Ohlcv1H),
             "ohlcv-1d" => Ok(Schema::Ohlcv1D),
-            "trade" => Ok(Schema::Trade),
+            "trades" => Ok(Schema::Trades),
             "tbbo" => Ok(Schema::Tbbo),
             "bbo-1s" => Ok(Schema::Bbo1S),
             "bbo-1m" => Ok(Schema::Bbo1M),
@@ -274,7 +274,7 @@ impl fmt::Display for Schema {
             Schema::Ohlcv1M => write!(f, "ohlcv-1m"),
             Schema::Ohlcv1H => write!(f, "ohlcv-1h"),
             Schema::Ohlcv1D => write!(f, "ohlcv-1d"),
-            Schema::Trade => write!(f, "trade"),
+            Schema::Trades => write!(f, "trades"),
             Schema::Tbbo => write!(f, "tbbo"),
             Schema::Bbo1S => write!(f, "bbo-1s"),
             Schema::Bbo1M => write!(f, "bbo-1m"),
@@ -293,7 +293,7 @@ impl fmt::Display for Schema {
 pub enum RType {
     Mbp1 = 0x01,
     Ohlcv = 0x02,
-    Trade = 0x03,
+    Trades = 0x03,
     Tbbo = 0x04,
     Bbo = 0x05,
 }
@@ -303,7 +303,7 @@ impl RType {
         match self {
             RType::Mbp1 => "mbp-1",
             RType::Ohlcv => "ohlcv",
-            RType::Trade => "trade",
+            RType::Trades => "trades",
             RType::Tbbo => "tbbo",
             RType::Bbo => "bbo",
         }
@@ -317,7 +317,7 @@ impl TryFrom<u8> for RType {
         match value {
             0x01 => Ok(RType::Mbp1),
             0x02 => Ok(RType::Ohlcv),
-            0x03 => Ok(RType::Trade),
+            0x03 => Ok(RType::Trades),
             0x04 => Ok(RType::Tbbo),
             0x05 => Ok(RType::Bbo),
             _ => Err(Error::Conversion(format!(
@@ -336,7 +336,7 @@ impl From<Schema> for RType {
             Schema::Ohlcv1M => RType::Ohlcv,
             Schema::Ohlcv1H => RType::Ohlcv,
             Schema::Ohlcv1D => RType::Ohlcv,
-            Schema::Trade => RType::Trade,
+            Schema::Trades => RType::Trades,
             Schema::Tbbo => RType::Tbbo,
             Schema::Bbo1S => RType::Bbo,
             Schema::Bbo1M => RType::Bbo,
@@ -351,7 +351,7 @@ impl FromStr for RType {
         match s {
             "mbp-1" => Ok(RType::Mbp1),
             "ohlcv" => Ok(RType::Ohlcv),
-            "trade" => Ok(RType::Trade),
+            "trades" => Ok(RType::Trades),
             "tbbo" => Ok(RType::Tbbo),
             "bbo" => Ok(RType::Bbo),
             _ => Err(Error::Conversion(format!("Invalid value for RType: {}", s))),
@@ -364,7 +364,7 @@ impl fmt::Display for RType {
         match self {
             RType::Mbp1 => write!(f, "mbp-1"),
             RType::Ohlcv => write!(f, "ohlcv"),
-            RType::Trade => write!(f, "trade"),
+            RType::Trades => write!(f, "trades"),
             RType::Tbbo => write!(f, "tbbo"),
             RType::Bbo => write!(f, "bbo"),
         }

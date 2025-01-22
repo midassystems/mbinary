@@ -43,7 +43,7 @@ impl RetrieveParams {
     pub fn schema_interval(&self) -> Result<i64> {
         match &self.schema {
             Schema::Mbp1 => Ok(1), // 1 nanosecond
-            Schema::Trade => Ok(1),
+            Schema::Trades => Ok(1),
             Schema::Tbbo => Ok(1),
             Schema::Ohlcv1S => Ok(1_000_000_000), // 1 second in nanoseconds
             Schema::Ohlcv1M => Ok(60_000_000_000), // 1 minute in nanoseconds
