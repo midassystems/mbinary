@@ -1,4 +1,4 @@
-use crate::enums::{Dataset, RType, Schema};
+use crate::enums::{Dataset, RType, Schema, Stype};
 use crate::utils::date_to_unix_nanos;
 use crate::Result;
 use serde::{Deserialize, Serialize};
@@ -14,7 +14,7 @@ pub struct RetrieveParams {
     pub end_ts: i64,
     pub schema: Schema,
     pub dataset: Dataset,
-    //pub stype: Stype
+    pub stype: Stype,
 }
 
 impl RetrieveParams {
@@ -24,6 +24,7 @@ impl RetrieveParams {
         end: &str,
         schema: Schema,
         dataset: Dataset,
+        stype: Stype,
     ) -> Result<Self> {
         Ok(RetrieveParams {
             symbols,
@@ -31,6 +32,7 @@ impl RetrieveParams {
             end_ts: date_to_unix_nanos(end)?,
             schema,
             dataset,
+            stype,
         })
     }
 
@@ -41,7 +43,7 @@ impl RetrieveParams {
     pub fn schema_interval(&self) -> Result<i64> {
         match &self.schema {
             Schema::Mbp1 => Ok(1), // 1 nanosecond
-            Schema::Trade => Ok(1),
+            Schema::Trades => Ok(1),
             Schema::Tbbo => Ok(1),
             Schema::Ohlcv1S => Ok(1_000_000_000), // 1 second in nanoseconds
             Schema::Ohlcv1M => Ok(60_000_000_000), // 1 minute in nanoseconds
@@ -90,6 +92,7 @@ mod test {
             end_ts: 1704209903644092567,
             schema: Schema::Mbp1, //tring::from("mbp-1"),
             dataset: Dataset::Futures,
+            stype: Stype::Raw,
         };
 
         // Test
@@ -106,6 +109,7 @@ mod test {
             end_ts: 1704209903644092567,
             schema: Schema::Tbbo, //tring::from("tbbo"),
             dataset: Dataset::Equities,
+            stype: Stype::Raw,
         };
 
         // Test
@@ -122,6 +126,7 @@ mod test {
             end_ts: 1728878460000000000,
             schema: Schema::Ohlcv1H, //tring::from("ohlcv-1h"),
             dataset: Dataset::Option,
+            stype: Stype::Raw,
         };
 
         // Test

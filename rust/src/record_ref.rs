@@ -74,7 +74,7 @@ mod tests {
     #[test]
     fn test_record_ref() {
         let record = OhlcvMsg {
-            hd: RecordHeader::new::<OhlcvMsg>(2, 162222293489348),
+            hd: RecordHeader::new::<OhlcvMsg>(2, 162222293489348, 0),
             open: 909,
             high: 11991,
             low: 800,

@@ -359,7 +359,7 @@ mod tests {
 
         // Record
         let msg1 = Mbp1Msg {
-            hd: RecordHeader::new::<Mbp1Msg>(1, 1622471124),
+            hd: RecordHeader::new::<Mbp1Msg>(1, 1622471124, 0),
             price: 12345676543,
             size: 1234543,
             action: 0,
@@ -380,7 +380,7 @@ mod tests {
             }],
         };
         let msg2 = Mbp1Msg {
-            hd: RecordHeader::new::<Mbp1Msg>(1, 1622471124),
+            hd: RecordHeader::new::<Mbp1Msg>(1, 1622471124, 0),
             price: 12345676543,
             size: 1234543,
             action: 0,
@@ -447,7 +447,7 @@ mod tests {
 
         // Record
         let ohlcv_msg1 = OhlcvMsg {
-            hd: RecordHeader::new::<OhlcvMsg>(1, 1622471124),
+            hd: RecordHeader::new::<OhlcvMsg>(1, 1622471124, 0),
             open: 100,
             high: 200,
             low: 50,
@@ -456,7 +456,7 @@ mod tests {
         };
 
         let ohlcv_msg2 = OhlcvMsg {
-            hd: RecordHeader::new::<OhlcvMsg>(2, 1622471125),
+            hd: RecordHeader::new::<OhlcvMsg>(2, 1622471125, 0),
             open: 110,
             high: 210,
             low: 55,
@@ -552,7 +552,7 @@ mod tests {
     fn test_decode_record() {
         // Create an OhlcvMsg record
         let ohlcv_msg = OhlcvMsg {
-            hd: RecordHeader::new::<OhlcvMsg>(1, 1622471124),
+            hd: RecordHeader::new::<OhlcvMsg>(1, 1622471124, 0),
             open: 100,
             high: 200,
             low: 50,
@@ -590,7 +590,7 @@ mod tests {
     fn test_decode_record_ref() {
         // Create an OhlcvMsg record
         let ohlcv_msg = OhlcvMsg {
-            hd: RecordHeader::new::<OhlcvMsg>(1, 1622471124),
+            hd: RecordHeader::new::<OhlcvMsg>(1, 1622471124, 0),
             open: 100,
             high: 200,
             low: 50,
@@ -616,6 +616,7 @@ mod tests {
             let header = record_ref.header();
             assert_eq!(header.instrument_id, 1);
             assert_eq!(header.ts_event, 1622471124);
+            assert_eq!(header.rollover_flag, 0);
             assert_eq!(header.rtype, RType::Ohlcv as u8);
         } else {
             panic!("Failed to decode record reference");
@@ -627,7 +628,7 @@ mod tests {
     // #[ignore]
     fn test_encode_decode_records() {
         let ohlcv_msg1 = OhlcvMsg {
-            hd: RecordHeader::new::<OhlcvMsg>(1, 1622471124),
+            hd: RecordHeader::new::<OhlcvMsg>(1, 1622471124, 0),
             open: 100,
             high: 200,
             low: 50,
@@ -636,7 +637,7 @@ mod tests {
         };
 
         let ohlcv_msg2 = OhlcvMsg {
-            hd: RecordHeader::new::<OhlcvMsg>(2, 1622471125),
+            hd: RecordHeader::new::<OhlcvMsg>(2, 1622471125, 0),
             open: 110,
             high: 210,
             low: 55,
@@ -685,7 +686,7 @@ mod tests {
 
         // Record
         let ohlcv_msg1 = OhlcvMsg {
-            hd: RecordHeader::new::<OhlcvMsg>(1, 1622471124),
+            hd: RecordHeader::new::<OhlcvMsg>(1, 1622471124, 0),
             open: 100,
             high: 200,
             low: 50,
@@ -694,7 +695,7 @@ mod tests {
         };
 
         let ohlcv_msg2 = OhlcvMsg {
-            hd: RecordHeader::new::<OhlcvMsg>(2, 1622471125),
+            hd: RecordHeader::new::<OhlcvMsg>(2, 1622471125, 0),
             open: 110,
             high: 210,
             low: 55,
@@ -790,7 +791,7 @@ mod tests {
     async fn test_decode_record_async() -> anyhow::Result<()> {
         // Create an OhlcvMsg record
         let ohlcv_msg = OhlcvMsg {
-            hd: RecordHeader::new::<OhlcvMsg>(1, 1622471124),
+            hd: RecordHeader::new::<OhlcvMsg>(1, 1622471124, 0),
             open: 100,
             high: 200,
             low: 50,
@@ -829,7 +830,7 @@ mod tests {
     async fn test_decode_record_ref_async() -> anyhow::Result<()> {
         // Create an OhlcvMsg record
         let ohlcv_msg = OhlcvMsg {
-            hd: RecordHeader::new::<OhlcvMsg>(1, 1622471124),
+            hd: RecordHeader::new::<OhlcvMsg>(1, 1622471124, 0),
             open: 100,
             high: 200,
             low: 50,
@@ -863,7 +864,7 @@ mod tests {
     // #[ignore]
     async fn test_encode_decode_records_async() -> anyhow::Result<()> {
         let ohlcv_msg1 = OhlcvMsg {
-            hd: RecordHeader::new::<OhlcvMsg>(1, 1622471124),
+            hd: RecordHeader::new::<OhlcvMsg>(1, 1622471124, 0),
             open: 100,
             high: 200,
             low: 50,
@@ -872,7 +873,7 @@ mod tests {
         };
 
         let ohlcv_msg2 = OhlcvMsg {
-            hd: RecordHeader::new::<OhlcvMsg>(2, 1622471125),
+            hd: RecordHeader::new::<OhlcvMsg>(2, 1622471125, 0),
             open: 110,
             high: 210,
             low: 55,

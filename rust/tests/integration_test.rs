@@ -25,7 +25,7 @@ fn test_integration_test() -> anyhow::Result<()> {
 
     // Records
     let record1 = Mbp1Msg {
-        hd: RecordHeader::new::<Mbp1Msg>(1, 1622471124),
+        hd: RecordHeader::new::<Mbp1Msg>(1, 1622471124, 0),
         price: 1000,
         size: 10,
         action: 1,
@@ -47,7 +47,7 @@ fn test_integration_test() -> anyhow::Result<()> {
     };
 
     let record2 = Mbp1Msg {
-        hd: RecordHeader::new::<Mbp1Msg>(1, 1622471124),
+        hd: RecordHeader::new::<Mbp1Msg>(1, 1622471124, 0),
         price: 1000,
         size: 10,
         action: 1,

@@ -28,6 +28,7 @@ pub struct RecordHeader {
     pub rtype: u8,
     pub instrument_id: u32,
     pub ts_event: u64,
+    pub rollover_flag: u8,
 }
 
 // Implementing Send and Sync for RecordHeader
@@ -38,12 +39,13 @@ impl RecordHeader {
     // Allows length to remaind u8 regardless of size
     pub const LENGTH_MULTIPLIER: usize = 4;
 
-    pub fn new<R: HasRType>(instrument_id: u32, ts_event: u64) -> Self {
+    pub fn new<R: HasRType>(instrument_id: u32, ts_event: u64, rollover_flag: u8) -> Self {
         Self {
             length: (mem::size_of::<R>() / Self::LENGTH_MULTIPLIER) as u8,
             rtype: R::rtype_byte(),
             instrument_id,
             ts_event,
+            rollover_flag,
         }
     }
 
@@ -56,7 +58,7 @@ impl RecordHeader {
     }
 
     pub fn from_dbn<R: HasRType>(header: dbn::RecordHeader) -> Self {
-        RecordHeader::new::<R>(header.instrument_id, header.ts_event)
+        RecordHeader::new::<R>(header.instrument_id, header.ts_event, 0)
     }
 }
 
@@ -152,7 +154,7 @@ impl AsRef<[u8]> for Mbp1Msg {
 impl From<dbn::Mbp1Msg> for Mbp1Msg {
     fn from(item: dbn::Mbp1Msg) -> Self {
         Mbp1Msg {
-            hd: RecordHeader::new::<Mbp1Msg>(item.hd.instrument_id, item.hd.ts_event),
+            hd: RecordHeader::new::<Mbp1Msg>(item.hd.instrument_id, item.hd.ts_event, 0),
             price: item.price,
             size: item.size,
             action: item.action,
@@ -171,7 +173,7 @@ impl From<dbn::Mbp1Msg> for Mbp1Msg {
 impl From<&dbn::Mbp1Msg> for Mbp1Msg {
     fn from(item: &dbn::Mbp1Msg) -> Self {
         Mbp1Msg {
-            hd: RecordHeader::new::<Mbp1Msg>(item.hd.instrument_id, item.hd.ts_event),
+            hd: RecordHeader::new::<Mbp1Msg>(item.hd.instrument_id, item.hd.ts_event, 0),
             price: item.price,
             size: item.size,
             action: item.action,
@@ -226,11 +228,11 @@ impl Record for TradeMsg {
 
 impl HasRType for TradeMsg {
     fn has_rtype(rtype: u8) -> bool {
-        rtype == RType::Trade as u8
+        rtype == RType::Trades as u8
     }
 
     fn rtype_byte() -> u8 {
-        RType::Trade as u8
+        RType::Trades as u8
     }
 }
 
@@ -247,7 +249,7 @@ impl AsRef<[u8]> for TradeMsg {
 impl From<dbn::TradeMsg> for TradeMsg {
     fn from(item: dbn::TradeMsg) -> Self {
         TradeMsg {
-            hd: RecordHeader::new::<TradeMsg>(item.hd.instrument_id, item.hd.ts_event),
+            hd: RecordHeader::new::<TradeMsg>(item.hd.instrument_id, item.hd.ts_event, 0),
             price: item.price,
             size: item.size,
             action: item.action,
@@ -314,7 +316,7 @@ impl AsRef<[u8]> for BboMsg {
 impl From<dbn::BboMsg> for BboMsg {
     fn from(item: dbn::BboMsg) -> Self {
         BboMsg {
-            hd: RecordHeader::new::<BboMsg>(item.hd.instrument_id, item.hd.ts_event),
+            hd: RecordHeader::new::<BboMsg>(item.hd.instrument_id, item.hd.ts_event, 0),
             price: item.price,
             size: item.size,
             side: item.side,
@@ -329,7 +331,7 @@ impl From<dbn::BboMsg> for BboMsg {
 impl From<dbn::Mbp1Msg> for BboMsg {
     fn from(item: dbn::Mbp1Msg) -> Self {
         BboMsg {
-            hd: RecordHeader::new::<BboMsg>(item.hd.instrument_id, item.hd.ts_event),
+            hd: RecordHeader::new::<BboMsg>(item.hd.instrument_id, item.hd.ts_event, 0),
             price: item.price,
             size: item.size,
             side: item.side,
@@ -407,7 +409,7 @@ impl AsRef<[u8]> for OhlcvMsg {
 impl From<dbn::OhlcvMsg> for OhlcvMsg {
     fn from(item: dbn::OhlcvMsg) -> Self {
         OhlcvMsg {
-            hd: RecordHeader::new::<OhlcvMsg>(item.hd.instrument_id, item.hd.ts_event),
+            hd: RecordHeader::new::<OhlcvMsg>(item.hd.instrument_id, item.hd.ts_event, 0),
             open: item.open,
             high: item.high,
             low: item.low,
@@ -491,7 +493,7 @@ mod tests {
     fn test_construct_record() {
         // Test
         let record = Mbp1Msg {
-            hd: RecordHeader::new::<Mbp1Msg>(1, 1622471124),
+            hd: RecordHeader::new::<Mbp1Msg>(1, 1622471124, 0),
             price: 1000,
             size: 10,
             action: Action::Modify.into(),
@@ -522,7 +524,7 @@ mod tests {
     fn test_record_header_transmute() {
         // Test
         let record = Mbp1Msg {
-            hd: RecordHeader::new::<Mbp1Msg>(1, 1622471124),
+            hd: RecordHeader::new::<Mbp1Msg>(1, 1622471124, 0),
             price: 1000,
             size: 10,
             action: 1,
@@ -553,7 +555,7 @@ mod tests {
     #[test]
     fn test_transmute_record() {
         let record = Mbp1Msg {
-            hd: RecordHeader::new::<Mbp1Msg>(1, 1622471124),
+            hd: RecordHeader::new::<Mbp1Msg>(1, 1622471124, 0),
             price: 1000,
             size: 10,
             action: Action::Add.into(),
@@ -586,7 +588,7 @@ mod tests {
     #[test]
     fn test_transmute_record_mbp() {
         let record = Mbp1Msg {
-            hd: RecordHeader::new::<Mbp1Msg>(1, 1725734014000000000),
+            hd: RecordHeader::new::<Mbp1Msg>(1, 1725734014000000000, 0),
             price: 1000,
             size: 10,
             action: Action::Trade as i8,
@@ -618,7 +620,7 @@ mod tests {
     #[test]
     fn test_transmute_record_trade() {
         let record = TradeMsg {
-            hd: RecordHeader::new::<TradeMsg>(1, 1725734014000000000),
+            hd: RecordHeader::new::<TradeMsg>(1, 1725734014000000000, 0),
             price: 1000,
             size: 10,
             action: Action::Trade as i8,
@@ -641,7 +643,7 @@ mod tests {
     #[test]
     fn test_transmute_record_tbbo() {
         let record = TbboMsg {
-            hd: RecordHeader::new::<TbboMsg>(1, 1725734014000000000),
+            hd: RecordHeader::new::<TbboMsg>(1, 1725734014000000000, 0),
             price: 1000,
             size: 10,
             action: Action::Trade as i8,
@@ -673,7 +675,7 @@ mod tests {
     #[test]
     fn test_transmute_record_bbo() {
         let record = BboMsg {
-            hd: RecordHeader::new::<BboMsg>(1, 1725734014000000000),
+            hd: RecordHeader::new::<BboMsg>(1, 1725734014000000000, 0),
             price: 1000,
             size: 10,
             side: 1,
