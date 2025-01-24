@@ -9,7 +9,7 @@ use mbn::{
     params::RetrieveParams,
     python::backest_encode::PyBacktestEncoder,
     python::buffer::BufferStore,
-    python::encode::PyRecordEncoder,
+    python::encode::{PyMetadataEncoder, PyRecordEncoder},
     python::records::RecordMsg,
     records::{BboMsg, BidAskPair, Mbp1Msg, OhlcvMsg, RecordHeader, TbboMsg, TradeMsg},
     symbols::SymbolMap,
@@ -56,6 +56,7 @@ fn python_mbn(_py: Python<'_>, m: &Bound<PyModule>) -> PyResult<()> {
     checked_add_class::<LiveData>(m)?;
     checked_add_class::<AccountSummary>(m)?;
     checked_add_class::<PyRecordEncoder>(m)?;
+    checked_add_class::<PyMetadataEncoder>(m)?;
     checked_add_class::<PyBacktestEncoder>(m)?;
 
     Ok(())
