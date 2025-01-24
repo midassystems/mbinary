@@ -3,28 +3,22 @@ name = "mbn"
 version = "1.0.6"
 edition = "2021"
 
-
 [dependencies]
 serde = { version = "1.0", features = ["derive"] }
-serde_json = "1.0"
 thiserror = "1.0.61"
 num_enum = "0.7.3"
 strum = { version = "0.26", features = ["derive"], optional = true }
-sqlx = { version = "0.6", features = ["postgres","runtime-tokio-rustls", "runtime-actix-rustls", "macros", "bigdecimal", "json"] }
+sqlx = { version = "0.6", features = ["macros","runtime-actix-rustls" ]} 
 pyo3 = { workspace = true, optional = true }
-bigdecimal = { version = "0.3", features = ["serde"] }
 dbn = "0.22.1"
-databento ="0.14.1"
 chrono = "0.4"
-tracing = "0.1"
-tracing-subscriber = { version = "0.3", features = ["fmt", "env-filter", "json"] }
-tokio = "1.40.0"
+tokio = { version = "1.0", features = ["io-util"] }
 futures = "0.3"
 time = { version = "0.3", features = ["macros"] }
 bytemuck = "1.20.0"
 
 [dev-dependencies]
-tokio = "1.40.0"
+tokio = { version = "1.0", features = ["macros", "rt-multi-thread", "time"] }
 anyhow = "1.0.89"
 serial_test ="3.1.1"
 
