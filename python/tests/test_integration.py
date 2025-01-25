@@ -1,4 +1,5 @@
 import unittest
+import json
 from mbn import (
     Side,
     Action,
@@ -28,7 +29,7 @@ from mbn import (
     Vendors,
     Dataset,
     Stype,
-    # RetrieveParams,
+    RetrieveParams,
 )
 from pandas import pandas
 
@@ -1121,6 +1122,33 @@ class IntegrationTests(unittest.TestCase):
         binary = encoder.get_encoded_data()
 
         self.assertTrue(len(binary) > 0)
+
+    def test_retrieve_params_json(self):
+        # Create an instance
+        params = RetrieveParams(
+            symbols=["AAPL", "GOOG"],
+            start="2024-01-01",
+            end="2024-01-02",
+            schema=Schema.MBP1,
+            dataset=Dataset.EQUITIES,
+            stype=Stype.RAW,
+        )
+
+        # Serialize to JSON
+        json_str = params.to_json()
+
+        # Validate
+        expected = json.dumps(
+            {
+                "symbols": ["AAPL", "GOOG"],
+                "start_ts": 1704067200000000000,
+                "end_ts": 1704153600000000000,
+                "schema": "Mbp1",
+                "dataset": "Equities",
+                "stype": "Raw",
+            }
+        )
+        self.assertEqual(json.loads(expected), json.loads(json_str))
 
     def test_buffer_store_to_file(self):
 

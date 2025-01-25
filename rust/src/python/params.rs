@@ -23,6 +23,24 @@ impl RetrieveParams {
         )
     }
 
+    /// Convert `RetrieveParams` to JSON string
+    fn to_json(&self) -> PyResult<String> {
+        serde_json::to_string(self).map_err(|e| {
+            pyo3::exceptions::PyValueError::new_err(format!("Failed to serialize to JSON: {}", e))
+        })
+    }
+
+    /// Create `RetrieveParams` from JSON string
+    #[staticmethod]
+    fn from_json(json_str: &str) -> PyResult<Self> {
+        serde_json::from_str(json_str).map_err(|e| {
+            pyo3::exceptions::PyValueError::new_err(format!(
+                "Failed to deserialize from JSON: {}",
+                e
+            ))
+        })
+    }
+
     fn __str__(&self) -> String {
         format!("{:?}", self)
     }
