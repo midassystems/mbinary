@@ -1,14 +1,8 @@
 [workspace]
 members = [
-# <<<<<<< HEAD
   "rust", 
   "python",
-  # "mbn_c",
-# =======
-#   "mbn", 
-#   "mbn_c",
-#   "mbn_python",
-# >>>>>>> 0cce253 (ADD: Added mbn_c with base functionality.)
+  "mbn_c",
 ]
 resolver = "2"
 

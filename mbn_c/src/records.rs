@@ -55,7 +55,7 @@ impl<'a> ToRecordRef<'a> for RecordData {
                 RType::Ohlcv => RecordRef::from(&*self.ohlcv),
                 RType::Bbo => RecordRef::from(&*self.bbo),
                 RType::Tbbo => RecordRef::from(&*self.tbbo),
-                RType::Trade => RecordRef::from(&*self.trade),
+                RType::Trades => RecordRef::from(&*self.trade),
             }
         }
     }
@@ -104,7 +104,7 @@ pub extern "C" fn get_trade(record: *const RecordData) -> *const TradeMsg {
 
     let rtype = get_rtype(record);
 
-    if rtype == RType::Trade {
+    if rtype == RType::Trades {
         return unsafe { &(*record).trade as *const ManuallyDrop<TradeMsg> as *const TradeMsg };
     } else {
         return std::ptr::null(); // Return null if input pointer is null
@@ -144,6 +144,7 @@ pub extern "C" fn get_bbo(record: *const RecordData) -> *const BboMsg {
 pub extern "C" fn create_mbp1(
     instrument_id: u32,
     ts_event: u64,
+    rollover_flag: u8,
     price: i64,
     size: u32,
     action: c_char,
@@ -174,7 +175,7 @@ pub extern "C" fn create_mbp1(
     }; //unsafe { [*Box::from_raw(levels); 1] };
 
     Mbp1Msg {
-        hd: RecordHeader::new::<Mbp1Msg>(instrument_id, ts_event),
+        hd: RecordHeader::new::<Mbp1Msg>(instrument_id, ts_event, rollover_flag),
         price,
         size,
         action,
@@ -193,6 +194,7 @@ pub extern "C" fn create_mbp1(
 pub extern "C" fn create_ohlcv(
     instrument_id: u32,
     ts_event: u64,
+    rollover_flag: u8,
     open: i64,
     high: i64,
     low: i64,
@@ -200,7 +202,7 @@ pub extern "C" fn create_ohlcv(
     volume: u64,
 ) -> OhlcvMsg {
     OhlcvMsg {
-        hd: RecordHeader::new::<OhlcvMsg>(instrument_id, ts_event),
+        hd: RecordHeader::new::<OhlcvMsg>(instrument_id, ts_event, rollover_flag),
         open,
         high,
         low,
@@ -213,6 +215,7 @@ pub extern "C" fn create_ohlcv(
 pub extern "C" fn create_trade(
     instrument_id: u32,
     ts_event: u64,
+    rollover_flag: u8,
     price: i64,
     size: u32,
     action: c_char,
@@ -224,7 +227,7 @@ pub extern "C" fn create_trade(
     sequence: u32,
 ) -> TradeMsg {
     TradeMsg {
-        hd: RecordHeader::new::<TradeMsg>(instrument_id, ts_event),
+        hd: RecordHeader::new::<TradeMsg>(instrument_id, ts_event, rollover_flag),
         price,
         size,
         action,
@@ -241,6 +244,7 @@ pub extern "C" fn create_trade(
 pub extern "C" fn create_bbo(
     instrument_id: u32,
     ts_event: u64,
+    rollover_flag: u8,
     price: i64,
     size: u32,
     side: c_char,
@@ -264,7 +268,7 @@ pub extern "C" fn create_bbo(
         ask_ct,
     };
     BboMsg {
-        hd: RecordHeader::new::<BboMsg>(instrument_id, ts_event),
+        hd: RecordHeader::new::<BboMsg>(instrument_id, ts_event, rollover_flag),
         price,
         size,
         side,

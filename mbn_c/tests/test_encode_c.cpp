@@ -10,8 +10,8 @@
 TEST(EncoderTests, test_encoder_buffer) {
   // Prepare test records
   Mbp1Msg record1 =
-      create_mbp1(1, 1622471124, 1000, 10, 1, 1, 0, 0, 123456789098765, 12345,
-                  123456, 0, 1, 2, 2, 2, 1, 3);
+      create_mbp1(1, 1622471124, 0, 1000, 10, 1, 1, 0, 0, 123456789098765,
+                  12345, 123456, 0, 1, 2, 2, 2, 1, 3);
 
   std::vector<RecordData> records;
   records.push_back(RecordData{.mbp1 = record1});
@@ -46,8 +46,8 @@ TEST(EncoderTests, test_encoder_buffer) {
 TEST(EncoderTests, test_encode_to_file) {
   // Prepare test records
   Mbp1Msg record1 =
-      create_mbp1(1, 1622471124, 1000, 10, 1, 1, 0, 0, 123456789098765, 12345,
-                  123456, 0, 1, 2, 2, 2, 1, 3);
+      create_mbp1(1, 1622471124, 0, 1000, 10, 1, 1, 0, 0, 123456789098765,
+                  12345, 123456, 0, 1, 2, 2, 2, 1, 3);
 
   std::vector<RecordData> records;
   records.push_back(RecordData{.mbp1 = record1});

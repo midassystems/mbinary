@@ -11,7 +11,7 @@
 TEST(DecoderTests, test_decode_buffer) {
   // Prepare test records
   Mbp1Msg record1 =
-      create_mbp1(1, 1622471124, 1000, 10, 84, 65, 0, 130, 123456789098765,
+      create_mbp1(1, 1622471124, 0, 1000, 10, 84, 65, 0, 130, 123456789098765,
                   12345, 123456, 0, 1, 2, 2, 2, 1, 3);
 
   std::vector<RecordData> records;
@@ -89,7 +89,7 @@ TEST(DecoderTests, test_decode_buffer) {
 TEST(DecoderTests, test_decode_file) {
   // Prepare test records
   Mbp1Msg record1 =
-      create_mbp1(1, 1622471124, 1000, 10, 84, 65, 0, 130, 123456789098765,
+      create_mbp1(1, 1622471124, 0, 1000, 10, 84, 65, 0, 130, 123456789098765,
                   12345, 123456, 0, 1, 2, 2, 2, 1, 3);
 
   std::vector<RecordData> records;
