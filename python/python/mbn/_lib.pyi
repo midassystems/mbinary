@@ -5,9 +5,9 @@ from typing import SupportsBytes
 import pandas
 
 class Side(Enum):
-    ASK: str
-    BID: str
-    NONE: str
+    ASK = "A"
+    BID = "B"
+    NONE = "N"
 
     @classmethod
     def from_str(cls, value: str) -> "Side": ...
@@ -15,12 +15,12 @@ class Side(Enum):
     def from_int(cls, value: int) -> "Side": ...
 
 class Action(Enum):
-    MODIFY: str
-    TRADE: str
-    FILL: str
-    CANCEL: str
-    ADD: str
-    CLEAR: str
+    MODIFY = "M"
+    TRADE = "T"
+    FILL = "F"
+    CANCEL = "C"
+    ADD = "A"
+    CLEAR = "R"
 
     @classmethod
     def from_str(cls, value: str) -> "Action": ...
@@ -33,6 +33,7 @@ class Vendors(Enum):
 
     @classmethod
     def from_str(cls, value: str) -> "Vendors": ...
+    def to_json(self) -> str: ...
 
 class Dataset(Enum):
     FUTURES=  "futures"
@@ -41,6 +42,7 @@ class Dataset(Enum):
 
     @classmethod
     def from_str(cls, value: str) -> "Dataset": ...
+    def to_json(self) -> str: ...
 
 class Stype(Enum):
     RAW = "raw"
@@ -48,6 +50,7 @@ class Stype(Enum):
 
     @classmethod
     def from_str(cls, value: str) -> "Stype": ...
+    def to_json(self) -> str: ...
 
 class Schema(Enum):
     MBP1 = "mbp-1"
@@ -61,6 +64,7 @@ class Schema(Enum):
     BBO1_M = "bbo-1m"
     @classmethod
     def from_str(cls, value: str) -> "Schema": ...
+    def to_json(self) -> str: ...
 
 class RType(Enum):
     MBP1 = "mbp-1" 
@@ -247,8 +251,8 @@ class TradeMsg(RecordMsg):
         rollover_flag: int,
         price: int,
         size: int,
-        action: str,
-        side: str,
+        action: Action,
+        side: Side,
         depth: int,
         flags: int,
         ts_recv: int,
@@ -297,7 +301,7 @@ class BboMsg(RecordMsg):
         rollover_flag: int,
         price: int,
         size: int,
-        side: str,
+        side: Side,
         flags: int,
         ts_recv: int,
         sequence: int,
@@ -338,8 +342,8 @@ class Mbp1Msg(RecordMsg):
         rollover_flag: int,
         price: int,
         size: int,
-        action: str,
-        side: str,
+        action: Action,
+        side: Side,
         depth: int,
         flags: int,
         ts_recv: int,
@@ -352,6 +356,8 @@ class Mbp1Msg(RecordMsg):
     def hd(self) -> RecordHeader: ...
     @property
     def instrument_id(self) -> int: ...
+    @instrument_id.setter
+    def instrument_id(self, value: int) -> None: ...
     @property
     def ts_event(self) -> int: ...
     @property

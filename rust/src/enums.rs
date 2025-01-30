@@ -133,11 +133,8 @@ impl fmt::Display for Stype {
 #[repr(u8)]
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, TryFromPrimitive, IntoPrimitive)]
 pub enum Side {
-    /// A sell order or sell aggressor in a trade.
     Ask = b'A',
-    /// A buy order or a buy aggressor in a trade.
     Bid = b'B',
-    /// No side specified by the original source.
     None = b'N',
 }
 

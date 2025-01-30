@@ -84,6 +84,24 @@ impl Schema {
     fn __str__(&self) -> String {
         format!("{}", self)
     }
+
+    fn __repr__(&self) -> String {
+        format!("<Schema.{}: '{}'>", self.name(), self.value())
+    }
+
+    #[getter]
+    fn name(&self) -> String {
+        self.as_ref().to_ascii_uppercase()
+    }
+
+    #[getter]
+    fn value(&self) -> String {
+        self.__str__()
+    }
+
+    fn to_json(&self) -> String {
+        self.as_ref().to_string() // Directly return the string without extra quotes
+    }
 }
 
 #[pymethods]
@@ -98,6 +116,24 @@ impl Stype {
     fn __str__(&self) -> String {
         format!("{}", self)
     }
+
+    fn __repr__(&self) -> String {
+        format!("<Stype.{}: '{}'>", self.name(), self.value())
+    }
+
+    #[getter]
+    fn name(&self) -> String {
+        self.as_ref().to_ascii_uppercase()
+    }
+
+    #[getter]
+    fn value(&self) -> String {
+        self.__str__()
+    }
+
+    fn to_json(&self) -> String {
+        self.as_ref().to_string() // Directly return the string without extra quotes
+    }
 }
 
 #[pymethods]
@@ -108,9 +144,26 @@ impl Dataset {
         let dataset_str: String = value.extract()?;
         Dataset::from_str(&dataset_str).map_err(|e| PyValueError::new_err(e.extract_message()))
     }
-
     fn __str__(&self) -> String {
         format!("{}", self)
+    }
+
+    fn __repr__(&self) -> String {
+        format!("<Dataset.{}: '{}'>", self.name(), self.value())
+    }
+
+    #[getter]
+    fn name(&self) -> String {
+        self.as_ref().to_ascii_uppercase()
+    }
+
+    #[getter]
+    fn value(&self) -> String {
+        self.__str__()
+    }
+
+    fn to_json(&self) -> String {
+        self.as_ref().to_string() // Directly return the string without extra quotes
     }
 }
 
@@ -136,5 +189,19 @@ impl RType {
 
     fn __str__(&self) -> String {
         format!("{}", self)
+    }
+
+    fn __repr__(&self) -> String {
+        format!("<RType.{}: '{}'>", self.name(), self.value())
+    }
+
+    #[getter]
+    fn name(&self) -> String {
+        self.as_ref().to_ascii_uppercase()
+    }
+
+    #[getter]
+    fn value(&self) -> String {
+        self.__str__()
     }
 }

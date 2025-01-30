@@ -751,6 +751,11 @@ class IntegrationTests(unittest.TestCase):
         add = Action.from_int(65)
         self.assertEqual(add, Action.ADD)
 
+        # valure
+        act_1 = Action.MODIFY
+        act_2 = Action.from_str("M")
+        self.assertEqual(act_1, act_2)
+
         # Error
         with self.assertRaises(ValueError):
             Action.from_str("dj")
@@ -767,6 +772,14 @@ class IntegrationTests(unittest.TestCase):
         # __str__
         schema = Schema.OHLCV1_S.__str__()
         self.assertEqual(schema, "ohlcv-1s")
+
+        # valure
+        act_1 = Schema.MBP1
+        act_2 = Schema.from_str("mbp-1")
+        self.assertEqual(act_1, act_2)
+
+        self.assertEqual(act_1.value, "mbp-1")
+        self.assertEqual(act_2.value, "mbp-1")
 
         # Error
         with self.assertRaises(ValueError):
@@ -785,6 +798,13 @@ class IntegrationTests(unittest.TestCase):
         rtype = RType.from_schema(Schema.from_str("ohlcv-1s"))
         self.assertEqual(rtype, RType.OHLCV)
 
+        # valure
+        act_1 = RType.MBP1
+        act_2 = RType.from_str("mbp-1")
+        self.assertEqual(act_1, act_2)
+
+        self.assertEqual(act_1.value, "mbp-1")
+        self.assertEqual(act_2.value, "mbp-1")
         # Errors
         with self.assertRaises(ValueError):
             RType.from_int(0x09)
@@ -804,6 +824,14 @@ class IntegrationTests(unittest.TestCase):
         # __str__
         v = Vendors.YFINANCE.__str__()
         self.assertEqual(v, "yfinance")
+
+        # valure
+        act_1 = Vendors.DATABENTO
+        act_2 = Vendors.from_str("databento")
+        self.assertEqual(act_1, act_2)
+
+        self.assertEqual(act_1.value, "databento")
+        self.assertEqual(act_2.to_json(), "Databento")
 
         # Error
         with self.assertRaises(ValueError):
@@ -929,10 +957,11 @@ class IntegrationTests(unittest.TestCase):
             0,
             [pair],
         )
+        msg.instrument_id = 2
 
         # Test
         self.assertEqual(msg.rtype, RType.MBP1)
-        self.assertEqual(msg.instrument_id, 1)
+        self.assertEqual(msg.instrument_id, 2)
         self.assertEqual(msg.ts_event, 123456765432)
         self.assertEqual(msg.rollover_flag, 0)
         self.assertEqual(msg.price, 1)

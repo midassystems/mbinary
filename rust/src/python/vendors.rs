@@ -16,4 +16,22 @@ impl Vendors {
     fn __str__(&self) -> String {
         format!("{}", self)
     }
+
+    fn __repr__(&self) -> String {
+        format!("<Vendors.{}: '{}'>", self.name(), self.value())
+    }
+
+    #[getter]
+    fn name(&self) -> String {
+        self.as_ref().to_ascii_uppercase()
+    }
+
+    #[getter]
+    fn value(&self) -> String {
+        self.__str__()
+    }
+
+    fn to_json(&self) -> String {
+        self.as_ref().to_string() // Directly return the string without extra quotes
+    }
 }
