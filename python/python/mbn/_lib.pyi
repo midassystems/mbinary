@@ -349,7 +349,7 @@ class Mbp1Msg(RecordMsg):
         ts_recv: int,
         ts_in_delta: int,
         sequence: int,
-        discrimincator: int,
+        discriminator: int,
         levels: List[BidAskPair],
     ) -> None: ...
     @property
