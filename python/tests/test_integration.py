@@ -906,6 +906,58 @@ class IntegrationTests(unittest.TestCase):
         mappings = symbol_map.map
         self.assertEqual(mappings, mappings)
 
+    def test_is_record(self):
+        pair = BidAskPair(1, 2, 3, 4, 5, 6)
+        ohlcv_msg = OhlcvMsg(1, 123456765432, 0, 1, 2, 3, 4, 100000)
+        mbp1_msg = Mbp1Msg(
+            1,
+            123456765432,
+            0,
+            1,
+            2,
+            Action.ADD,
+            Side.ASK,
+            0,
+            0,
+            3,
+            4,
+            5,
+            0,
+            [pair],
+        )
+        trade_msg = TradeMsg(
+            1,
+            123456765432,
+            0,
+            1,
+            2,
+            Action.TRADE,
+            Side.ASK,
+            0,
+            0,
+            3,
+            4,
+            5,
+        )
+        bbo_msg = BboMsg(
+            1,
+            123456765432,
+            0,
+            1,
+            2,
+            Side.ASK,
+            0,
+            3,
+            5,
+            [pair],
+        )
+
+        # Test
+        self.assertTrue(RecordMsg.is_record(ohlcv_msg))
+        self.assertTrue(RecordMsg.is_record(mbp1_msg))
+        self.assertTrue(RecordMsg.is_record(bbo_msg))
+        self.assertTrue(RecordMsg.is_record(trade_msg))
+
     def test_bid_ask_properties(self):
         pair = BidAskPair(1, 2, 3, 4, 5, 6)
 

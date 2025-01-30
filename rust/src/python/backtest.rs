@@ -24,11 +24,11 @@ impl BacktestData {
         })
     }
     pub fn to_dict(&self, py: Python) -> Py<PyDict> {
-        let dict = PyDict::new_bound(py);
+        let dict = PyDict::new(py);
         let _ = dict.set_item("metadata", self.metadata.__dict__(py));
 
         // Create a Python list to hold the trade instructions
-        let period_list = PyList::empty_bound(py);
+        let period_list = PyList::empty(py);
         for stat in &self.period_timeseries_stats {
             let dict = stat.to_dict(py);
             period_list.append(dict).unwrap();
@@ -36,7 +36,7 @@ impl BacktestData {
         let _ = dict.set_item("period_timeseries_stats", &period_list);
 
         // Create a Python list to hold the trade instructions
-        let daily_list = PyList::empty_bound(py);
+        let daily_list = PyList::empty(py);
         for stat in &self.daily_timeseries_stats {
             let dict = stat.to_dict(py);
             daily_list.append(dict).unwrap();
@@ -45,7 +45,7 @@ impl BacktestData {
         let _ = dict.set_item("daily_timeseries_stats", &daily_list);
 
         // Create a Python list to hold the trade instructions
-        let trades_list = PyList::empty_bound(py);
+        let trades_list = PyList::empty(py);
         for stat in &self.trades {
             let dict = stat.to_dict(py);
             trades_list.append(dict).unwrap();
@@ -54,7 +54,7 @@ impl BacktestData {
         let _ = dict.set_item("trades", &trades_list);
 
         // Create a Python list to hold the trade instructions
-        let signal_list = PyList::empty_bound(py);
+        let signal_list = PyList::empty(py);
         for stat in &self.signals {
             let dict = stat.to_dict(py);
             signal_list.append(dict).unwrap();
@@ -83,7 +83,7 @@ impl BacktestMetaData {
     }
 
     pub fn __dict__(&self, py: Python) -> Py<PyDict> {
-        let dict = PyDict::new_bound(py);
+        let dict = PyDict::new(py);
         dict.set_item("backtest_id", self.backtest_id).unwrap();
         dict.set_item("backtest_name", &self.backtest_name).unwrap();
         let _ = dict.set_item("parameters", self.parameters.to_dict(py));
@@ -116,7 +116,7 @@ impl Parameters {
         }
     }
     pub fn to_dict(&self, py: Python) -> Py<PyDict> {
-        let dict = PyDict::new_bound(py);
+        let dict = PyDict::new(py);
         dict.set_item("strategy_name", &self.strategy_name).unwrap();
         dict.set_item("capital", self.capital).unwrap();
         dict.set_item("schema", &self.schema).unwrap();
@@ -185,7 +185,7 @@ impl StaticStats {
     }
 
     pub fn to_dict(&self, py: Python) -> Py<PyDict> {
-        let dict = PyDict::new_bound(py);
+        let dict = PyDict::new(py);
         dict.set_item("total_trades", &self.total_trades).unwrap();
         dict.set_item("total_winning_trades", self.total_winning_trades)
             .unwrap();
@@ -260,7 +260,7 @@ impl TimeseriesStats {
     }
 
     pub fn to_dict(&self, py: Python) -> Py<PyDict> {
-        let dict = PyDict::new_bound(py);
+        let dict = PyDict::new(py);
         dict.set_item("timestamp", &self.timestamp).unwrap();
         dict.set_item("equity_value", self.equity_value).unwrap();
         dict.set_item("percent_drawdown", &self.percent_drawdown)
@@ -302,7 +302,7 @@ impl Trades {
         }
     }
     pub fn to_dict(&self, py: Python) -> Py<PyDict> {
-        let dict = PyDict::new_bound(py);
+        let dict = PyDict::new(py);
         dict.set_item("trade_id", self.trade_id).unwrap();
         dict.set_item("leg_id", self.leg_id).unwrap();
         dict.set_item("timestamp", self.timestamp).unwrap();
@@ -327,11 +327,11 @@ impl Signals {
         }
     }
     pub fn to_dict(&self, py: Python) -> Py<PyDict> {
-        let dict = PyDict::new_bound(py);
+        let dict = PyDict::new(py);
         dict.set_item("timestamp", &self.timestamp).unwrap();
 
         // Create a Python list to hold the trade instructions
-        let trade_instructions_list = PyList::empty_bound(py);
+        let trade_instructions_list = PyList::empty(py);
 
         // Iterate over the trade_instructions vector
         for instruction in &self.trade_instructions {
@@ -371,7 +371,7 @@ impl SignalInstructions {
         }
     }
     pub fn to_dict(&self, py: Python) -> Py<PyDict> {
-        let dict = PyDict::new_bound(py);
+        let dict = PyDict::new(py);
         dict.set_item("ticker", &self.ticker).unwrap();
         dict.set_item("order_type", &self.order_type).unwrap();
         dict.set_item("action", &self.action).unwrap();

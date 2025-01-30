@@ -32,7 +32,7 @@ impl Metadata {
         let mut buffer = Vec::new();
         let mut encoder = MetadataEncoder::new(&mut buffer);
         encoder.encode_metadata(self)?;
-        Ok(PyBytes::new_bound(py, buffer.as_slice()).into())
+        Ok(PyBytes::new(py, buffer.as_slice()).into())
     }
 
     #[pyo3(name = "decode")]

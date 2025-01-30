@@ -2,13 +2,14 @@ use crate::enums::RType;
 use crate::error::{Error, Result};
 use crate::record_ref::RecordRef;
 use crate::records::{BboMsg, Mbp1Msg, OhlcvMsg, Record, RecordHeader, TbboMsg, TradeMsg};
+use pyo3::IntoPyObject;
 use serde::Serialize;
 use std::hash::Hash;
 
-#[cfg(feature = "python")]
-use pyo3::prelude::*;
+// #[cfg(feature = "python")]
+// use pyo3::prelude::*;
 
-#[derive(Debug, Clone, Hash, PartialEq, Eq, Serialize)]
+#[derive(Debug, Clone, Hash, PartialEq, Eq, Serialize, IntoPyObject)]
 pub enum RecordEnum {
     Mbp1(Mbp1Msg),
     Ohlcv(OhlcvMsg),
@@ -111,18 +112,42 @@ impl Record for RecordEnum {
     }
 }
 
-#[cfg(feature = "python")]
-impl IntoPy<Py<PyAny>> for RecordEnum {
-    fn into_py(self, py: Python<'_>) -> Py<PyAny> {
-        match self {
-            RecordEnum::Mbp1(msg) => msg.into_py(py).into(),
-            RecordEnum::Ohlcv(msg) => msg.into_py(py).into(),
-            RecordEnum::Trade(msg) => msg.into_py(py).into(),
-            RecordEnum::Tbbo(msg) => msg.into_py(py).into(),
-            RecordEnum::Bbo(msg) => msg.into_py(py).into(),
-        }
-    }
-}
+// #[cfg(feature = "python")]
+// impl IntoPy<Py<PyAny>> for RecordEnum {
+//     fn into_py(self, py: Python<'_>) -> Py<PyAny> {
+//         match self {
+//             RecordEnum::Mbp1(msg) => msg.into_py(py).into(),
+//             RecordEnum::Ohlcv(msg) => msg.into_py(py).into(),
+//             RecordEnum::Trade(msg) => msg.into_py(py).into(),
+//             RecordEnum::Tbbo(msg) => msg.into_py(py).into(),
+//             RecordEnum::Bbo(msg) => msg.into_py(py).into(),
+//         }
+//     }
+// }
+//
+// impl<'py> IntoPyObjectExt<'py> for RecordEnum {
+//     fn into_py_any(self, py: Python<'py>) -> PyResult<Py<PyAny>> {
+//         Ok(PyAny::new())
+//     }
+// }
+
+// #[cfg(feature = "python")]
+// impl<'py> IntoPyObject<'py> for RecordEnum {
+//     type Target = PyAny;
+//     type Output = Bound<'py, PyAny>;
+//     type Error = PyErr;
+//
+//     fn into_py_any(self, py: Python<'py>) -> std::result::Result<Self::Output, Self::Error> {
+//         match self {
+//             RecordEnum::Bbo(msg) => Ok(msg.into_py_any(py)?),
+//             RecordEnum::Ohlcv(msg) => Ok(PyString::new_bound(py, &msg)),
+//             RecordEnum::Trade(msg) => Ok(PyString::new_bound(py, &msg)),
+//             RecordEnum::Tbbo(msg) => Ok(PyString::new_bound(py, &msg)),
+//
+//             RecordEnum::Bbo(msg) => Ok(msg.into_pyobject(py)),
+//         }
+//     }
+// }
 
 #[derive(Debug, Clone)]
 pub enum RecordEnumRef<'a> {

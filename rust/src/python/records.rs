@@ -3,9 +3,28 @@ use crate::records::{BboMsg, BidAskPair, Mbp1Msg, OhlcvMsg, RecordHeader, TradeM
 use crate::PRICE_SCALE;
 use pyo3::prelude::*;
 use pyo3::types::PyDict;
+use pyo3::types::{PyAny, PyAnyMethods};
 
 #[cfg_attr(feature = "python", pyclass(dict, module = "mbn"))]
 pub struct RecordMsg;
+
+#[pymethods]
+impl RecordMsg {
+    #[staticmethod]
+    fn is_record(py: Python, obj: &Bound<'_, PyAny>) -> bool {
+        // Get the types of the custom Python classes
+        let mbp1_type = &py.get_type::<Mbp1Msg>();
+        let trade_type = &py.get_type::<TradeMsg>();
+        let ohlcv_type = &py.get_type::<OhlcvMsg>();
+        let bbo_type = &py.get_type::<BboMsg>();
+
+        // Check if the object is an instance of any of the custom types
+        obj.is_exact_instance(mbp1_type)
+            || obj.is_exact_instance(trade_type)
+            || obj.is_exact_instance(ohlcv_type)
+            || obj.is_exact_instance(bbo_type)
+    }
+}
 
 #[pymethods]
 impl BidAskPair {
@@ -119,7 +138,7 @@ impl Mbp1Msg {
     }
 
     fn __dict__(&self, py: Python) -> Py<PyDict> {
-        let dict = PyDict::new_bound(py);
+        let dict = PyDict::new(py);
         dict.set_item("length", self.hd.length).unwrap();
         dict.set_item("rtype", self.hd.rtype).unwrap();
         dict.set_item("instrument_id", self.hd.instrument_id)
@@ -224,7 +243,7 @@ impl TradeMsg {
     }
 
     fn __dict__(&self, py: Python) -> Py<PyDict> {
-        let dict = PyDict::new_bound(py);
+        let dict = PyDict::new(py);
         dict.set_item("length", self.hd.length).unwrap();
         dict.set_item("rtype", self.hd.rtype).unwrap();
         dict.set_item("instrument_id", self.hd.instrument_id)
@@ -348,7 +367,7 @@ impl BboMsg {
     }
 
     fn __dict__(&self, py: Python) -> Py<PyDict> {
-        let dict = PyDict::new_bound(py);
+        let dict = PyDict::new(py);
         dict.set_item("length", self.hd.length).unwrap();
         dict.set_item("rtype", self.hd.rtype).unwrap();
         dict.set_item("instrument_id", self.hd.instrument_id)
@@ -449,7 +468,7 @@ impl OhlcvMsg {
         format!("{:?}", self)
     }
     fn __dict__(&self, py: Python) -> Py<PyDict> {
-        let dict = PyDict::new_bound(py); // Correct usage of PyDict::new
+        let dict = PyDict::new(py); // Correct usage of PyDict::new
         dict.set_item("length", self.hd.length).unwrap();
         dict.set_item("rtype", self.hd.rtype).unwrap();
         dict.set_item("instrument_id", self.hd.instrument_id)

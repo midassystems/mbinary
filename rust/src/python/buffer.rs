@@ -3,8 +3,8 @@ use crate::metadata::Metadata;
 use crate::utils::unix_nanos_to_date;
 use crate::PRICE_SCALE;
 use pyo3::exceptions::PyIOError;
-use pyo3::prelude::*;
 use pyo3::types::{PyBytes, PyDict};
+use pyo3::{prelude::*, IntoPyObjectExt};
 use std::io::Cursor;
 
 #[cfg_attr(feature = "python", pyo3::pyclass(module = "mbn"))]
@@ -32,7 +32,7 @@ impl BufferStore {
 
     #[getter]
     pub fn metadata(&self, py: Python) -> PyResult<PyObject> {
-        Ok(self.metadata.clone().into_py(py))
+        Ok(self.metadata.clone().into_py_any(py)?)
     }
 
     pub fn decode_to_array(&mut self) -> PyResult<Vec<PyObject>> {
@@ -42,10 +42,10 @@ impl BufferStore {
             .map_err(|e| PyIOError::new_err(e.to_string()))?;
 
         Python::with_gil(|py| {
-            Ok(decoded
+            decoded
                 .into_iter()
-                .map(|record| record.into_py(py))
-                .collect())
+                .map(|record| record.into_py_any(py)) // No `?` inside map
+                .collect::<PyResult<Vec<_>>>() // Collect into PyResult<Vec<PyObject>>
         })
     }
 
@@ -53,7 +53,13 @@ impl BufferStore {
         let mut iter = self.decoder.decode_iterator();
 
         match iter.next() {
-            Some(Ok(record)) => Some(record.into_py(py)),
+            Some(Ok(record)) => match record.into_py_any(py) {
+                Ok(obj) => Some(obj), // Extract `PyObject` from `Ok`
+                Err(e) => {
+                    e.restore(py); // Restore the error
+                    None
+                }
+            },
             Some(Err(e)) => {
                 PyIOError::new_err(e.to_string()).restore(py);
                 None
@@ -61,6 +67,7 @@ impl BufferStore {
             None => None, // End of iteration
         }
     }
+
     pub fn decode_to_df(
         &mut self,
         py: Python,
@@ -146,7 +153,7 @@ impl BufferStore {
             })
             .collect::<PyResult<Vec<_>>>()?;
 
-        let pandas = py.import_bound("pandas")?;
+        let pandas = py.import("pandas")?;
         let df = pandas.call_method1("DataFrame", (dicts,))?;
         Ok(df.into())
     }
@@ -158,7 +165,7 @@ impl BufferStore {
     #[staticmethod]
     pub fn from_file(file_path: &str, py: Python) -> PyResult<Self> {
         let buffer = std::fs::read(file_path).map_err(|e| PyIOError::new_err(e.to_string()))?;
-        let py_bytes = PyBytes::new_bound(py, &buffer);
+        let py_bytes = PyBytes::new(py, &buffer);
         Ok(BufferStore::py_new(&py_bytes)?)
     }
 }
