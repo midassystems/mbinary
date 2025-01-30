@@ -295,7 +295,7 @@ class IntegrationTests(unittest.TestCase):
                 },
             ],
         }
-        self.assertDictEqual(expected, live.__dict__())
+        self.assertDictEqual(expected, live.to_dict())
 
     # -- Backtest --
     def test_backtest_data(self):
@@ -449,7 +449,7 @@ class IntegrationTests(unittest.TestCase):
                 },
             ],
         }
-        self.assertEqual(expected, backtest.__dict__())
+        self.assertEqual(expected, backtest.to_dict())
 
     def test_parameters(self):
         strategy_name = "Testing"
@@ -481,7 +481,7 @@ class IntegrationTests(unittest.TestCase):
             "end": 1730160814000000000,
             "tickers": ["test", "test2"],
         }
-        self.assertEqual(expected, parameters.__dict__())
+        self.assertEqual(expected, parameters.to_dict())
 
     def test_static_stats(self):
         total_trades = 100
@@ -564,7 +564,7 @@ class IntegrationTests(unittest.TestCase):
             "sharpe_ratio": 23432343,
             "sortino_ratio": 123453234543,
         }
-        self.assertEqual(expected, static_stats.__dict__())
+        self.assertEqual(expected, static_stats.to_dict())
 
     def test_timeseries(self):
         timestamp = 123700000000000
@@ -590,7 +590,7 @@ class IntegrationTests(unittest.TestCase):
             "period_return": 2345432345,
             "cumulative_return": 2343234,
         }
-        self.assertEqual(expected, timeseries.__dict__())
+        self.assertEqual(expected, timeseries.to_dict())
 
     def test_trades(self):
         trade_id = 1
@@ -631,7 +631,7 @@ class IntegrationTests(unittest.TestCase):
             "action": "BUY",
             "fees": 2343,
         }
-        self.assertEqual(expected, trade.__dict__())
+        self.assertEqual(expected, trade.to_dict())
 
     def test_signal(self):
         ticker = "AAPL"
@@ -677,7 +677,7 @@ class IntegrationTests(unittest.TestCase):
                 }
             ],
         }
-        self.assertEqual(expected, signal.__dict__())
+        self.assertEqual(expected, signal.to_dict())
 
     def test_signalinstructions(self):
         ticker = "AAPL"
@@ -715,7 +715,7 @@ class IntegrationTests(unittest.TestCase):
             "limit_price": "",
             "aux_price": "",
         }
-        self.assertEqual(expected, instructions.__dict__())
+        self.assertEqual(expected, instructions.to_dict())
 
     # -- Records --
     def test_side(self):
@@ -848,8 +848,8 @@ class IntegrationTests(unittest.TestCase):
 
         # Test
         metadata = Metadata(
-            Schema.OHLCV1_S,
-            Dataset.EQUITIES,
+            Schema.from_str("ohlcv-1s"),
+            Dataset.from_str("equities"),
             1234567654321,
             987654345676543456,
             symbol_map,
@@ -1032,12 +1032,8 @@ class IntegrationTests(unittest.TestCase):
             5,
             [pair],
         )
-        msg.bid_px = 1234
-        msg.ask_px = 1234
-        msg.bid_sz = 1234
-        msg.ask_sz = 1234
-        msg.bid_ct = 1234
-        msg.ask_ct = 1234
+        pair2 = BidAskPair(1234, 1234, 1234, 1234, 1234, 1234)
+        msg.levels = [pair2]  # type: ignore
 
         # Test
         self.assertEqual(msg.levels[0].bid_px, 1234)
@@ -1060,8 +1056,8 @@ class IntegrationTests(unittest.TestCase):
         # Metadata
         symbol_map = SymbolMap({})
         metadata = Metadata(
-            Schema.MBP1,
-            Dataset.EQUITIES,
+            Schema.from_str("mbp-1"),
+            Dataset.from_str("equities"),
             1234567654321,
             987654345676543456,
             symbol_map,

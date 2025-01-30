@@ -28,46 +28,46 @@ class Action(Enum):
     def from_int(cls, value: int) -> "Action": ...
 
 class Vendors(Enum):
-    DATABENTO: str
-    YFINANCE: str
+    DATABENTO = "databento"
+    YFINANCE = "yfinance"
 
     @classmethod
     def from_str(cls, value: str) -> "Vendors": ...
 
 class Dataset(Enum):
-    FUTURES: str
-    EQUITIES: str
-    OPTION: str
+    FUTURES=  "futures"
+    EQUITIES ="equities"
+    OPTION = "option"
 
     @classmethod
     def from_str(cls, value: str) -> "Dataset": ...
 
 class Stype(Enum):
-    RAW: str
-    CONTINUOUS: str 
+    RAW = "raw"
+    CONTINUOUS = "continuous"
 
     @classmethod
     def from_str(cls, value: str) -> "Stype": ...
 
 class Schema(Enum):
-    MBP1: str
-    OHLCV1_S: str
-    OHLCV1_M: str
-    OHLCV1_H: str
-    OHLCV1_D: str
-    TRADES: str
-    TBBO: str
-    BBO1_S: str
-    BBO1_M: str
+    MBP1 = "mbp-1"
+    OHLCV1_S = "ohlcv-1s"
+    OHLCV1_M = "ohlcv-1m"
+    OHLCV1_H = "ohlcv-1h"
+    OHLCV1_D = "ohlcv-1d"
+    TRADES = "trades"
+    TBBO = "tbbo"
+    BBO1_S = "bbo-1s"
+    BBO1_M = "bbo-1m"
     @classmethod
     def from_str(cls, value: str) -> "Schema": ...
 
 class RType(Enum):
-    MBP1: str
-    OHLCV: str
-    TRADES: str
-    TBBO: str
-    BBO: str
+    MBP1 = "mbp-1" 
+    OHLCV = "ohlcv"
+    TRADES = "trades"
+    TBBO = "tbbo"
+    BBO = "bbo"
 
     @classmethod
     def from_int(cls, value: int) -> "RType": ...
@@ -86,10 +86,11 @@ class SymbolMap:
 class Metadata(SupportsBytes):
     def __init__(
         self,
-        schema: Schema | None,
+        schema: Schema,
+        dataset: Dataset,
         start: int,
-        end: int | None = None,
-        mappings: SymbolMap | None = None,
+        end: int,
+        mappings: SymbolMap,
     ) -> None: ...
     def __bytes__(self) -> bytes: ...
     @classmethod
@@ -98,6 +99,8 @@ class Metadata(SupportsBytes):
     @property
     def schema(self) -> Schema: ...
     @property
+    def dataset(self) -> Dataset: ...
+    @property
     def start(self) -> int: ...
     @property
     def end(self) -> int: ...
@@ -105,16 +108,18 @@ class Metadata(SupportsBytes):
     def mappings(self) -> SymbolMap: ...
 
 
-class RetrieveParams(SupportsBytes):
+class RetrieveParams():
     def __init__(
         self,
         symbols: List[str],
-        start: int,
-        end: int,
+        start: str,
+        end: str,
         schema: Schema,
         dataset: Dataset,
         stype: Stype,
     ) -> None: ...
+    @classmethod
+    def from_json(cls, json_str: str)-> "RetrieveParams": ...
     @property
     def symbols(self) -> List[str]: ...
     @property
@@ -127,6 +132,7 @@ class RetrieveParams(SupportsBytes):
     def dataset(self) -> Dataset: ...
     @property
     def stype(self) -> Stype: ...
+    def to_json(self) -> str: ...
 
 class RecordHeader:
     """docs testing"""
@@ -391,8 +397,17 @@ class BufferStore(SupportsBytes):
     def decode_to_df(self, pretty_ts: bool, pretty_px: bool) -> pandas.DataFrame: ...
     def replay(self) -> Optional[RecordMsg]: ...
 
-# -- Trading -- 
+class PyMetadataEncoder:
+    def __init__(self) -> None: ...
+    def encode_metadata(self, metadata: Metadata) -> None: ...
+    def get_encoded_data(self) -> bytes: ...
 
+class PyRecordEncoder:
+    def __init__(self) -> None: ...
+    def encode_records(self, records: List[Mbp1Msg]) -> None: ...
+    def get_encoded_data(self) -> bytes: ...
+
+# -- Trading -- 
 class SignalInstructions:
     def __init__(
         self,
@@ -406,6 +421,7 @@ class SignalInstructions:
         limit_price: str,
         aux_price: str,
     ) -> None: ...
+    def to_dict(self) -> Dict: ...
 
 class Signals:
     def __init__(
@@ -413,6 +429,7 @@ class Signals:
         timestamp: int, 
         trade_instructions: List[SignalInstructions]
     ) -> None: ...
+    def to_dict(self) -> Dict: ...
 
 class Trades:
     def __init__(
@@ -424,9 +441,11 @@ class Trades:
         quantity: int,
         avg_price: int,
         trade_value: int,
+        trade_cost: int,
         action: str,
         fees: int,
     ) -> None: ...
+    def to_dict(self) -> Dict: ...
 
 class TimeseriesStats: 
     def __init__(
@@ -437,6 +456,7 @@ class TimeseriesStats:
         cumulative_return: int,
         period_return: int,
     ) -> None: ...
+    def to_dict(self) -> Dict: ...
 
 class StaticStats:
     def __init__(
@@ -458,6 +478,7 @@ class StaticStats:
         beginning_equity: int,
         ending_equity: int,
         total_return: int,
+        annualized_return: int,
         daily_standard_deviation_percentage: int,
         annual_standard_deviation_percentage: int,
         max_drawdown_percentage_period: int,
@@ -465,6 +486,7 @@ class StaticStats:
         sharpe_ratio: int,
         sortino_ratio: int,
     ) -> None: ...
+    def to_dict(self) -> Dict: ...
 
 class Parameters:
     def __init__(self,        
@@ -476,6 +498,7 @@ class Parameters:
         end: int,
         tickers: List[str],
     ) -> None: ...
+    def to_dict(self) -> Dict: ...
 
 class BacktestMetaData:
     def __init__(
@@ -485,6 +508,7 @@ class BacktestMetaData:
         parameters: Parameters,
         static_stats: StaticStats,
     ) -> None: ...
+    def to_dict(self) -> Dict: ...
 
 class BacktestData:
     def __init__(
@@ -495,10 +519,11 @@ class BacktestData:
         trades: List[Trades],
         signals: List[Signals]
     ) -> None: ...
+    def to_dict(self) -> Dict: ...
 
 
 class PyBacktestEncoder:
-    def __init__() -> None: ...
+    def __init__(self) -> None: ...
     def encode_backtest(self, backtest: BacktestData) -> List[int]: ...
 
 class AccountSummary:
@@ -525,6 +550,8 @@ class AccountSummary:
         end_total_cash_balance: int,
         end_unrealized_pnl: int,
     ) -> None: ...
+    def to_dict(self) -> Dict: ...
+
 
 class LiveData:
     def __init__(
@@ -535,5 +562,6 @@ class LiveData:
         signals: List[Signals],
         account: AccountSummary,
     ) -> None: ...
+    def to_dict(self) -> Dict: ...
 
 

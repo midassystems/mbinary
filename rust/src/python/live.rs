@@ -31,16 +31,16 @@ impl LiveData {
         })
     }
 
-    fn __dict__(&self, py: Python) -> Py<PyDict> {
+    fn to_dict(&self, py: Python) -> Py<PyDict> {
         let dict = PyDict::new_bound(py);
         dict.set_item("live_id", self.live_id).unwrap();
-        let _ = dict.set_item("parameters", self.parameters.__dict__(py));
-        let _ = dict.set_item("account", self.account.__dict__(py));
+        let _ = dict.set_item("parameters", self.parameters.to_dict(py));
+        let _ = dict.set_item("account", self.account.to_dict(py));
 
         // Create a Python list to hold the trade instructions
         let trades_list = PyList::empty_bound(py);
         for stat in &self.trades {
-            let dict = stat.__dict__(py);
+            let dict = stat.to_dict(py);
             trades_list.append(dict).unwrap();
         }
 
@@ -49,7 +49,7 @@ impl LiveData {
         // Create a Python list to hold the trade instructions
         let signal_list = PyList::empty_bound(py);
         for stat in &self.signals {
-            let dict = stat.__dict__(py);
+            let dict = stat.to_dict(py);
             signal_list.append(dict).unwrap();
         }
         let _ = dict.set_item("signals", &signal_list);
@@ -108,7 +108,7 @@ impl AccountSummary {
             end_unrealized_pnl,
         }
     }
-    pub fn __dict__(&self, py: Python) -> Py<PyDict> {
+    pub fn to_dict(&self, py: Python) -> Py<PyDict> {
         let dict = PyDict::new_bound(py);
         dict.set_item("currency", &self.currency).unwrap();
         dict.set_item("start_timestamp", &self.start_timestamp)
