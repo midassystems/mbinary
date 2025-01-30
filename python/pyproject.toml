@@ -9,7 +9,7 @@ module-name = "mbn._lib" # was python_mbn
 
 [project]
 name = "mbn" #was python_mbn
-version = "1.0.11"
+version = "1.0.12"
 description = "A binary encoding library designed for efficient data storage and transportation in trading platforms."  
 readme = "README.md"  
 keywords = ["midas","binary-encoding", "protocol-buffers"]  
