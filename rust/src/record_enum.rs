@@ -2,14 +2,14 @@ use crate::enums::RType;
 use crate::error::{Error, Result};
 use crate::record_ref::RecordRef;
 use crate::records::{BboMsg, Mbp1Msg, OhlcvMsg, Record, RecordHeader, TbboMsg, TradeMsg};
-use pyo3::IntoPyObject;
 use serde::Serialize;
 use std::hash::Hash;
 
-// #[cfg(feature = "python")]
-// use pyo3::prelude::*;
+#[cfg(feature = "python")]
+use pyo3::prelude::*;
 
-#[derive(Debug, Clone, Hash, PartialEq, Eq, Serialize, IntoPyObject)]
+#[cfg_attr(feature = "python", derive(IntoPyObject))]
+#[derive(Debug, Clone, Hash, PartialEq, Eq, Serialize)]
 pub enum RecordEnum {
     Mbp1(Mbp1Msg),
     Ohlcv(OhlcvMsg),
