@@ -7,7 +7,7 @@ use pyo3::types::{PyBytes, PyDict};
 use pyo3::{prelude::*, IntoPyObjectExt};
 use std::io::Cursor;
 
-#[cfg_attr(feature = "python", pyo3::pyclass(module = "mbe"))]
+#[cfg_attr(feature = "python", pyo3::pyclass(module = "mbinary"))]
 pub struct BufferStore {
     buffer: Vec<u8>,
     metadata: Metadata,

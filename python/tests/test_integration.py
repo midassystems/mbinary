@@ -1,6 +1,6 @@
 import unittest
 import json
-from mbe import (
+from mbinary import (
     Side,
     Action,
     Schema,

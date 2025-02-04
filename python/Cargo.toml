@@ -1,14 +1,14 @@
 [package]
-name = "mbe_python"
+name = "mbinary_python"
 version = "1.0.0"
 edition = "2021"
 
 [lib]
-name = "mbe_python"
+name = "mbinary_python"
 crate-type = ["cdylib"]
 
 [dependencies]
-mbe = {path = "../rust" , features =["python"]}
+mbinary = {path = "../rust" , features =["python"]}
 pyo3 = { workspace = true }
 
 

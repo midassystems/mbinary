@@ -6,7 +6,10 @@ use sqlx::FromRow;
 use pyo3::pyclass;
 
 #[repr(C)]
-#[cfg_attr(feature = "python", pyclass(get_all, set_all, dict, module = "mbe"))]
+#[cfg_attr(
+    feature = "python",
+    pyclass(get_all, set_all, dict, module = "mbinary")
+)]
 #[derive(Deserialize, Serialize, FromRow, Debug, Clone, PartialEq)]
 pub struct LiveData {
     pub live_id: Option<u16>,
@@ -17,7 +20,10 @@ pub struct LiveData {
 }
 
 #[repr(C)]
-#[cfg_attr(feature = "python", pyclass(get_all, set_all, dict, module = "mbe"))]
+#[cfg_attr(
+    feature = "python",
+    pyclass(get_all, set_all, dict, module = "mbinary")
+)]
 #[derive(Deserialize, Serialize, FromRow, Debug, Clone, PartialEq)]
 pub struct AccountSummary {
     pub currency: String,

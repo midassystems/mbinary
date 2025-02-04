@@ -5,7 +5,10 @@ use std::io;
 #[cfg(feature = "python")]
 use pyo3::pyclass;
 
-#[cfg_attr(feature = "python", pyclass(get_all, set_all, dict, module = "mbe"))]
+#[cfg_attr(
+    feature = "python",
+    pyclass(get_all, set_all, dict, module = "mbinary")
+)]
 #[derive(Debug, PartialEq, Eq, Clone)]
 pub struct Metadata {
     pub schema: Schema,

@@ -22,7 +22,7 @@ jobs:
         uses: Swatinem/rust-cache@v2
 
       - name: Publish to Crates.io
-        working-directory: rust  # Adjust if needed
+        working-directory: rust 
         env:
           CARGO_REGISTRY_TOKEN: ${{ secrets.CARGO_TOKEN }}
         run: cargo publish --verbose

@@ -10,7 +10,7 @@ use pyo3::pyclass;
 #[cfg_attr(feature = "python", derive(strum::EnumIter, strum::AsRefStr))]
 #[cfg_attr(
     feature = "python",
-    pyclass(module = "mbe", rename_all = "SCREAMING_SNAKE_CASE", eq, eq_int)
+    pyclass(module = "mbinary", rename_all = "SCREAMING_SNAKE_CASE", eq, eq_int)
 )]
 #[repr(u8)]
 #[derive(

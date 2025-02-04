@@ -5,7 +5,7 @@ use pyo3::prelude::*;
 use pyo3::types::PyDict;
 use pyo3::types::{PyAny, PyAnyMethods};
 
-#[cfg_attr(feature = "python", pyclass(dict, module = "mbe"))]
+#[cfg_attr(feature = "python", pyclass(dict, module = "mbinary"))]
 pub struct RecordMsg;
 
 #[pymethods]

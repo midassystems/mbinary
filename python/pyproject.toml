@@ -8,7 +8,7 @@ python-source = "python"
 module-name = "mbe._lib" 
 
 [project]
-name = "mbe" 
+name = "mbinary" 
 version = "1.0.17"
 description = "A binary encoding library designed for efficient data storage and transportation in trading platforms."  
 readme = "README.md"  

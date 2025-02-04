@@ -1,25 +1,4 @@
-name: CI
-
-# on:
-#   push:
-#     branches:
-#       - main
-#       - master
-#     tags:
-#       - '*'
-#   pull_request:
-#   workflow_dispatch:
-#
-# permissions:
-#   contents: read
-
-
-# on:
-#   push:
-#     branches:
-#       - main
-#       - master
-#       - 'test_release'
+name: Publish Pypi
 
 on:
   workflow_run:
@@ -56,13 +35,6 @@ jobs:
               pip install maturin
               cd python
               maturin build --release --out dist --find-interpreter
-#      - name: Build wheels
- #       uses: PyO3/maturin-action@v1
-  #      with:
-   #       target: ${{ matrix.platform.target }}
-    #      args: -m python --release --out dist --find-interpreter
-     #     sccache: 'true'
-      #    manylinux: auto
       - name: Upload wheels
         uses: actions/upload-artifact@v4
         with:
@@ -92,13 +64,6 @@ jobs:
               pip install maturin
               cd python
               maturin build --release --out dist --find-interpreter
-      # - name: Build wheels
-      #   uses: PyO3/maturin-action@v1
-      #   with:
-      #     target: ${{ matrix.platform.target }}
-      #     args: --release --out dist --find-interpreter
-      #     sccache: 'true'
-      #     manylinux: musllinux_1_2
       - name: Upload wheels
         uses: actions/upload-artifact@v4
         with:
@@ -126,12 +91,6 @@ jobs:
               pip install maturin
               cd python
               maturin build --release --out dist --find-interpreter
-      # - name: Build wheels
-      #   uses: PyO3/maturin-action@v1
-      #   with:
-      #     target: ${{ matrix.platform.target }}
-      #     args: --release --out dist --find-interpreter
-      #     sccache: 'true'
       - name: Upload wheels
         uses: actions/upload-artifact@v4
         with:
@@ -157,12 +116,6 @@ jobs:
               pip install maturin
               cd python
               maturin build --release --out dist --find-interpreter
-      # - name: Build wheels
-      #   uses: PyO3/maturin-action@v1
-      #   with:
-      #     target: ${{ matrix.platform.target }}
-      #     args: --release --out dist --find-interpreter
-      #     sccache: 'true'
       - name: Upload wheels
         uses: actions/upload-artifact@v4
         with:
@@ -178,12 +131,6 @@ jobs:
           pip install maturin
           cd python
           maturin sdist --out dist
-
-      # - name: Build sdist
-      #   uses: PyO3/maturin-action@v1
-      #   with:
-      #     command: sdist
-      #     args: --out dist
       - name: Upload sdist
         uses: actions/upload-artifact@v4
         with:
@@ -193,8 +140,6 @@ jobs:
   release:
     name: Release
     runs-on: ubuntu-latest
-    # if: "startsWith(github.ref, 'refs/tags/')"
-    # needs: [macos]
     needs: [linux, musllinux, windows, macos, sdist]
     steps:
       - uses: actions/download-artifact@v4
@@ -204,11 +149,3 @@ jobs:
         run: |
           pip install maturin
           maturin upload --non-interactive --skip-existing wheels-*/*
-
-      # - name: Publish to PyPI
-      #   uses: PyO3/maturin-action@v1
-      #   env:
-      #     MATURIN_PYPI_TOKEN: ${{ secrets.PYPI_API_TOKEN }}
-      #   with:
-      #     command: upload
-      #     args: --non-interactive --skip-existing wheels-*/*

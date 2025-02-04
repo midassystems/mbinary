@@ -78,11 +78,21 @@ impl PartialEq<dbn::RecordEnum> for RecordEnum {
     fn eq(&self, other: &dbn::RecordEnum) -> bool {
         match (self, other) {
             // Match and compare Mbp1 variants
-            (RecordEnum::Mbp1(mbe_msg), dbn::RecordEnum::Mbp1(dbn_msg)) => mbe_msg.eq(dbn_msg),
-            (RecordEnum::Tbbo(mbe_msg), dbn::RecordEnum::Mbp1(dbn_msg)) => mbe_msg.eq(dbn_msg),
-            (RecordEnum::Bbo(mbe_msg), dbn::RecordEnum::Mbp1(dbn_msg)) => mbe_msg.eq(dbn_msg),
-            (RecordEnum::Trade(mbe_msg), dbn::RecordEnum::Trade(dbn_msg)) => mbe_msg.eq(dbn_msg),
-            (RecordEnum::Ohlcv(mbe_msg), dbn::RecordEnum::Ohlcv(dbn_msg)) => mbe_msg.eq(dbn_msg),
+            (RecordEnum::Mbp1(mbinary_msg), dbn::RecordEnum::Mbp1(dbn_msg)) => {
+                mbinary_msg.eq(dbn_msg)
+            }
+            (RecordEnum::Tbbo(mbinary_msg), dbn::RecordEnum::Mbp1(dbn_msg)) => {
+                mbinary_msg.eq(dbn_msg)
+            }
+            (RecordEnum::Bbo(mbinary_msg), dbn::RecordEnum::Mbp1(dbn_msg)) => {
+                mbinary_msg.eq(dbn_msg)
+            }
+            (RecordEnum::Trade(mbinary_msg), dbn::RecordEnum::Trade(dbn_msg)) => {
+                mbinary_msg.eq(dbn_msg)
+            }
+            (RecordEnum::Ohlcv(mbinary_msg), dbn::RecordEnum::Ohlcv(dbn_msg)) => {
+                mbinary_msg.eq(dbn_msg)
+            }
             _ => false,
         }
     }
@@ -263,7 +273,7 @@ mod tests {
         let dbn_enum = dbn::RecordEnum::Mbp1(dbn_mbp);
 
         //MBN
-        let mbe_enum = RecordEnum::Mbp1(Mbp1Msg {
+        let mbinary_enum = RecordEnum::Mbp1(Mbp1Msg {
             hd: RecordHeader::new::<Mbp1Msg>(1, 1622471124, 0),
             price: 12345676543,
             size: 1234543,
@@ -285,7 +295,7 @@ mod tests {
             }],
         });
 
-        assert!(mbe_enum == dbn_enum);
+        assert!(mbinary_enum == dbn_enum);
 
         Ok(())
     }
@@ -319,7 +329,7 @@ mod tests {
         let dbn_enum = dbn::RecordEnum::Mbp1(dbn_mbp);
 
         //MBN
-        let mbe_enum = RecordEnum::Mbp1(Mbp1Msg {
+        let mbinary_enum = RecordEnum::Mbp1(Mbp1Msg {
             hd: RecordHeader::new::<Mbp1Msg>(1, 1622471124, 0),
             price: 12345676543,
             size: 1234543,
@@ -341,7 +351,7 @@ mod tests {
             }],
         });
 
-        assert!(mbe_enum != dbn_enum);
+        assert!(mbinary_enum != dbn_enum);
 
         Ok(())
     }
