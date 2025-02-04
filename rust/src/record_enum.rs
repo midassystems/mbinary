@@ -272,7 +272,7 @@ mod tests {
         };
         let dbn_enum = dbn::RecordEnum::Mbp1(dbn_mbp);
 
-        //MBN
+        //mbinary
         let mbinary_enum = RecordEnum::Mbp1(Mbp1Msg {
             hd: RecordHeader::new::<Mbp1Msg>(1, 1622471124, 0),
             price: 12345676543,
@@ -328,7 +328,7 @@ mod tests {
         };
         let dbn_enum = dbn::RecordEnum::Mbp1(dbn_mbp);
 
-        //MBN
+        //mbinary
         let mbinary_enum = RecordEnum::Mbp1(Mbp1Msg {
             hd: RecordHeader::new::<Mbp1Msg>(1, 1622471124, 0),
             price: 12345676543,
