@@ -6,7 +6,7 @@ use crate::records::Mbp1Msg; // Your existing RecordEncoder implementation
 use pyo3::prelude::*; // PyO3 essentials
 
 /// Python-facing wrapper for RecordEncoder
-#[cfg_attr(feature = "python", pyclass(module = "mbn"))]
+#[cfg_attr(feature = "python", pyclass(module = "mbe"))]
 pub struct PyMetadataEncoder {
     buffer: Vec<u8>, // Owned buffer
 }
@@ -39,7 +39,7 @@ impl PyMetadataEncoder {
 }
 
 /// Python-facing wrapper for RecordEncoder
-#[cfg_attr(feature = "python", pyclass(module = "mbn"))]
+#[cfg_attr(feature = "python", pyclass(module = "mbe"))]
 pub struct PyRecordEncoder {
     buffer: Vec<u8>, // Owned buffer
 }

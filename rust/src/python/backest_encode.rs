@@ -3,7 +3,7 @@ use crate::backtest_encode::BacktestEncoder;
 use pyo3::prelude::*;
 
 /// Python-facing wrapper for BacktestRecordEncoder
-#[cfg_attr(feature = "python", pyclass(module = "mbn"))]
+#[cfg_attr(feature = "python", pyclass(module = "mbe"))]
 pub struct PyBacktestEncoder {
     buffer: Vec<u8>, // Owned buffer
 }

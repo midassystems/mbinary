@@ -1,11 +1,11 @@
-use mbn::decode::Decoder;
-use mbn::encode::CombinedEncoder;
-use mbn::enums::{Dataset, Schema};
-use mbn::metadata::Metadata;
-use mbn::record_enum::RecordEnum;
-use mbn::record_ref::RecordRef;
-use mbn::records::{BidAskPair, Mbp1Msg, RecordHeader};
-use mbn::symbols::SymbolMap;
+use mbe::decode::Decoder;
+use mbe::encode::CombinedEncoder;
+use mbe::enums::{Dataset, Schema};
+use mbe::metadata::Metadata;
+use mbe::record_enum::RecordEnum;
+use mbe::record_ref::RecordRef;
+use mbe::records::{BidAskPair, Mbp1Msg, RecordHeader};
+use mbe::symbols::SymbolMap;
 use std::io::Cursor;
 
 #[test]

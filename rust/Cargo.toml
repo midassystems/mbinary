@@ -1,6 +1,12 @@
 [package]
-name = "mbn"
+name = "mbe"
 version = "1.0.16"
+description = "A binary encoding library designed for efficient data storage and transportation in trading platforms."
+readme = "README.md"
+keywords = ["midas", "binary-encoding", "protocol-buffers"]
+license = "Apache-2.0"
+authors = ["Anthony Baxter <anthonybaxter819@gmail.com>"]
+repository = "https://github.com/midassystems/mbn"
 edition = "2021"
 
 [dependencies]

@@ -6,7 +6,7 @@ use serde::{Deserialize, Serialize};
 #[cfg(feature = "python")]
 use pyo3::pyclass;
 
-#[cfg_attr(feature = "python", pyclass(get_all, set_all, dict, module = "mbn"))]
+#[cfg_attr(feature = "python", pyclass(get_all, set_all, dict, module = "mbe"))]
 #[derive(Debug, Serialize, Deserialize, Clone, PartialEq, Eq)]
 pub struct RetrieveParams {
     pub symbols: Vec<String>,
