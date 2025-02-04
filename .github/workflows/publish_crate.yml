@@ -1,15 +1,12 @@
 name: Publish Crate.io
 
-# on:
-#   workflow_run:
-#     workflows: ['Bump-Version']
-#     types: [completed]
-#     branches:
-#       - 'main'
 on:
-  push:
+  workflow_run:
+    workflows: ['Bump-Version']
+    types: [completed]
     branches:
-      - dev
+      - 'main'
+      
 jobs:
   publish_crate:
     runs-on: ubuntu-latest
