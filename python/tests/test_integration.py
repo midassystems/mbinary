@@ -1,6 +1,6 @@
 import unittest
 import json
-from mbn import (
+from mbe import (
     Side,
     Action,
     Schema,

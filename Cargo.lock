@@ -645,8 +645,8 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "a7a70ba024b9dc04c27ea2f0c0548feb474ec5c54bba33a7f72f873a39d07b24"
 
 [[package]]
-name = "mbn"
-version = "1.0.15"
+name = "mbe"
+version = "1.0.16"
 dependencies = [
  "anyhow",
  "bytemuck",
@@ -666,10 +666,10 @@ dependencies = [
 ]
 
 [[package]]
-name = "mbn_python"
+name = "mbe_python"
 version = "1.0.0"
 dependencies = [
- "mbn",
+ "mbe",
  "pyo3",
  "pyo3-build-config",
 ]

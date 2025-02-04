@@ -21,7 +21,7 @@ pub trait HasRType {
 
 /// Constant data across all records.
 #[repr(C)]
-#[cfg_attr(feature = "python", pyclass(get_all, set_all, dict, module = "mbn"))]
+#[cfg_attr(feature = "python", pyclass(get_all, set_all, dict, module = "mbe"))]
 #[derive(Clone, Debug, PartialEq, Eq, Hash, Serialize, Deserialize)]
 pub struct RecordHeader {
     pub length: u8,
@@ -64,7 +64,7 @@ impl RecordHeader {
 
 /// Order book level e.g. MBP1 would contain the top level.
 #[repr(C)]
-#[cfg_attr(feature = "python", pyclass(get_all, set_all, dict, module = "mbn"))]
+#[cfg_attr(feature = "python", pyclass(get_all, set_all, dict, module = "mbe"))]
 #[derive(Clone, Serialize, Deserialize, Debug, PartialEq, Eq, Hash)]
 pub struct BidAskPair {
     /// The bid price.
@@ -107,7 +107,7 @@ impl PartialEq<dbn::BidAskPair> for BidAskPair {
 
 /// Mbp1Msg struct
 #[repr(C)]
-#[cfg_attr(feature = "python", pyclass(get_all, set_all, dict, module = "mbn"))]
+#[cfg_attr(feature = "python", pyclass(get_all, set_all, dict, module = "mbe"))]
 #[derive(Clone, Debug, PartialEq, Eq, Hash, Serialize, Deserialize, FromRow)]
 pub struct Mbp1Msg {
     pub hd: RecordHeader,
@@ -205,7 +205,7 @@ impl PartialEq<dbn::Mbp1Msg> for Mbp1Msg {
 }
 
 #[repr(C)]
-#[cfg_attr(feature = "python", pyclass(get_all, set_all, dict, module = "mbn"))]
+#[cfg_attr(feature = "python", pyclass(get_all, set_all, dict, module = "mbe"))]
 #[derive(Clone, Debug, PartialEq, Eq, Hash, Serialize, Deserialize, FromRow)]
 pub struct TradeMsg {
     pub hd: RecordHeader,
@@ -278,7 +278,7 @@ impl PartialEq<dbn::TradeMsg> for TradeMsg {
 }
 
 #[repr(C)]
-#[cfg_attr(feature = "python", pyclass(get_all, set_all, dict, module = "mbn"))]
+#[cfg_attr(feature = "python", pyclass(get_all, set_all, dict, module = "mbe"))]
 #[derive(Clone, Debug, PartialEq, Eq, Hash, Serialize, Deserialize, FromRow)]
 pub struct BboMsg {
     pub hd: RecordHeader,
@@ -369,7 +369,7 @@ pub type TbboMsg = Mbp1Msg;
 
 /// OhlcvMsg struct
 #[repr(C)]
-#[cfg_attr(feature = "python", pyclass(get_all, set_all, dict, module = "mbn"))]
+#[cfg_attr(feature = "python", pyclass(get_all, set_all, dict, module = "mbe"))]
 #[derive(Clone, Debug, PartialEq, Eq, Hash, Serialize, Deserialize)]
 pub struct OhlcvMsg {
     pub hd: RecordHeader,
@@ -711,10 +711,10 @@ mod tests {
             ask_ct: 60000000,
         };
 
-        let mbn_pair = BidAskPair::from(dbn_pair.clone());
+        let mbe_pair = BidAskPair::from(dbn_pair.clone());
 
         // Test
-        assert!(mbn_pair == dbn_pair);
+        assert!(mbe_pair == dbn_pair);
 
         Ok(())
     }
@@ -730,11 +730,11 @@ mod tests {
             ask_ct: 60000000,
         };
 
-        let mut mbn_pair = BidAskPair::from(dbn_pair.clone());
-        mbn_pair.bid_px = 12343212;
+        let mut mbe_pair = BidAskPair::from(dbn_pair.clone());
+        mbe_pair.bid_px = 12343212;
 
         // Test
-        assert!(mbn_pair != dbn_pair);
+        assert!(mbe_pair != dbn_pair);
 
         Ok(())
     }
@@ -766,8 +766,8 @@ mod tests {
         };
 
         // Test
-        let mbn_mbp = Mbp1Msg::from(dbn_mbp.clone());
-        assert!(mbn_mbp == dbn_mbp);
+        let mbe_mbp = Mbp1Msg::from(dbn_mbp.clone());
+        assert!(mbe_mbp == dbn_mbp);
 
         Ok(())
     }
@@ -799,9 +799,9 @@ mod tests {
         };
 
         // Test
-        let mut mbn_mbp = Mbp1Msg::from(dbn_mbp.clone());
-        mbn_mbp.price = 123432343234323;
-        assert!(mbn_mbp != dbn_mbp);
+        let mut mbe_mbp = Mbp1Msg::from(dbn_mbp.clone());
+        mbe_mbp.price = 123432343234323;
+        assert!(mbe_mbp != dbn_mbp);
 
         Ok(())
     }
@@ -824,8 +824,8 @@ mod tests {
         };
 
         // Test
-        let mbn_record = TradeMsg::from(dbn_record.clone());
-        assert!(mbn_record == dbn_record);
+        let mbe_record = TradeMsg::from(dbn_record.clone());
+        assert!(mbe_record == dbn_record);
 
         Ok(())
     }
@@ -848,9 +848,9 @@ mod tests {
         };
 
         // Test
-        let mut mbn_record = TradeMsg::from(dbn_record.clone());
-        mbn_record.price = 123432343234323;
-        assert!(mbn_record != dbn_record);
+        let mut mbe_record = TradeMsg::from(dbn_record.clone());
+        mbe_record.price = 123432343234323;
+        assert!(mbe_record != dbn_record);
 
         Ok(())
     }
@@ -882,8 +882,8 @@ mod tests {
         };
 
         // Test
-        let mbn_record = BboMsg::from(dbn_record.clone());
-        assert!(mbn_record == dbn_record);
+        let mbe_record = BboMsg::from(dbn_record.clone());
+        assert!(mbe_record == dbn_record);
 
         Ok(())
     }
@@ -916,8 +916,8 @@ mod tests {
         };
 
         // Test
-        let mbn_record = BboMsg::from(dbn_record.clone());
-        assert!(mbn_record == dbn_record);
+        let mbe_record = BboMsg::from(dbn_record.clone());
+        assert!(mbe_record == dbn_record);
 
         Ok(())
     }
@@ -950,9 +950,9 @@ mod tests {
         };
 
         // Test
-        let mut mbn_record = BboMsg::from(dbn_record.clone());
-        mbn_record.price = 123432343234323;
-        assert!(mbn_record != dbn_record);
+        let mut mbe_record = BboMsg::from(dbn_record.clone());
+        mbe_record.price = 123432343234323;
+        assert!(mbe_record != dbn_record);
 
         Ok(())
     }
@@ -970,8 +970,8 @@ mod tests {
         };
 
         // Test
-        let mbn_record = OhlcvMsg::from(dbn_record.clone());
-        assert!(mbn_record == dbn_record);
+        let mbe_record = OhlcvMsg::from(dbn_record.clone());
+        assert!(mbe_record == dbn_record);
 
         Ok(())
     }
@@ -990,9 +990,9 @@ mod tests {
         };
 
         // Test
-        let mut mbn_record = OhlcvMsg::from(dbn_record.clone());
-        mbn_record.open = 123432343234323;
-        assert!(mbn_record != dbn_record);
+        let mut mbe_record = OhlcvMsg::from(dbn_record.clone());
+        mbe_record.open = 123432343234323;
+        assert!(mbe_record != dbn_record);
 
         Ok(())
     }
@@ -1025,10 +1025,10 @@ mod tests {
         };
 
         // Test
-        let mbn_record = BboMsg::from(dbn_record.clone());
+        let mbe_record = BboMsg::from(dbn_record.clone());
 
         // Validate
-        assert!(mbn_record == dbn_record);
+        assert!(mbe_record == dbn_record);
 
         Ok(())
     }

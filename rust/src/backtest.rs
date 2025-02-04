@@ -52,7 +52,7 @@ pub trait Decode<R: Read>: Sized {
 }
 
 #[repr(C)]
-#[cfg_attr(feature = "python", pyclass(get_all, set_all, dict, module = "mbn"))]
+#[cfg_attr(feature = "python", pyclass(get_all, set_all, dict, module = "mbe"))]
 #[derive(Deserialize, Serialize, FromRow, Debug, Clone, PartialEq)]
 pub struct BacktestData {
     pub metadata: BacktestMetaData,
@@ -63,7 +63,7 @@ pub struct BacktestData {
 }
 
 #[repr(C)]
-#[cfg_attr(feature = "python", pyclass(get_all, set_all, dict, module = "mbn"))]
+#[cfg_attr(feature = "python", pyclass(get_all, set_all, dict, module = "mbe"))]
 #[derive(Deserialize, Serialize, FromRow, Debug, Clone, PartialEq)]
 pub struct BacktestMetaData {
     pub backtest_id: u16,
@@ -117,7 +117,7 @@ impl<R: Read> Decode<R> for BacktestMetaData {
 }
 
 #[repr(C)]
-#[cfg_attr(feature = "python", pyclass(get_all, set_all, dict, module = "mbn"))]
+#[cfg_attr(feature = "python", pyclass(get_all, set_all, dict, module = "mbe"))]
 #[derive(Deserialize, Serialize, FromRow, Debug, Clone, PartialEq)]
 pub struct Parameters {
     pub strategy_name: String,
@@ -186,7 +186,7 @@ impl<R: Read> Decode<R> for Parameters {
 }
 
 #[repr(C)]
-#[cfg_attr(feature = "python", pyclass(get_all, set_all, dict, module = "mbn"))]
+#[cfg_attr(feature = "python", pyclass(get_all, set_all, dict, module = "mbe"))]
 #[derive(Deserialize, Serialize, FromRow, Debug, Clone, PartialEq)]
 pub struct StaticStats {
     pub total_trades: i32,
@@ -241,7 +241,7 @@ impl<R: Read> Decode<R> for StaticStats {
 }
 
 #[repr(C)]
-#[cfg_attr(feature = "python", pyclass(get_all, set_all, dict, module = "mbn"))]
+#[cfg_attr(feature = "python", pyclass(get_all, set_all, dict, module = "mbe"))]
 #[derive(Deserialize, Serialize, FromRow, Debug, Clone, PartialEq, Eq)]
 pub struct TimeseriesStats {
     pub timestamp: i64,
@@ -278,7 +278,7 @@ impl<R: Read> Decode<R> for TimeseriesStats {
 }
 
 #[repr(C)]
-#[cfg_attr(feature = "python", pyclass(get_all, set_all, dict, module = "mbn"))]
+#[cfg_attr(feature = "python", pyclass(get_all, set_all, dict, module = "mbe"))]
 #[derive(Deserialize, Serialize, FromRow, Debug, Clone, PartialEq, Eq)]
 pub struct Trades {
     pub trade_id: i32,
@@ -337,7 +337,7 @@ impl<R: Read> Decode<R> for Trades {
 }
 
 #[repr(C)]
-#[cfg_attr(feature = "python", pyclass(get_all, set_all, dict, module = "mbn"))]
+#[cfg_attr(feature = "python", pyclass(get_all, set_all, dict, module = "mbe"))]
 #[derive(Deserialize, Serialize, FromRow, Debug, Clone, PartialEq, Eq)]
 pub struct Signals {
     pub timestamp: i64,
@@ -379,7 +379,7 @@ impl<R: Read> Decode<R> for Signals {
 }
 
 #[repr(C)]
-#[cfg_attr(feature = "python", pyclass(get_all, set_all, dict, module = "mbn"))]
+#[cfg_attr(feature = "python", pyclass(get_all, set_all, dict, module = "mbe"))]
 #[derive(Deserialize, Serialize, FromRow, Debug, Clone, PartialEq, Eq)]
 pub struct SignalInstructions {
     pub ticker: String,

@@ -10,7 +10,7 @@ use pyo3::pyclass;
 #[cfg_attr(feature = "python", derive(strum::EnumIter, strum::AsRefStr))]
 #[cfg_attr(
     feature = "python",
-    pyclass(module = "mbn", rename_all = "SCREAMING_SNAKE_CASE", eq, eq_int)
+    pyclass(module = "mbe", rename_all = "SCREAMING_SNAKE_CASE", eq, eq_int)
 )]
 #[repr(u8)]
 #[derive(
@@ -81,7 +81,7 @@ impl fmt::Display for Dataset {
 #[cfg_attr(feature = "python", derive(strum::EnumIter, strum::AsRefStr))]
 #[cfg_attr(
     feature = "python",
-    pyclass(module = "mbn", rename_all = "SCREAMING_SNAKE_CASE", eq, eq_int)
+    pyclass(module = "mbe", rename_all = "SCREAMING_SNAKE_CASE", eq, eq_int)
 )]
 #[repr(u8)]
 #[derive(
@@ -128,7 +128,7 @@ impl fmt::Display for Stype {
 #[cfg_attr(feature = "python", derive(strum::EnumIter, strum::AsRefStr))]
 #[cfg_attr(
     feature = "python",
-    pyclass(module = "mbn", rename_all = "SCREAMING_SNAKE_CASE", eq, eq_int)
+    pyclass(module = "mbe", rename_all = "SCREAMING_SNAKE_CASE", eq, eq_int)
 )]
 #[repr(u8)]
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, TryFromPrimitive, IntoPrimitive)]
@@ -164,7 +164,7 @@ impl fmt::Display for Side {
 #[cfg_attr(feature = "python", derive(strum::EnumIter, strum::AsRefStr))]
 #[cfg_attr(
     feature = "python",
-    pyclass(module = "mbn", rename_all = "SCREAMING_SNAKE_CASE", eq, eq_int)
+    pyclass(module = "mbe", rename_all = "SCREAMING_SNAKE_CASE", eq, eq_int)
 )]
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, TryFromPrimitive, IntoPrimitive)]
 #[repr(u8)]
@@ -207,7 +207,7 @@ impl fmt::Display for Action {
 #[cfg_attr(feature = "python", derive(strum::EnumIter, strum::AsRefStr))]
 #[cfg_attr(
     feature = "python",
-    pyclass(module = "mbn", rename_all = "SCREAMING_SNAKE_CASE", eq, eq_int)
+    pyclass(module = "mbe", rename_all = "SCREAMING_SNAKE_CASE", eq, eq_int)
 )]
 #[repr(u8)]
 #[derive(
@@ -283,7 +283,7 @@ impl fmt::Display for Schema {
 #[cfg_attr(feature = "python", derive(strum::EnumIter, strum::AsRefStr))]
 #[cfg_attr(
     feature = "python",
-    pyclass(module = "mbn", rename_all = "SCREAMING_SNAKE_CASE", eq, eq_int)
+    pyclass(module = "mbe", rename_all = "SCREAMING_SNAKE_CASE", eq, eq_int)
 )]
 #[repr(u8)]
 #[derive(Debug, PartialEq, Eq)]

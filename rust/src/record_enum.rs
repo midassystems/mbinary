@@ -78,11 +78,11 @@ impl PartialEq<dbn::RecordEnum> for RecordEnum {
     fn eq(&self, other: &dbn::RecordEnum) -> bool {
         match (self, other) {
             // Match and compare Mbp1 variants
-            (RecordEnum::Mbp1(mbn_msg), dbn::RecordEnum::Mbp1(dbn_msg)) => mbn_msg.eq(dbn_msg),
-            (RecordEnum::Tbbo(mbn_msg), dbn::RecordEnum::Mbp1(dbn_msg)) => mbn_msg.eq(dbn_msg),
-            (RecordEnum::Bbo(mbn_msg), dbn::RecordEnum::Mbp1(dbn_msg)) => mbn_msg.eq(dbn_msg),
-            (RecordEnum::Trade(mbn_msg), dbn::RecordEnum::Trade(dbn_msg)) => mbn_msg.eq(dbn_msg),
-            (RecordEnum::Ohlcv(mbn_msg), dbn::RecordEnum::Ohlcv(dbn_msg)) => mbn_msg.eq(dbn_msg),
+            (RecordEnum::Mbp1(mbe_msg), dbn::RecordEnum::Mbp1(dbn_msg)) => mbe_msg.eq(dbn_msg),
+            (RecordEnum::Tbbo(mbe_msg), dbn::RecordEnum::Mbp1(dbn_msg)) => mbe_msg.eq(dbn_msg),
+            (RecordEnum::Bbo(mbe_msg), dbn::RecordEnum::Mbp1(dbn_msg)) => mbe_msg.eq(dbn_msg),
+            (RecordEnum::Trade(mbe_msg), dbn::RecordEnum::Trade(dbn_msg)) => mbe_msg.eq(dbn_msg),
+            (RecordEnum::Ohlcv(mbe_msg), dbn::RecordEnum::Ohlcv(dbn_msg)) => mbe_msg.eq(dbn_msg),
             _ => false,
         }
     }
@@ -263,7 +263,7 @@ mod tests {
         let dbn_enum = dbn::RecordEnum::Mbp1(dbn_mbp);
 
         //MBN
-        let mbn_enum = RecordEnum::Mbp1(Mbp1Msg {
+        let mbe_enum = RecordEnum::Mbp1(Mbp1Msg {
             hd: RecordHeader::new::<Mbp1Msg>(1, 1622471124, 0),
             price: 12345676543,
             size: 1234543,
@@ -285,7 +285,7 @@ mod tests {
             }],
         });
 
-        assert!(mbn_enum == dbn_enum);
+        assert!(mbe_enum == dbn_enum);
 
         Ok(())
     }
@@ -319,7 +319,7 @@ mod tests {
         let dbn_enum = dbn::RecordEnum::Mbp1(dbn_mbp);
 
         //MBN
-        let mbn_enum = RecordEnum::Mbp1(Mbp1Msg {
+        let mbe_enum = RecordEnum::Mbp1(Mbp1Msg {
             hd: RecordHeader::new::<Mbp1Msg>(1, 1622471124, 0),
             price: 12345676543,
             size: 1234543,
@@ -341,7 +341,7 @@ mod tests {
             }],
         });
 
-        assert!(mbn_enum != dbn_enum);
+        assert!(mbe_enum != dbn_enum);
 
         Ok(())
     }

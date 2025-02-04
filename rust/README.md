@@ -25,7 +25,7 @@ Add MBN to your Rust project's `Cargo.toml`:
 
 ```toml
 [dependencies]
-mbe = { git = "https://github.com/midassystems/mbe.git", branch = "main" }
+mbn = { git = "https://github.com/midassystems/mbn.git", branch = "main" }
 ```
 
 ### Python Installation
@@ -35,8 +35,8 @@ For Python, MBN must be installed from source:
 1. Clone the repository:
 
    ```bash
-   git clone https://github.com/midassystems/mbe.git
-   cd mbe/mbe_python
+   git clone https://github.com/midassystems/mbn.git
+   cd mbn/mbn_python
    ```
 
 2. Install dependencies:
@@ -55,7 +55,7 @@ For Python, MBN must be installed from source:
 
 4. Navigate to the desired installation location and install the built package:
    ```bash
-   cd mbe/mbe_python
+   cd mbn/mbn_python
    pip install dist/*.whl
    ```
 

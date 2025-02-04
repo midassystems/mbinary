@@ -83,7 +83,7 @@ impl Instrument {
 }
 
 /// Struct created by Midas server to map instrument ids to tickers.
-#[cfg_attr(feature = "python", pyclass(get_all, set_all, dict, module = "mbn"))]
+#[cfg_attr(feature = "python", pyclass(get_all, set_all, dict, module = "mbe"))]
 #[derive(Debug, Clone, Default, PartialEq, Eq)]
 pub struct SymbolMap {
     pub map: HashMap<u32, String>,
