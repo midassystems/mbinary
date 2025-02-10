@@ -31,6 +31,7 @@ from mbinary import (
     Stype,
     RetrieveParams,
 )
+import mbinary
 from pandas import pandas
 
 
@@ -565,6 +566,10 @@ class IntegrationTests(unittest.TestCase):
             "sortino_ratio": 123453234543,
         }
         self.assertEqual(expected, static_stats.to_dict())
+
+    def test_constants(self):
+        self.assertEqual(mbinary.PRICE_SCALE, 1000000000)
+        self.assertEqual(mbinary.QUANTITY_SCALE, 1000)
 
     def test_timeseries(self):
         timestamp = 123700000000000

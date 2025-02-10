@@ -4,6 +4,10 @@ from enum import Enum
 from typing import SupportsBytes
 import pandas
 
+
+PRICE_SCALE: int = 1_000_000_000
+QUANTITY_SCALE: int = 1_000
+
 class Side(Enum):
     ASK = "A"
     BID = "B"

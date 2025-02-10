@@ -14,6 +14,7 @@ use mbinary::{
     records::{BboMsg, BidAskPair, Mbp1Msg, OhlcvMsg, RecordHeader, TbboMsg, TradeMsg},
     symbols::SymbolMap,
     vendors::Vendors,
+    PRICE_SCALE, QUANTITY_SCALE,
 };
 use pyo3::{prelude::*, PyClass};
 
@@ -58,6 +59,8 @@ fn python_mbinary(_py: Python<'_>, m: &Bound<PyModule>) -> PyResult<()> {
     checked_add_class::<PyRecordEncoder>(m)?;
     checked_add_class::<PyMetadataEncoder>(m)?;
     checked_add_class::<PyBacktestEncoder>(m)?;
+    let _ = m.add("PRICE_SCALE", PRICE_SCALE);
+    let _ = m.add("QUANTITY_SCALE", QUANTITY_SCALE);
 
     Ok(())
 }
