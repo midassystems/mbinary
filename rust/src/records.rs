@@ -11,6 +11,7 @@ use pyo3::pyclass;
 /// Trait to access common header across records.
 pub trait Record {
     fn header(&self) -> &RecordHeader;
+    fn timestamp(&self) -> u64;
 }
 
 /// Trait to check if a type has a specific RType property.
@@ -138,6 +139,9 @@ impl Record for Mbp1Msg {
     fn header(&self) -> &RecordHeader {
         &self.hd
     }
+    fn timestamp(&self) -> u64 {
+        self.ts_recv
+    }
 }
 
 impl HasRType for Mbp1Msg {
@@ -236,6 +240,9 @@ impl Record for TradeMsg {
     fn header(&self) -> &RecordHeader {
         &self.hd
     }
+    fn timestamp(&self) -> u64 {
+        self.ts_recv
+    }
 }
 
 impl HasRType for TradeMsg {
@@ -309,6 +316,9 @@ pub struct BboMsg {
 impl Record for BboMsg {
     fn header(&self) -> &RecordHeader {
         &self.hd
+    }
+    fn timestamp(&self) -> u64 {
+        self.ts_recv
     }
 }
 
@@ -401,6 +411,9 @@ pub struct OhlcvMsg {
 impl Record for OhlcvMsg {
     fn header(&self) -> &RecordHeader {
         &self.hd
+    }
+    fn timestamp(&self) -> u64 {
+        self.header().ts_event
     }
 }
 

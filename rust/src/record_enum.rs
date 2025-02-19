@@ -120,6 +120,16 @@ impl Record for RecordEnum {
             RecordEnum::Bbo(msg) => &msg.hd,
         }
     }
+
+    fn timestamp(&self) -> u64 {
+        match self {
+            RecordEnum::Mbp1(msg) => msg.timestamp(),
+            RecordEnum::Ohlcv(msg) => msg.timestamp(),
+            RecordEnum::Trade(msg) => msg.timestamp(),
+            RecordEnum::Tbbo(msg) => msg.timestamp(),
+            RecordEnum::Bbo(msg) => msg.timestamp(),
+        }
+    }
 }
 
 // #[cfg(feature = "python")]
@@ -199,6 +209,16 @@ impl<'a> Record for RecordEnumRef<'a> {
             RecordEnumRef::Trade(msg) => &msg.hd,
             RecordEnumRef::Bbo(msg) => &msg.hd,
             RecordEnumRef::Tbbo(msg) => &msg.hd,
+        }
+    }
+
+    fn timestamp(&self) -> u64 {
+        match self {
+            RecordEnumRef::Mbp1(msg) => msg.timestamp(),
+            RecordEnumRef::Ohlcv(msg) => msg.timestamp(),
+            RecordEnumRef::Trade(msg) => msg.timestamp(),
+            RecordEnumRef::Tbbo(msg) => msg.timestamp(),
+            RecordEnumRef::Bbo(msg) => msg.timestamp(),
         }
     }
 }
