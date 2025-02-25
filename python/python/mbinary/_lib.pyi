@@ -225,6 +225,8 @@ class OhlcvMsg(RecordMsg):
     @property
     def ts_event(self) -> int: ...
     @property
+    def ts(self) -> int: ...
+    @property
     def rollover_flag(self) -> int: ...
     @property
     def rtype(self) -> RType: ...
@@ -280,6 +282,8 @@ class TradeMsg(RecordMsg):
     @property
     def ts_event(self) -> int: ...
     @property
+    def ts(self) -> int: ...
+    @property
     def rollover_flag(self) -> int: ...
     @property
     def price(self) -> int: ...
@@ -330,6 +334,8 @@ class BboMsg(RecordMsg):
     @property
     def ts_event(self) -> int: ...
     @property
+    def ts(self) -> int: ...
+    @property
     def rollover_flag(self) -> int: ...
     @property
     def price(self) -> int: ...
@@ -376,6 +382,8 @@ class Mbp1Msg(RecordMsg):
     def instrument_id(self, value: int) -> None: ...
     @property
     def ts_event(self) -> int: ...
+    @property
+    def ts(self) -> int: ...
     @property
     def rollover_flag(self) -> int: ...
     @property
@@ -436,8 +444,7 @@ class SignalInstructions:
         ticker: str,
         order_type: str,
         action: str,
-        trade_id: int,
-        leg_id: int,
+        signal_id: int,
         weight: int,
         quantity: int,
         limit_price: str,
@@ -457,7 +464,7 @@ class Trades:
     def __init__(
         self,
         trade_id: int,
-        leg_id: int,
+        signal_id: int,
         timestamp: int,
         ticker: str,
         quantity: int,
