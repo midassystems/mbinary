@@ -1,5 +1,5 @@
 use crate::enums::{Action, RType, Side};
-use crate::records::{BboMsg, BidAskPair, Mbp1Msg, OhlcvMsg, RecordHeader, TradeMsg};
+use crate::records::{BboMsg, BidAskPair, Mbp1Msg, OhlcvMsg, Record, RecordHeader, TradeMsg};
 use crate::PRICE_SCALE;
 use pyo3::prelude::*;
 use pyo3::types::PyDict;
@@ -101,6 +101,11 @@ impl Mbp1Msg {
     #[getter]
     fn instrument_id(&self) -> u32 {
         self.hd.instrument_id
+    }
+
+    #[getter]
+    fn ts(&self) -> u64 {
+        self.timestamp()
     }
 
     #[getter]
@@ -209,6 +214,11 @@ impl TradeMsg {
     }
 
     #[getter]
+    fn ts(&self) -> u64 {
+        self.timestamp()
+    }
+
+    #[getter]
     fn ts_event(&self) -> u64 {
         self.hd.ts_event
     }
@@ -299,6 +309,11 @@ impl BboMsg {
     #[setter]
     fn set_ts_event(&mut self, ts_event: u64) {
         self.hd.ts_event = ts_event;
+    }
+
+    #[getter]
+    fn ts(&self) -> u64 {
+        self.timestamp()
     }
 
     #[getter]
@@ -422,6 +437,11 @@ impl OhlcvMsg {
     #[getter]
     fn instrument_id(&self) -> u32 {
         self.hd.instrument_id
+    }
+
+    #[getter]
+    fn ts(&self) -> u64 {
+        self.timestamp()
     }
 
     #[getter]

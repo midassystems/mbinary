@@ -149,7 +149,7 @@ impl BufferStore {
                     }
                 }
 
-                Ok(dict.to_object(py))
+                Ok(dict.clone().into_pyobject(py)?)
             })
             .collect::<PyResult<Vec<_>>>()?;
 
