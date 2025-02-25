@@ -300,7 +300,7 @@ impl<R: Read> Decode<R> for TimeseriesStats {
 #[derive(Deserialize, Serialize, FromRow, Debug, Clone, PartialEq, Eq)]
 pub struct Trades {
     pub trade_id: i32,
-    pub leg_id: i32,
+    pub signal_id: i32,
     pub timestamp: i64,
     pub ticker: String,
     pub quantity: i64,    // Scaled by 1e9
@@ -314,7 +314,7 @@ pub struct Trades {
 impl Encode for Trades {
     fn encode(&self, buffer: &mut Vec<u8>) {
         buffer.extend(&self.trade_id.to_le_bytes());
-        buffer.extend(&self.leg_id.to_le_bytes());
+        buffer.extend(&self.signal_id.to_le_bytes());
         buffer.extend(&self.timestamp.to_le_bytes());
         write_string(buffer, &self.ticker);
         buffer.extend(&self.quantity.to_le_bytes());
@@ -329,7 +329,7 @@ impl Encode for Trades {
 impl<R: Read> Decode<R> for Trades {
     fn decode(cursor: &mut R) -> Result<Self> {
         let trade_id: i32 = read_fixed(cursor)?;
-        let leg_id: i32 = read_fixed(cursor)?;
+        let signal_id: i32 = read_fixed(cursor)?;
         let timestamp: i64 = read_fixed(cursor)?;
         let ticker: String = read_string(cursor)?;
         let quantity: i64 = read_fixed(cursor)?;
@@ -341,7 +341,7 @@ impl<R: Read> Decode<R> for Trades {
 
         Ok(Self {
             trade_id,
-            leg_id,
+            signal_id,
             timestamp,
             ticker,
             quantity,
@@ -409,8 +409,7 @@ pub struct SignalInstructions {
     pub ticker: String,
     pub order_type: String,
     pub action: String,
-    pub trade_id: i32,
-    pub leg_id: i32,
+    pub signal_id: i32,
     pub weight: i64, // Scaled by 1e9
     pub quantity: i32,
     pub limit_price: String, // Maybe int scale by 1e9
@@ -422,8 +421,7 @@ impl Encode for SignalInstructions {
         write_string(buffer, &self.ticker);
         write_string(buffer, &self.order_type);
         write_string(buffer, &self.action);
-        buffer.extend(&self.trade_id.to_le_bytes());
-        buffer.extend(&self.leg_id.to_le_bytes());
+        buffer.extend(&self.signal_id.to_le_bytes());
         buffer.extend(&self.weight.to_le_bytes());
         buffer.extend(&self.quantity.to_le_bytes());
         write_string(buffer, &self.limit_price);
@@ -435,8 +433,7 @@ impl<R: Read> Decode<R> for SignalInstructions {
         let ticker: String = read_string(cursor)?;
         let order_type: String = read_string(cursor)?;
         let action: String = read_string(cursor)?;
-        let trade_id: i32 = read_fixed(cursor)?;
-        let leg_id: i32 = read_fixed(cursor)?;
+        let signal_id: i32 = read_fixed(cursor)?;
         let weight: i64 = read_fixed(cursor)?;
         let quantity: i32 = read_fixed(cursor)?;
         let limit_price: String = read_string(cursor)?;
@@ -446,8 +443,7 @@ impl<R: Read> Decode<R> for SignalInstructions {
             ticker,
             order_type,
             action,
-            trade_id,
-            leg_id,
+            signal_id,
             weight,
             quantity,
             limit_price,
@@ -603,7 +599,7 @@ mod tests {
     fn trades_encode_decode() -> anyhow::Result<()> {
         let trade = Trades {
             trade_id: 1,
-            leg_id: 1,
+            signal_id: 1,
             timestamp: 1704903000,
             ticker: "AAPL".to_string(),
             quantity: 4,
@@ -643,8 +639,7 @@ mod tests {
             ticker: "AAPL".to_string(),
             order_type: "MKT".to_string(),
             action: "BUY".to_string(),
-            trade_id: 1,
-            leg_id: 2,
+            signal_id: 1,
             weight: 13213432,
             quantity: 2343,
             limit_price: "12341".to_string(),
@@ -680,8 +675,7 @@ mod tests {
             ticker: "AAPL".to_string(),
             order_type: "MKT".to_string(),
             action: "BUY".to_string(),
-            trade_id: 1,
-            leg_id: 2,
+            signal_id: 1,
             weight: 13213432,
             quantity: 2343,
             limit_price: "12341".to_string(),

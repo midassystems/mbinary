@@ -78,7 +78,7 @@
   "trades": [
     {
       "trade_id": 1,
-      "leg_id": 1,
+      "signal_id": 1,
       "timestamp": 1704903000,
       "ticker": "AAPL",
       "quantity": 4,
@@ -95,15 +95,13 @@
         {
           "ticker": "AAPL",
           "action": "BUY",
-          "trade_id": 1,
-          "leg_id": 1,
+          "signal_id": 1,
           "weight": 0.05
         },
         {
           "ticker": "MSFT",
           "action": "SELL",
-          "trade_id": 1,
-          "leg_id": 2,
+          "signal_id": 1,
           "weight": 0.05
         }
       ]

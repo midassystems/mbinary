@@ -97,7 +97,7 @@ mod tests {
 
         let trade = Trades {
             trade_id: 1,
-            leg_id: 1,
+            signal_id: 1,
             timestamp: 1704903000,
             ticker: "AAPL".to_string(),
             quantity: 4,
@@ -114,8 +114,7 @@ mod tests {
             ticker: "AAPL".to_string(),
             order_type: "MKT".to_string(),
             action: "BUY".to_string(),
-            trade_id: 1,
-            leg_id: 2,
+            signal_id: 2,
             weight: 13213432,
             quantity: 2343,
             limit_price: "12341".to_string(),

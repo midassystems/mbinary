@@ -278,7 +278,7 @@ impl Trades {
     #[new]
     pub fn py_new(
         trade_id: i32,
-        leg_id: i32,
+        signal_id: i32,
         timestamp: i64,
         ticker: String,
         quantity: i64,
@@ -290,7 +290,7 @@ impl Trades {
     ) -> Self {
         Trades {
             trade_id,
-            leg_id,
+            signal_id,
             timestamp,
             ticker,
             quantity,
@@ -304,7 +304,7 @@ impl Trades {
     pub fn to_dict(&self, py: Python) -> Py<PyDict> {
         let dict = PyDict::new(py);
         dict.set_item("trade_id", self.trade_id).unwrap();
-        dict.set_item("leg_id", self.leg_id).unwrap();
+        dict.set_item("signal_id", self.signal_id).unwrap();
         dict.set_item("timestamp", self.timestamp).unwrap();
         dict.set_item("ticker", &self.ticker).unwrap();
         dict.set_item("quantity", self.quantity).unwrap();
@@ -351,8 +351,7 @@ impl SignalInstructions {
         ticker: String,
         order_type: String,
         action: String,
-        trade_id: i32,
-        leg_id: i32,
+        signal_id: i32,
         weight: i64,
         quantity: i32,
         limit_price: String,
@@ -362,8 +361,7 @@ impl SignalInstructions {
             ticker,
             order_type,
             action,
-            trade_id,
-            leg_id,
+            signal_id,
             weight,
             quantity,
             limit_price,
@@ -375,8 +373,7 @@ impl SignalInstructions {
         dict.set_item("ticker", &self.ticker).unwrap();
         dict.set_item("order_type", &self.order_type).unwrap();
         dict.set_item("action", &self.action).unwrap();
-        dict.set_item("trade_id", self.trade_id).unwrap();
-        dict.set_item("leg_id", self.leg_id).unwrap();
+        dict.set_item("signal_id", self.signal_id).unwrap();
         dict.set_item("weight", self.weight).unwrap();
         dict.set_item("quantity", self.quantity).unwrap();
         dict.set_item("limit_price", &self.limit_price).unwrap();

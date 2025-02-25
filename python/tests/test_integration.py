@@ -122,7 +122,7 @@ class IntegrationTests(unittest.TestCase):
 
         self.trade1 = Trades(
             trade_id=1,
-            leg_id=2,
+            signal_id=2,
             timestamp=170000000000,
             ticker="AAPL",
             quantity=12,
@@ -135,7 +135,7 @@ class IntegrationTests(unittest.TestCase):
 
         self.trade2 = Trades(
             trade_id=1,
-            leg_id=2,
+            signal_id=2,
             timestamp=170000000000,
             ticker="AAPL",
             quantity=12,
@@ -152,8 +152,7 @@ class IntegrationTests(unittest.TestCase):
             ticker="AAPL",
             order_type="MKT",
             action="BUY",
-            trade_id=1,
-            leg_id=2,
+            signal_id=1,
             weight=13213432,
             quantity=2343,
             limit_price="",
@@ -238,7 +237,7 @@ class IntegrationTests(unittest.TestCase):
             "trades": [
                 {
                     "trade_id": 1,
-                    "leg_id": 2,
+                    "signal_id": 2,
                     "timestamp": 170000000000,
                     "ticker": "AAPL",
                     "quantity": 12,
@@ -250,7 +249,7 @@ class IntegrationTests(unittest.TestCase):
                 },
                 {
                     "trade_id": 1,
-                    "leg_id": 2,
+                    "signal_id": 2,
                     "timestamp": 170000000000,
                     "ticker": "AAPL",
                     "quantity": 12,
@@ -269,8 +268,7 @@ class IntegrationTests(unittest.TestCase):
                             "ticker": "AAPL",
                             "order_type": "MKT",
                             "action": "BUY",
-                            "trade_id": 1,
-                            "leg_id": 2,
+                            "signal_id": 1,
                             "weight": 13213432,
                             "quantity": 2343,
                             "limit_price": "",
@@ -285,8 +283,7 @@ class IntegrationTests(unittest.TestCase):
                             "ticker": "AAPL",
                             "order_type": "MKT",
                             "action": "BUY",
-                            "trade_id": 1,
-                            "leg_id": 2,
+                            "signal_id": 1,
                             "weight": 13213432,
                             "quantity": 2343,
                             "limit_price": "",
@@ -392,7 +389,7 @@ class IntegrationTests(unittest.TestCase):
             "trades": [
                 {
                     "trade_id": 1,
-                    "leg_id": 2,
+                    "signal_id": 2,
                     "timestamp": 170000000000,
                     "ticker": "AAPL",
                     "quantity": 12,
@@ -404,7 +401,7 @@ class IntegrationTests(unittest.TestCase):
                 },
                 {
                     "trade_id": 1,
-                    "leg_id": 2,
+                    "signal_id": 2,
                     "timestamp": 170000000000,
                     "ticker": "AAPL",
                     "quantity": 12,
@@ -423,8 +420,7 @@ class IntegrationTests(unittest.TestCase):
                             "ticker": "AAPL",
                             "order_type": "MKT",
                             "action": "BUY",
-                            "trade_id": 1,
-                            "leg_id": 2,
+                            "signal_id": 1,
                             "weight": 13213432,
                             "quantity": 2343,
                             "limit_price": "",
@@ -439,8 +435,7 @@ class IntegrationTests(unittest.TestCase):
                             "ticker": "AAPL",
                             "order_type": "MKT",
                             "action": "BUY",
-                            "trade_id": 1,
-                            "leg_id": 2,
+                            "signal_id": 1,
                             "weight": 13213432,
                             "quantity": 2343,
                             "limit_price": "",
@@ -599,7 +594,7 @@ class IntegrationTests(unittest.TestCase):
 
     def test_trades(self):
         trade_id = 1
-        leg_id = 2
+        signal_id = 2
         timestamp = 170000000000
         ticker = "AAPL"
         quantity = 12
@@ -612,7 +607,7 @@ class IntegrationTests(unittest.TestCase):
         # Test
         trade = Trades(
             trade_id,
-            leg_id,
+            signal_id,
             timestamp,
             ticker,
             quantity,
@@ -626,7 +621,7 @@ class IntegrationTests(unittest.TestCase):
         # Validate
         expected = {
             "trade_id": 1,
-            "leg_id": 2,
+            "signal_id": 2,
             "timestamp": 170000000000,
             "ticker": "AAPL",
             "quantity": 12,
@@ -642,8 +637,7 @@ class IntegrationTests(unittest.TestCase):
         ticker = "AAPL"
         order_type = "MKT"
         action = "BUY"
-        trade_id = 1
-        leg_id = 2
+        signal_id = 1
         weight = 13213432
         quantity = 2343
         limit_price = ""
@@ -654,8 +648,7 @@ class IntegrationTests(unittest.TestCase):
             ticker,
             order_type,
             action,
-            trade_id,
-            leg_id,
+            signal_id,
             weight,
             quantity,
             limit_price,
@@ -673,8 +666,7 @@ class IntegrationTests(unittest.TestCase):
                     "ticker": "AAPL",
                     "order_type": "MKT",
                     "action": "BUY",
-                    "trade_id": 1,
-                    "leg_id": 2,
+                    "signal_id": 1,
                     "weight": 13213432,
                     "quantity": 2343,
                     "limit_price": "",
@@ -688,8 +680,7 @@ class IntegrationTests(unittest.TestCase):
         ticker = "AAPL"
         order_type = "MKT"
         action = "BUY"
-        trade_id = 1
-        leg_id = 2
+        signal_id = 1
         weight = 13213432
         quantity = 2343
         limit_price = ""
@@ -700,8 +691,7 @@ class IntegrationTests(unittest.TestCase):
             ticker,
             order_type,
             action,
-            trade_id,
-            leg_id,
+            signal_id,
             weight,
             quantity,
             limit_price,
@@ -713,8 +703,7 @@ class IntegrationTests(unittest.TestCase):
             "ticker": "AAPL",
             "order_type": "MKT",
             "action": "BUY",
-            "trade_id": 1,
-            "leg_id": 2,
+            "signal_id": 1,
             "weight": 13213432,
             "quantity": 2343,
             "limit_price": "",
