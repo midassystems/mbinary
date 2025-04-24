@@ -1,0 +1,26 @@
+language = "C"
+pragma_once = true
+line_length = 100
+tab_width = 4
+sys_includes = ["stdio.h"]
+
+# Affects enum typedefs
+cpp_compat = true
+
+[export]
+include =["RecordHeader","RType", "Mbp1Msg", "OhlcvMsg", "TradesMsg", "BboMsg", "TbboMsg", "BidAskPair", "RecordData","CRecordEnum" , "Side", "Action"]
+
+[export.rename]
+"FILE" = "FILE"
+
+[enum]
+prefix_with_name = false
+
+[parse]
+parse_deps = true
+include = ["mbinary"]
+extra_bindings = ["mbinary"]
+
+# [defines]
+# cbindgen = true
+

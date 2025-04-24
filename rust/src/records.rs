@@ -26,7 +26,7 @@ pub trait HasRType {
     feature = "python",
     pyclass(get_all, set_all, dict, module = "mbinary")
 )]
-#[derive(Clone, Debug, PartialEq, Eq, Hash, Serialize, Deserialize)]
+#[derive(Clone, Copy, Debug, PartialEq, Eq, Hash, Serialize, Deserialize)]
 pub struct RecordHeader {
     pub length: u8,
     pub rtype: u8,
@@ -72,7 +72,7 @@ impl RecordHeader {
     feature = "python",
     pyclass(get_all, set_all, dict, module = "mbinary")
 )]
-#[derive(Clone, Serialize, Deserialize, Debug, PartialEq, Eq, Hash)]
+#[derive(Clone, Copy, Serialize, Deserialize, Debug, PartialEq, Eq, Hash)]
 pub struct BidAskPair {
     /// The bid price.
     pub bid_px: i64,
@@ -118,7 +118,7 @@ impl PartialEq<dbn::BidAskPair> for BidAskPair {
     feature = "python",
     pyclass(get_all, set_all, dict, module = "mbinary")
 )]
-#[derive(Clone, Debug, PartialEq, Eq, Hash, Serialize, Deserialize, FromRow)]
+#[derive(Clone, Copy, Debug, PartialEq, Eq, Hash, Serialize, Deserialize, FromRow)]
 pub struct Mbp1Msg {
     pub hd: RecordHeader,
     pub price: i64,
@@ -222,7 +222,7 @@ impl PartialEq<dbn::Mbp1Msg> for Mbp1Msg {
     feature = "python",
     pyclass(get_all, set_all, dict, module = "mbinary")
 )]
-#[derive(Clone, Debug, PartialEq, Eq, Hash, Serialize, Deserialize, FromRow)]
+#[derive(Clone, Copy, Debug, PartialEq, Eq, Hash, Serialize, Deserialize, FromRow)]
 pub struct TradeMsg {
     pub hd: RecordHeader,
     pub price: i64,
@@ -301,7 +301,7 @@ impl PartialEq<dbn::TradeMsg> for TradeMsg {
     feature = "python",
     pyclass(get_all, set_all, dict, module = "mbinary")
 )]
-#[derive(Clone, Debug, PartialEq, Eq, Hash, Serialize, Deserialize, FromRow)]
+#[derive(Clone, Copy, Debug, PartialEq, Eq, Hash, Serialize, Deserialize, FromRow)]
 pub struct BboMsg {
     pub hd: RecordHeader,
     pub price: i64,
@@ -398,7 +398,7 @@ pub type TbboMsg = Mbp1Msg;
     feature = "python",
     pyclass(get_all, set_all, dict, module = "mbinary")
 )]
-#[derive(Clone, Debug, PartialEq, Eq, Hash, Serialize, Deserialize)]
+#[derive(Clone, Copy, Debug, PartialEq, Eq, Hash, Serialize, Deserialize)]
 pub struct OhlcvMsg {
     pub hd: RecordHeader,
     pub open: i64,
