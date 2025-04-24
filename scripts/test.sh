@@ -37,6 +37,18 @@ rust() {
 	fi
 }
 
+c() {
+	if cd c; then
+		# Build
+		cargo build
+		cmake -DCMAKE_EXPORT_COMPILE_COMMANDS=ON -B build
+		cmake --build ./build
+		if cd build; then
+			ctest --verbose
+		fi
+	fi
+}
+
 options() {
 	echo "Which tests would you like to run?"
 	echo "1 - rust"
@@ -51,6 +63,9 @@ python)
 	;;
 rust)
 	rust
+	;;
+c)
+	c
 	;;
 *) echo "Invalid argument, valid arguments {rust|python}" ;;
 

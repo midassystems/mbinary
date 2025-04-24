@@ -280,12 +280,12 @@ impl fmt::Display for Schema {
 }
 
 /// Enums representing record types (RType) and schemas
+#[repr(u8)]
 #[cfg_attr(feature = "python", derive(strum::EnumIter, strum::AsRefStr))]
 #[cfg_attr(
     feature = "python",
     pyclass(module = "mbinary", rename_all = "SCREAMING_SNAKE_CASE", eq, eq_int)
 )]
-#[repr(u8)]
 #[derive(Debug, PartialEq, Eq)]
 pub enum RType {
     Mbp1 = 0x01,

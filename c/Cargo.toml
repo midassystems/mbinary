@@ -8,7 +8,7 @@ crate-type = ["staticlib"] # for .a static lib
 
 
 [dependencies]
-mbn = {path = "../rust"}
+mbinary = {path = "../rust"}
 libc ="0.2.168"
 cbindgen = { version = "0.27.0" }
 

@@ -11,8 +11,6 @@ set(CMAKE_OSX_DEPLOYMENT_TARGET "13.3")
 
 
 enable_testing()
-
-# Find Google Test
 find_package(GTest CONFIG REQUIRED)
 
 # Path to the cbindgen-generated header
@@ -20,7 +18,7 @@ set(CBINDGEN_HEADER_DIR "${CMAKE_SOURCE_DIR}/../target")
 
 # Rust binary
 set(RUST_PROJECT_DIR "${CMAKE_SOURCE_DIR}/..")
-set(RUST_LIB_DIR "${RUST_PROJECT_DIR}/target/debug")  # or target/release for release builds
+set(RUST_LIB_DIR "${RUST_PROJECT_DIR}/target/debug") 
 set(RUST_LIB "${RUST_LIB_DIR}/libmbn_c.a")
 
 # Add a custom command to build Rust library using Cargo
@@ -38,8 +36,9 @@ add_custom_target(build_rust ALL DEPENDS "${RUST_LIB}")
 
 # Test executable
 add_executable(MbnTests 
-    tests/test_decode_c.cpp # Add your test files here
+    tests/test_decode_c.cpp 
     tests/test_encode_c.cpp
+    tests/test_records.cpp
 )
 
 # Include the cbindgen header directory

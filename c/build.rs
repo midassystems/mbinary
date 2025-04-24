@@ -9,5 +9,5 @@ fn main() {
         .with_config(config)
         .generate()
         .expect("Unable to generate bindings")
-        .write_to_file("../target/mbn_c.h");
+        .write_to_file("../target/mbinary.h");
 }
