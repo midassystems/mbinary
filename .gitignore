@@ -29,6 +29,8 @@ venv/
 *.egg-info/
 .installed.cfg
 *.egg
+vcpkg_installed/
+
 # *.bin
 
 # Installer logs
