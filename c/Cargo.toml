@@ -1,9 +1,10 @@
 [package]
-name = "mbn_c"
+name = "mbinary_c"
 version = "0.1.0"
 edition = "2021"
 
 [lib]
+name="mbinary"
 crate-type = ["staticlib"] # for .a static lib
 
 
