@@ -24,6 +24,7 @@ add_library(mbinary STATIC IMPORTED GLOBAL)
 
 set_target_properties(mbinary PROPERTIES
     INTERFACE_INCLUDE_DIRECTORIES "${CMAKE_CURRENT_SOURCE_DIR}/include"
-#     IMPORTED_LOCATION "${CMAKE_CURRENT_SOURCE_DIR}/../mbinary-build/libmbinary.a"
+    IMPORTED_LOCATION "${CMAKE_CURRENT_SOURCE_DIR}/target/release/libmbinary.a"
 )
+
 
