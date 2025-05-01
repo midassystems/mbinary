@@ -1,6 +1,6 @@
 [package]
 name = "mbinary"
-version = "1.0.29"
+version = "1.0.30"
 description = "A binary encoding library designed for efficient data storage and transportation in trading platforms."
 readme = "README.md"
 keywords = ["midas", "binary-encoding", "protocol-buffers"]
