@@ -17,6 +17,7 @@ use pyo3::pyclass;
     Debug, Deserialize, Serialize, Clone, Copy, PartialEq, Eq, TryFromPrimitive, IntoPrimitive,
 )]
 pub enum Vendors {
+    Internal = 0,
     Databento = 1,
     Yfinance = 2,
 }
@@ -32,6 +33,7 @@ impl TryFrom<i8> for Vendors {
 
     fn try_from(value: i8) -> Result<Self> {
         match value {
+            0 => Ok(Vendors::Internal),
             1 => Ok(Vendors::Databento),
             2 => Ok(Vendors::Yfinance),
             _ => Err(Error::CustomError("Invalid value for Vendor".into())),
@@ -42,6 +44,7 @@ impl TryFrom<i8> for Vendors {
 impl Vendors {
     pub const fn as_str(&self) -> &'static str {
         match self {
+            Vendors::Internal => "internal",
             Vendors::Databento => "databento",
             Vendors::Yfinance => "yfinance",
         }
@@ -53,6 +56,7 @@ impl FromStr for Vendors {
 
     fn from_str(value: &str) -> Result<Self> {
         match value {
+            "internal" => Ok(Vendors::Internal),
             "databento" => Ok(Vendors::Databento),
             "yfinance" => Ok(Vendors::Yfinance),
             _ => Err(Error::CustomError(format!(
@@ -65,6 +69,7 @@ impl FromStr for Vendors {
 impl fmt::Display for Vendors {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
         match self {
+            Vendors::Internal => write!(f, "internal"),
             Vendors::Databento => write!(f, "databento"),
             Vendors::Yfinance => write!(f, "yfinance"),
         }
@@ -73,6 +78,7 @@ impl fmt::Display for Vendors {
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub enum VendorData {
+    Internal,
     Databento(DatabentoData),
     Yfinance(YfinanceData),
 }
@@ -80,6 +86,7 @@ pub enum VendorData {
 impl VendorData {
     pub fn encode(&self) -> u64 {
         match &self {
+            VendorData::Internal => return 0,
             VendorData::Databento(data) => return data.encode(),
             VendorData::Yfinance(data) => return data.encode(),
         }
@@ -87,6 +94,7 @@ impl VendorData {
 
     pub fn decode(raw: u64, vendor: &Vendors) -> Self {
         match vendor {
+            Vendors::Internal => return VendorData::Internal,
             Vendors::Databento => return VendorData::Databento(DatabentoData::decode(raw)),
             Vendors::Yfinance => return VendorData::Yfinance(YfinanceData::decode(raw)),
         }
