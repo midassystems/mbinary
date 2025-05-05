@@ -109,11 +109,11 @@ pub extern "C" fn get_timestamp(record: *const CRecordEnum) -> u64 {
 pub extern "C" fn get_price(record: *const CRecordEnum) -> i64 {
     unsafe {
         match &(*record).rtype {
-            RType::Mbp1 => return (*record).data.mbp1.price,
-            RType::Tbbo => return (*record).data.tbbo.price,
-            RType::Trades => return (*record).data.trade.price,
-            RType::Ohlcv => return (*record).data.ohlcv.close,
-            RType::Bbo => return (*record).data.bbo.price,
+            RType::Mbp1 => return (*record).data.mbp1.price(),
+            RType::Tbbo => return (*record).data.tbbo.price(),
+            RType::Trades => return (*record).data.trade.price(),
+            RType::Ohlcv => return (*record).data.ohlcv.price(),
+            RType::Bbo => return (*record).data.bbo.price(),
         }
     }
 }
