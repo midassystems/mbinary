@@ -30,6 +30,8 @@ pub struct Instrument {
     pub first_available: u64,
     /// first date available in database
     pub expiration_date: u64,
+    /// Coninuous Flag
+    pub is_continuous: bool,
     /// Active status
     pub active: bool,
 }
@@ -45,6 +47,7 @@ impl Instrument {
         last_available: u64,
         first_available: u64,
         expiration_date: u64,
+        is_continuous: bool,
         active: bool,
     ) -> Self {
         Self {
@@ -57,6 +60,7 @@ impl Instrument {
             last_available,
             first_available,
             expiration_date,
+            is_continuous,
             active,
         }
     }
@@ -205,6 +209,7 @@ mod tests {
             1730419200000000000,
             1730419200000000000,
             1730419200000000000,
+            false,
             true,
         );
         // Test
@@ -231,6 +236,7 @@ mod tests {
             1730419200000000000,
             1730419200000000000,
             1730419200000000000,
+            false,
             true,
         );
         // Test
@@ -258,6 +264,7 @@ mod tests {
             1,
             1,
             1730419200000000000,
+            false,
             true,
         );
 
@@ -291,6 +298,7 @@ mod tests {
             1,
             1,
             1730419200000000000,
+            false,
             true,
         );
 
