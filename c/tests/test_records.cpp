@@ -45,8 +45,10 @@ TEST(RTypeTests, Bbo) {
 TEST(Mbp1Tests, ConstructionTest) {
   CRecordEnum record{
       RType::Mbp1,
-      RecordData{.mbp1 = {1, RType::Mbp1, 3, 4, 5,  6, 7, 'T', 'A', 1, 2,
-                          3, 4,           6, 7, 72, 2, 1, 3,   1,   2}}};
+      RecordData{.mbp1 = {
+                     1, RType::Mbp1, 3, 4, 5,  6, 7, 'T', 'A', 1, 2,
+                     3, 4,           6, 7, 72, 2, 1, 3,   1,   2,
+                 }}};
 
   // RType
   ASSERT_EQ(record.rtype, RType::Mbp1);
@@ -86,8 +88,10 @@ TEST(Mbp1Tests, ConstructionTest) {
 TEST(TbboTests, ConstructionTest) {
   CRecordEnum record{
       RType::Tbbo,
-      RecordData{.tbbo = {1, RType::Tbbo, 3, 4, 5,  6, 7, 'T', 'A', 1, 2,
-                          3, 4,           6, 7, 72, 2, 1, 3,   1,   2}}};
+      RecordData{.tbbo = {
+                     1, RType::Tbbo, 3, 4, 5,  6, 7, 'T', 'A', 1, 2,
+                     3, 4,           6, 7, 72, 2, 1, 3,   1,   2,
+                 }}};
 
   // RType
   ASSERT_EQ(record.rtype, RType::Tbbo);
@@ -174,9 +178,19 @@ TEST(TradeTests, ConstructionTest) {
 
 // Bbo
 TEST(BboTests, ConstructionTest) {
-  CRecordEnum record{
-      RType::Bbo, RecordData{.bbo = {1, RType::Bbo, 3, 4, 5, 6, 7, 'A', 0, 1, 2,
-                                     3, 4, 6, 7, 72, 2}}};
+  CRecordEnum record{RType::Bbo, RecordData{.bbo = {
+                                                1,
+                                                RType::Bbo,
+                                                3,
+                                                4,
+                                                5,
+                                                3000000000,
+                                                4000000000,
+                                                6,
+                                                7,
+                                                72,
+                                                2,
+                                            }}};
 
   // RType
   ASSERT_EQ(record.rtype, RType::Bbo);
@@ -191,28 +205,32 @@ TEST(BboTests, ConstructionTest) {
 
   // Timestamp
   uint64_t ts = get_timestamp(&record);
-  ASSERT_EQ(ts, 1);
+  ASSERT_EQ(ts, 4);
 
   // Price
-  int price = get_price(&record);
-  ASSERT_EQ(price, 6);
+  int64_t price = get_price(&record);
+  ASSERT_EQ(price, 3500000000);
 
   // Record
   const BboMsg* msg = &record.data.bbo;
-  ASSERT_EQ(msg->price, 6);
-  ASSERT_EQ(msg->size, 7);
-  ASSERT_EQ(msg->side, 'A');
-  ASSERT_EQ(msg->side, 65);
-  ASSERT_EQ(msg->side, Side::Ask);
-  ASSERT_EQ(msg->ts_recv, 1);
-  ASSERT_EQ(msg->levels[0].ask_px, 4);
+  ASSERT_EQ(msg->levels[0].ask_px, 4000000000);
   ASSERT_EQ(msg->levels[0].bid_sz, 6);
 };
 
 // Ohlcv
 TEST(OhlcvTests, ConstructionTest) {
-  CRecordEnum record{RType::Ohlcv, RecordData{.ohlcv = {1, RType::Ohlcv, 3, 4,
-                                                        5, 6, 7, 8, 9, 10}}};
+  CRecordEnum record{RType::Ohlcv, RecordData{.ohlcv = {
+                                                  1,
+                                                  RType::Ohlcv,
+                                                  3,
+                                                  4,
+                                                  5,
+                                                  6,
+                                                  7,
+                                                  8,
+                                                  9,
+                                                  10,
+                                              }}};
 
   // RType
   ASSERT_EQ(record.rtype, RType::Ohlcv);

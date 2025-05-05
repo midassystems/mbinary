@@ -1,4 +1,5 @@
 use crate::enums::RType;
+use crate::PRICE_SCALE;
 use dbn;
 use serde::{Deserialize, Serialize};
 use sqlx::FromRow;
@@ -12,6 +13,7 @@ use pyo3::pyclass;
 pub trait Record {
     fn header(&self) -> &RecordHeader;
     fn timestamp(&self) -> u64;
+    fn price(&self) -> i64;
 }
 
 /// Trait to check if a type has a specific RType property.
@@ -88,6 +90,21 @@ pub struct BidAskPair {
     pub ask_ct: u32,
 }
 
+impl BidAskPair {
+    pub fn mid_px(&self) -> i64 {
+        let bid_px: f64 = self.bid_px as f64 / PRICE_SCALE as f64;
+        let ask_px: f64 = self.ask_px as f64 / PRICE_SCALE as f64;
+        let mid: f64 = (bid_px + ask_px) / 2.0 * PRICE_SCALE as f64;
+        mid as i64
+    }
+    pub fn pretty_mid_px(&self) -> f64 {
+        let bid_px: f64 = (self.bid_px / PRICE_SCALE) as f64;
+        let ask_px: f64 = (self.ask_px / PRICE_SCALE) as f64;
+        let mid = (bid_px + ask_px) / 2.0;
+        mid
+    }
+}
+
 impl From<dbn::BidAskPair> for BidAskPair {
     fn from(dbn_pair: dbn::BidAskPair) -> Self {
         BidAskPair {
@@ -141,6 +158,9 @@ impl Record for Mbp1Msg {
     }
     fn timestamp(&self) -> u64 {
         self.ts_recv
+    }
+    fn price(&self) -> i64 {
+        self.price
     }
 }
 
@@ -243,6 +263,9 @@ impl Record for TradeMsg {
     fn timestamp(&self) -> u64 {
         self.ts_recv
     }
+    fn price(&self) -> i64 {
+        self.price
+    }
 }
 
 impl HasRType for TradeMsg {
@@ -304,12 +327,6 @@ impl PartialEq<dbn::TradeMsg> for TradeMsg {
 #[derive(Clone, Copy, Debug, PartialEq, Eq, Hash, Serialize, Deserialize, FromRow)]
 pub struct BboMsg {
     pub hd: RecordHeader,
-    pub price: i64,
-    pub size: u32,
-    pub side: c_char,
-    pub flags: u8,
-    pub ts_recv: u64,
-    pub sequence: u32,
     pub levels: [BidAskPair; 1],
 }
 
@@ -318,7 +335,10 @@ impl Record for BboMsg {
         &self.hd
     }
     fn timestamp(&self) -> u64 {
-        self.ts_recv
+        self.hd.ts_event
+    }
+    fn price(&self) -> i64 {
+        self.levels[0].mid_px()
     }
 }
 
@@ -342,12 +362,6 @@ impl From<dbn::BboMsg> for BboMsg {
     fn from(item: dbn::BboMsg) -> Self {
         BboMsg {
             hd: RecordHeader::new::<BboMsg>(item.hd.instrument_id, item.hd.ts_event, 0),
-            price: item.price,
-            size: item.size,
-            side: item.side,
-            flags: item.flags.raw(),
-            ts_recv: item.ts_recv,
-            sequence: item.sequence,
             levels: [BidAskPair::from(item.levels[0].clone())],
         }
     }
@@ -357,12 +371,6 @@ impl From<dbn::Mbp1Msg> for BboMsg {
     fn from(item: dbn::Mbp1Msg) -> Self {
         BboMsg {
             hd: RecordHeader::new::<BboMsg>(item.hd.instrument_id, item.hd.ts_event, 0),
-            price: item.price,
-            size: item.size,
-            side: item.side,
-            flags: item.flags.raw(),
-            ts_recv: item.ts_recv,
-            sequence: item.sequence,
             levels: [BidAskPair::from(item.levels[0].clone())],
         }
     }
@@ -370,22 +378,7 @@ impl From<dbn::Mbp1Msg> for BboMsg {
 
 impl PartialEq<dbn::Mbp1Msg> for BboMsg {
     fn eq(&self, other: &dbn::Mbp1Msg) -> bool {
-        if other.price == dbn::UNDEF_PRICE {
-            self.price == other.price
-                && self.size == other.size
-                && self.side == other.side
-                && self.ts_recv == other.ts_recv
-                && self.levels[0] == other.levels[0]
-            // && self.sequence == other.sequence
-        } else {
-            self.hd.ts_event == other.hd.ts_event
-                && self.price == other.price
-                && self.size == other.size
-                && self.side == other.side
-                && self.ts_recv == other.ts_recv
-                && self.levels[0] == other.levels[0]
-            // && self.sequence == other.sequence
-        }
+        self.hd.ts_event == other.hd.ts_event && self.levels[0] == other.levels[0]
     }
 }
 
@@ -414,6 +407,9 @@ impl Record for OhlcvMsg {
     }
     fn timestamp(&self) -> u64 {
         self.header().ts_event
+    }
+    fn price(&self) -> i64 {
+        self.close
     }
 }
 
@@ -707,12 +703,6 @@ mod tests {
     fn test_transmute_record_bbo() {
         let record = BboMsg {
             hd: RecordHeader::new::<BboMsg>(1, 1725734014000000000, 0),
-            price: 1000,
-            size: 10,
-            side: 1,
-            flags: 0,
-            ts_recv: 1725734014000000000,
-            sequence: 123456,
             levels: [BidAskPair {
                 bid_px: 1,
                 ask_px: 2,
@@ -982,7 +972,7 @@ mod tests {
 
         // Test
         let mut mbinary_record = BboMsg::from(dbn_record.clone());
-        mbinary_record.price = 123432343234323;
+        mbinary_record.levels[0].bid_px = 123432343234323;
         assert!(mbinary_record != dbn_record);
 
         Ok(())

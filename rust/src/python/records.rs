@@ -281,22 +281,10 @@ impl BboMsg {
         instrument_id: u32,
         ts_event: u64,
         rollover_flag: u8,
-        price: i64,
-        size: u32,
-        side: Side,
-        flags: u8,
-        ts_recv: u64,
-        sequence: u32,
         levels: [BidAskPair; 1],
     ) -> Self {
         BboMsg {
             hd: RecordHeader::new::<Self>(instrument_id, ts_event, rollover_flag),
-            price,
-            size,
-            side: side.into(),
-            flags,
-            ts_recv,
-            sequence,
             levels,
         }
     }
@@ -369,12 +357,12 @@ impl BboMsg {
 
     #[getter]
     fn pretty_price(&self) -> f64 {
-        self.price as f64 / PRICE_SCALE as f64
+        self.levels[0].pretty_mid_px()
     }
 
     #[getter]
-    fn pretty_side(&self) -> Side {
-        Side::try_from(self.side as u8).unwrap()
+    fn price(&self) -> i64 {
+        self.levels[0].mid_px()
     }
 
     fn __str__(&self) -> String {
@@ -390,12 +378,6 @@ impl BboMsg {
         dict.set_item("ts_event", self.hd.ts_event).unwrap();
         dict.set_item("rollover_flag", self.hd.rollover_flag)
             .unwrap();
-        dict.set_item("price", self.price).unwrap();
-        dict.set_item("size", self.size).unwrap();
-        dict.set_item("side", self.side).unwrap();
-        dict.set_item("flags", self.flags).unwrap();
-        dict.set_item("ts_recv", self.ts_recv).unwrap();
-        dict.set_item("sequence", self.sequence).unwrap();
         dict.set_item("bid_px", self.levels[0].bid_px).unwrap();
         dict.set_item("ask_px", self.levels[0].ask_px).unwrap();
         dict.set_item("bid_sz", self.levels[0].bid_sz).unwrap();

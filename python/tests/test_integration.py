@@ -937,12 +937,6 @@ class IntegrationTests(unittest.TestCase):
             1,
             123456765432,
             0,
-            1,
-            2,
-            Side.ASK,
-            0,
-            3,
-            5,
             [pair],
         )
 
@@ -1064,17 +1058,11 @@ class IntegrationTests(unittest.TestCase):
         self.assertEqual(msg.sequence, 5)
 
     def test_bbomsg_properties(self):
-        pair = BidAskPair(1, 2, 3, 4, 5, 6)
+        pair = BidAskPair(1000000000, 2000000000, 3, 4, 5, 6)
         msg = BboMsg(
             1,
             123456765432,
             0,
-            1,
-            2,
-            Side.ASK,
-            0,
-            3,
-            5,
             [pair],
         )
 
@@ -1082,14 +1070,10 @@ class IntegrationTests(unittest.TestCase):
         self.assertEqual(msg.rtype, RType.BBO)
         self.assertEqual(msg.instrument_id, 1)
         self.assertEqual(msg.ts_event, 123456765432)
-        self.assertEqual(msg.ts, 3)
+        self.assertEqual(msg.ts, 123456765432)
         self.assertEqual(msg.rollover_flag, 0)
-        self.assertEqual(msg.price, 1)
-        self.assertEqual(msg.pretty_price, 1 / 1e9)
-        self.assertEqual(msg.pretty_side, Side.ASK)
-        self.assertEqual(msg.side, 65)
-        self.assertEqual(msg.ts_recv, 3)
-        self.assertEqual(msg.sequence, 5)
+        self.assertEqual(msg.pretty_price, 1.5)
+        self.assertEqual(msg.price, 1500000000)
         self.assertEqual(msg.levels[0].bid_px, pair.bid_px)
         self.assertEqual(msg.levels[0].ask_px, pair.ask_px)
         self.assertEqual(msg.levels[0].bid_sz, pair.bid_sz)
@@ -1103,12 +1087,6 @@ class IntegrationTests(unittest.TestCase):
             1,
             123456765432,
             0,
-            1,
-            2,
-            Side.ASK,
-            0,
-            3,
-            5,
             [pair],
         )
         pair2 = BidAskPair(1234, 1234, 1234, 1234, 1234, 1234)

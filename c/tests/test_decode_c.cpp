@@ -78,10 +78,12 @@ TEST(DecoderTests, test_decode_file) {
   CRecordEnum record1{
       .rtype = RType::Mbp1,
       .data = RecordData{
-          .mbp1 = {length, RType::Mbp1, 1,   1622471124, 0, 1000,
-                   10,     'T',         'A', 0,          0, 123456789098765,
-                   12345,  123456,      0,   1,          2, 2,
-                   2,      1,           3}}};
+          .mbp1 = {
+              length, RType::Mbp1, 1,   1622471124, 0, 1000,
+              10,     'T',         'A', 0,          0, 123456789098765,
+              12345,  123456,      0,   1,          2, 2,
+              2,      1,           3,
+          }}};
 
   std::vector<RecordData> records;
   records.push_back(record1.data);
