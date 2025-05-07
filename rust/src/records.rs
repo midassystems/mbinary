@@ -100,7 +100,9 @@ impl BidAskPair {
     pub fn pretty_mid_px(&self) -> f64 {
         let bid_px: f64 = (self.bid_px / PRICE_SCALE) as f64;
         let ask_px: f64 = (self.ask_px / PRICE_SCALE) as f64;
+        println!("{:?} {:?}", bid_px, ask_px);
         let mid = (bid_px + ask_px) / 2.0;
+        println!("{:?}", mid);
         mid
     }
 }
@@ -378,7 +380,7 @@ impl From<dbn::Mbp1Msg> for BboMsg {
 
 impl PartialEq<dbn::Mbp1Msg> for BboMsg {
     fn eq(&self, other: &dbn::Mbp1Msg) -> bool {
-        self.hd.ts_event == other.hd.ts_event && self.levels[0] == other.levels[0]
+        self.hd.ts_event == other.ts_recv && self.levels[0] == other.levels[0]
     }
 }
 
@@ -903,7 +905,9 @@ mod tests {
         };
 
         // Test
-        let mbinary_record = BboMsg::from(dbn_record.clone());
+        let mut mbinary_record = BboMsg::from(dbn_record.clone());
+        mbinary_record.hd.ts_event = 1231;
+
         assert!(mbinary_record == dbn_record);
 
         Ok(())
@@ -937,7 +941,9 @@ mod tests {
         };
 
         // Test
-        let mbinary_record = BboMsg::from(dbn_record.clone());
+        let mut mbinary_record = BboMsg::from(dbn_record.clone());
+        mbinary_record.hd.ts_event = 1231;
+
         assert!(mbinary_record == dbn_record);
 
         Ok(())
@@ -1046,7 +1052,8 @@ mod tests {
         };
 
         // Test
-        let mbinary_record = BboMsg::from(dbn_record.clone());
+        let mut mbinary_record = BboMsg::from(dbn_record.clone());
+        mbinary_record.hd.ts_event = 1704183600000000000;
 
         // Validate
         assert!(mbinary_record == dbn_record);
