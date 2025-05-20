@@ -47,6 +47,36 @@ impl BidAskPair {
         }
     }
 
+    #[setter]
+    fn set_bid_px(&mut self, price: i64) {
+        self.bid_px = price;
+    }
+
+    #[setter]
+    fn set_ask_px(&mut self, price: i64) {
+        self.ask_px = price;
+    }
+
+    #[setter]
+    fn set_bid_sz(&mut self, size: u32) {
+        self.bid_sz = size;
+    }
+
+    #[setter]
+    fn set_ask_sz(&mut self, size: u32) {
+        self.ask_sz = size;
+    }
+
+    #[setter]
+    fn set_bid_ct(&mut self, count: u32) {
+        self.bid_ct = count;
+    }
+
+    #[setter]
+    fn set_ask_ct(&mut self, count: u32) {
+        self.ask_ct = count;
+    }
+
     #[getter]
     fn pretty_bid_px(&self) -> f64 {
         self.bid_px as f64 / PRICE_SCALE as f64

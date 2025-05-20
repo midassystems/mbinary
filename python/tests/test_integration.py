@@ -900,6 +900,37 @@ class IntegrationTests(unittest.TestCase):
         mappings = symbol_map.map
         self.assertEqual(mappings, mappings)
 
+    def test_bid_ask(self):
+        pair = BidAskPair(1, 2, 3, 4, 5, 6)
+
+        # Validate Initial Data
+        self.assertEqual(pair.bid_px, 1)
+        self.assertEqual(pair.ask_px, 2)
+        self.assertEqual(pair.bid_sz, 3)
+        self.assertEqual(pair.ask_sz, 4)
+        self.assertEqual(pair.bid_ct, 5)
+        self.assertEqual(pair.ask_ct, 6)
+        self.assertEqual(pair.pretty_bid_px, 1 / 1e9)
+        self.assertEqual(pair.pretty_ask_px, 2 / 1e9)
+
+        # Test
+        pair.ask_px = 900
+        pair.bid_px = 800
+        pair.ask_sz = 700
+        pair.bid_sz = 600
+        pair.ask_ct = 500
+        pair.bid_ct = 400
+
+        # Validate 
+        self.assertEqual(pair.bid_px, 800)
+        self.assertEqual(pair.ask_px, 900)
+        self.assertEqual(pair.bid_sz, 600)
+        self.assertEqual(pair.ask_sz, 700)
+        self.assertEqual(pair.bid_ct, 400)
+        self.assertEqual(pair.ask_ct, 500)
+        self.assertEqual(pair.pretty_bid_px, 800 / 1e9)
+        self.assertEqual(pair.pretty_ask_px, 900 / 1e9)
+
     def test_is_record(self):
         pair = BidAskPair(1, 2, 3, 4, 5, 6)
         ohlcv_msg = OhlcvMsg(1, 123456765432, 0, 1, 2, 3, 4, 100000)
