@@ -100,9 +100,7 @@ impl BidAskPair {
     pub fn pretty_mid_px(&self) -> f64 {
         let bid_px: f64 = (self.bid_px / PRICE_SCALE) as f64;
         let ask_px: f64 = (self.ask_px / PRICE_SCALE) as f64;
-        println!("{:?} {:?}", bid_px, ask_px);
         let mid = (bid_px + ask_px) / 2.0;
-        println!("{:?}", mid);
         mid
     }
 }
